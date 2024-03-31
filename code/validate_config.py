@@ -1,0 +1,78 @@
+import configparser
+import re
+
+from global_variables import LOG
+
+
+pattern_1 = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+pattern_2 = "^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+
+
+def validate_config(file_contents):
+    config = configparser.ConfigParser()
+    config.read_string(file_contents)
+
+    errors = 0
+
+    try:
+        # Validate TOKEN
+        if not config["BOT_INFO"]["TOKEN"]:
+            LOG.critical("TOKEN has not been set.")
+            errors += 1
+        # Validate BOT_COLOR
+        if not config["BOT_INFO"]["BOT_COLOR"]:
+            LOG.critical("BOT_COLOR has not been set.")
+            errors += 1
+
+        elif not bool(
+            re.match(pattern_1, config["BOT_INFO"]["BOT_COLOR"])
+        ) and not bool(re.match(pattern_2, config["BOT_INFO"]["BOT_COLOR"])):
+            LOG.critical("BOT_COLOR is not a valid hex color.")
+            errors += 1
+
+        # Validate LAVALINK
+        # Validate HOST
+        if not config["LAVALINK"]["HOST"]:
+            LOG.critical("HOST has not been set.")
+            errors += 1
+        # Validate PORT
+        if not config["LAVALINK"]["PORT"]:
+            LOG.critical("PORT has not been set.")
+            errors += 1
+        # Validate PASSWORD
+        if not config["LAVALINK"]["PASSWORD"]:
+            LOG.critical("HOST has not been set.")
+            errors += 1
+
+        else:
+            LOG.info("Configuration checks passed. Starting bot.")
+
+    except KeyError:
+        LOG.critical(
+            "You are missing at least one of the configuration options from your config.ini file. In order to regenerate this file with all of the proper options, please delete it and re-run the `bot.py` file."
+        )
+        exit()
+
+
+def create_config():
+    try:
+        with open("config.ini", "r") as f:
+            file_contents = f.read()
+            validate_config(file_contents)
+
+    except FileNotFoundError:
+        config = configparser.ConfigParser()
+        config["BOT_INFO"] = {
+            "TOKEN": "",
+            "BOT_COLOR": "",
+        }
+
+        config["LAVALINK"] = {"HOST": "", "PORT": "", "PASSWORD": ""}
+
+        with open("config.ini", "w") as configfile:
+            config.write(configfile)
+
+        LOG.error(
+            "Configuration file `config.ini` has been generated. Please fill out all of the necessary information. Refer to the docs for information on what a specific configuration option is."
+        )
+        exit()
