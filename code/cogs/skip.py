@@ -41,6 +41,14 @@ class Skip(commands.Cog):
 
         await player.skip()
 
+        if not player.current:
+            embed = discord.Embed(
+                title="End of Queue",
+                description=f"All songs in queue have been played. Thank you for using Guava :wave:\n\nIssued by: {interaction.user.mention}",
+                color=BOT_COLOR
+            )
+            return await interaction.response.send_message(embed=embed)
+
         # It takes a sec for the new track to be grabbed and played
         # So just wait a sec before sending the message
         await asyncio.sleep(0.5)
