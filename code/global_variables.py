@@ -30,11 +30,7 @@ except FileNotFoundError:
         "BOT_COLOR": "",
     }
 
-    config["LAVALINK"] = {
-        "HOST": "",
-        "PORT": "",
-        "PASSWORD": ""
-    }
+    config["LAVALINK"] = {"HOST": "", "PORT": "", "PASSWORD": ""}
 
     with open("config.ini", "w") as configfile:
         config.write(configfile)

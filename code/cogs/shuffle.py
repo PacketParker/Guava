@@ -11,7 +11,6 @@ class Shuffle(commands.GroupCog, name="shuffle"):
     def __init__(self, bot):
         self.bot = bot
 
-
     @app_commands.command(name="on")
     @app_commands.check(Music.create_player)
     async def shuffle_on(self, interaction: discord.Interaction):

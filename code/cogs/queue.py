@@ -13,7 +13,6 @@ class Queue(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @app_commands.command()
     @app_commands.check(Music.create_player)
     @app_commands.describe(page="Queue page number - leave blank if you are unsure")

@@ -6,7 +6,6 @@ class TreeSync(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @commands.command()
     @commands.dm_only()
     @commands.is_owner()

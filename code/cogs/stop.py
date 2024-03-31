@@ -11,7 +11,6 @@ class Stop(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @app_commands.command()
     @app_commands.check(Music.create_player)
     async def stop(self, interaction: discord.Interaction):

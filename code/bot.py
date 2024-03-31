@@ -10,7 +10,7 @@ class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(
             command_prefix="***",
-            activity=discord.Game(name='music!'),
+            activity=discord.Game(name="music!"),
             intents=discord.Intents.default(),
         )
 
