@@ -8,7 +8,7 @@
 <h3 align="center">
     Dead simple Discord music bot
     <br>
-    <a href="https://pkrm.dev">Invite Guava</a>
+    <a href="https://pkrm.dev" target="_blank">Invite Guava</a>
 </h3>
 
 <p align="center">
@@ -61,13 +61,13 @@ PASSWORD | Password to authenticate into the Lavalink node
 
 As previously state, a Lavalink node running at least `v4` with the LavaSrc plugin is required. Due to the plugin requirement, it is unlikely that you will be able to use a free/public Lavalink node.
 
-For instructions on setting up a Lavalink node, look [here](https://lavalink.dev/getting-started/), and for instructions on the LavaSrc plugin, look [here]().
+For instructions on setting up a Lavalink node, look [here](https://lavalink.dev/getting-started/), and for instructions on the LavaSrc plugin, look [here](https://github.com/topi314/LavaSrc).
 <br>
 *P.S. Only the Spotify, Deezer, and YouTube sources/search providers are needed.*
 
 It is also highly recommended to setup IPv6 rotation in order to avoid blocks and other issues. There are helpful guides for this both [here](https://blog.arbjerg.dev/2020/3/tunnelbroker-with-lavalink) and [here](https://gist.github.com/Drapersniper/11fee08f91ea7174e0d8af12496f3443).
 
-An example of my personal `application.yml` file can be found [here](https://github.com/packetparker/Guava/applcation.yml.example).
+An example of my personal `application.yml` file can be found [here](https://github.com/PacketParker/Guava/blob/main/application.yml.example).
 
 <br>
 <br>
