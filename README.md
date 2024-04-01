@@ -21,9 +21,6 @@
   <a href="https://makeapullrequest.com">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
   </a>
-  <a href="https://makeapullrequest.com">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
-  </a>
 </p>
 
 # Overview
