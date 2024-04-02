@@ -22,7 +22,6 @@ class MyBot(commands.Bot):
 
 
 bot = MyBot()
-bot.count_hold = 0
 bot.remove_command("help")
 
 
