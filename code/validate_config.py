@@ -32,15 +32,19 @@ def validate_config(file_contents):
         # Validate FEEDBACK_CHANNEL_ID
         if not config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"]:
             LOG.critical("FEEDBACK_CHANNEL_ID has not been set.")
+            errors += 1
 
         elif len(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"]) != 19:
             LOG.critical("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
+            errors += 1
         # Validate BUG_CHANNEL_ID
         if not config["BOT_INFO"]["BUG_CHANNEL_ID"]:
             LOG.critical("BUG_CHANNEL_ID has not been set.")
+            errors += 1
 
         elif len(config["BOT_INFO"]["BUG_CHANNEL_ID"]) != 19:
             LOG.critical("BUG_CHANNEL_ID is not a valid Discord channel ID.")
+            errors += 1
 
         # Validate LAVALINK
         # Validate HOST
@@ -55,6 +59,10 @@ def validate_config(file_contents):
         if not config["LAVALINK"]["PASSWORD"]:
             LOG.critical("HOST has not been set.")
             errors += 1
+
+        if errors > 0:
+            LOG.critical("Configuration checks failed. Correct your config.ini file and run again.")
+            exit()
 
         else:
             LOG.info("Configuration checks passed. Starting bot.")
