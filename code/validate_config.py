@@ -70,7 +70,9 @@ def validate_config(file_contents):
             errors += 1
 
         if errors > 0:
-            LOG.critical("Configuration checks failed. Correct your config.ini file and run again.")
+            LOG.critical(
+                "Configuration checks failed. Correct your config.ini file and run again."
+            )
             exit()
 
         else:
