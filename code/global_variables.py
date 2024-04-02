@@ -48,6 +48,7 @@ BOT_TOKEN = config["BOT_INFO"]["TOKEN"]
 BOT_COLOR = discord.Color(int((config["BOT_INFO"]["BOT_COLOR"]).replace("#", ""), 16))
 FEEDBACK_CHANNEL_ID = int(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"])
 BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
+BOT_INVITE_LINK = config["BOT_INFO"]["BOT_INVITE_LINK"]
 
 LAVALINK_HOST = config["LAVALINK"]["HOST"]
 LAVALINK_PORT = config["LAVALINK"]["PORT"]

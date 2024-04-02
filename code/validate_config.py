@@ -1,5 +1,6 @@
 import configparser
 import re
+import validators
 
 from global_variables import LOG
 
@@ -44,6 +45,14 @@ def validate_config(file_contents):
 
         elif len(config["BOT_INFO"]["BUG_CHANNEL_ID"]) != 19:
             LOG.critical("BUG_CHANNEL_ID is not a valid Discord channel ID.")
+            errors += 1
+        # Validate BOT_INVITE_LINK
+        if not config["BOT_INFO"]["BOT_INVITE_LINK"]:
+            LOG.critical("BOT_INVITE_LINK has not been set.")
+            errors += 1
+
+        elif not validators.url(config["BOT_INFO"]["BOT_INVITE_LINK"]):
+            LOG.critical("BOT_INVITE_LINK is not a valid URL.")
             errors += 1
 
         # Validate LAVALINK
