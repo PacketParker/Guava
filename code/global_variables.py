@@ -47,6 +47,7 @@ config.read_string(file_contents)
 BOT_TOKEN = config["BOT_INFO"]["TOKEN"]
 BOT_COLOR = discord.Color(int((config["BOT_INFO"]["BOT_COLOR"]).replace("#", ""), 16))
 FEEDBACK_CHANNEL_ID = int(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"])
+BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
 
 LAVALINK_HOST = config["LAVALINK"]["HOST"]
 LAVALINK_PORT = config["LAVALINK"]["PORT"]

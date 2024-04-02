@@ -2,6 +2,7 @@
 token =
 bot_color =
 feedback_channel_id =
+bug_channel_id =
 
 [LAVALINK]
 host =

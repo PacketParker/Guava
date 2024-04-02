@@ -35,6 +35,12 @@ def validate_config(file_contents):
 
         elif len(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"]) != 19:
             LOG.critical("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
+        # Validate BUG_CHANNEL_ID
+        if not config["BOT_INFO"]["BUG_CHANNEL_ID"]:
+            LOG.critical("BUG_CHANNEL_ID has not been set.")
+
+        elif len(config["BOT_INFO"]["BUG_CHANNEL_ID"]) != 19:
+            LOG.critical("BUG_CHANNEL_ID is not a valid Discord channel ID.")
 
         # Validate LAVALINK
         # Validate HOST
@@ -68,7 +74,12 @@ def create_config():
 
     except FileNotFoundError:
         config = configparser.ConfigParser()
-        config["BOT_INFO"] = {"TOKEN": "", "BOT_COLOR": "", "FEEDBACK_CHANNEL_ID": ""}
+        config["BOT_INFO"] = {
+            "TOKEN": "",
+            "BOT_COLOR": "",
+            "FEEDBACK_CHANNEL_ID": "",
+            "BUG_CHANNEL_ID": "",
+        }
 
         config["LAVALINK"] = {"HOST": "", "PORT": "", "PASSWORD": ""}
 
