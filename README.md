@@ -8,7 +8,7 @@
 <h3 align="center">
     Dead simple Discord music bot
     <br>
-    <a href="https://pkrm.dev" target="_blank">Invite Guava</a>
+    <a href="https://discord.com/oauth2/authorize?client_id=982806583060885525&permissions=3147776&scope=bot+applications.commands" target="_blank">Invite Guava</a>
 </h3>
 
 <p align="center">
