@@ -1,6 +1,7 @@
 [BOT_INFO]
 token =
 bot_color =
+feedback_channel_id =
 
 [LAVALINK]
 host =
