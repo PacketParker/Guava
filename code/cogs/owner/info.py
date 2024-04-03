@@ -1,10 +1,11 @@
 from discord.ext import commands
 import discord
+import lavalink
 
 from global_variables import BOT_COLOR
 
 
-class UserCount(commands.Cog):
+class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -29,7 +30,7 @@ class UserCount(commands.Cog):
 
         embed = discord.Embed(
             title="User Count",
-            description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`",
+            description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`\n\nTotal Players: `{self.bot.lavalink.nodes[0].stats.players}`",
             color=BOT_COLOR,
         )
         # Add the top 5 guilds to the embed
@@ -42,4 +43,4 @@ class UserCount(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(UserCount(bot))
+    await bot.add_cog(Info(bot))
