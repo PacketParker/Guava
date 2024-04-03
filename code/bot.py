@@ -19,6 +19,9 @@ class MyBot(commands.Bot):
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
                 await self.load_extension(f"cogs.{ext[:-3]}")
+        for ext in os.listdir("./code/cogs/owner"):
+            if ext.endswith(".py"):
+                await self.load_extension(f"cogs.owner.{ext[:-3]}")
 
 
 bot = MyBot()
