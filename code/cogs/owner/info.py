@@ -1,6 +1,5 @@
 from discord.ext import commands
 import discord
-import lavalink
 
 from global_variables import BOT_COLOR
 
