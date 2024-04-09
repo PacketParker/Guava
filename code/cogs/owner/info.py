@@ -29,7 +29,7 @@ class Info(commands.Cog):
 
         embed = discord.Embed(
             title="User Count",
-            description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`\n\nTotal Players: `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad: `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}`",
+            description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`\n\nTotal Players: `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad: `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`",
             color=BOT_COLOR,
         )
         # Add the top 5 guilds to the embed
