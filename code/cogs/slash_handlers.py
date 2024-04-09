@@ -5,7 +5,6 @@ from discord.ext.commands.errors import *
 import datetime
 
 from global_variables import BOT_COLOR
-from cogs.music import CreatePlayerError
 from custom_source import LoadError
 
 
@@ -47,7 +46,7 @@ class slash_handlers(commands.Cog):
         #     )
         #     await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        elif isinstance(error, CreatePlayerError):
+        elif isinstance(error, app_commands.AppCommandError):
             embed = discord.Embed(
                 title=error.args[0]["title"],
                 description=error.args[0]["description"],
