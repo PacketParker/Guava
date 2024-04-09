@@ -34,7 +34,7 @@ class Play(commands.Cog):
                 description="Unfortunately, YouTube does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
                 color=BOT_COLOR,
             )
-            return await interaction.response.send_message(embed=embed)
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         if "music.apple.com" in query:
             embed = discord.Embed(
@@ -42,7 +42,7 @@ class Play(commands.Cog):
                 description="Unfortunately, Apple Music does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
                 color=BOT_COLOR,
             )
-            return await interaction.response.send_message(embed=embed)
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # If a Spotify link is found, act accordingly
         # We use a custom source for this (I tried the LavaSrc plugin, but Spotify
