@@ -11,6 +11,11 @@ from global_variables import (
 )
 
 
+class CreatePlayerError(Exception):
+    "Raised when the create_player function errors out"
+    pass
+
+
 class LavalinkVoiceClient(discord.VoiceProtocol):
     """
     This is the preferred way to handle external voice sending
@@ -134,14 +139,14 @@ class Music(commands.Cog):
 
         if not interaction.user.voice or not interaction.user.voice.channel:
             if voice_client is not None:
-                raise app_commands.errors.AppCommandError(
+                raise CreatePlayerError(
                     {
                         "title": "Not in my VC",
                         "description": "You must join my voice channel to run that command.",
                     }
                 )
 
-            raise app_commands.AppCommandError(
+            raise CreatePlayerError(
                 {
                     "title": "No Channel",
                     "description": "You must join a voice channel before you can run that command.",
@@ -150,7 +155,7 @@ class Music(commands.Cog):
 
         if voice_client is None:
             if not should_connect:
-                raise app_commands.AppCommandError(
+                raise CreatePlayerError(
                     {
                         "title": "Not Connected",
                         "description": "I am not connected and playing music right now, therefore that command will not work.",
@@ -162,7 +167,7 @@ class Music(commands.Cog):
             )
 
             if not permissions.connect or not permissions.speak:
-                raise app_commands.AppCommandError(
+                raise CreatePlayerError(
                     {
                         "title": "Missing Permissions",
                         "description": "I need the `CONNECT` and `SPEAK` permissions in order to work.",
@@ -172,7 +177,7 @@ class Music(commands.Cog):
             player.store("channel", interaction.channel.id)
         else:
             if int(player.channel_id) != interaction.user.voice.channel.id:
-                raise app_commands.AppCommandError(
+                raise CreatePlayerError(
                     {
                         "title": "Not in my VC",
                         "description": "You must join my voice channel to run that command.",
