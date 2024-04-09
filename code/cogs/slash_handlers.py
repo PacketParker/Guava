@@ -5,6 +5,8 @@ from discord.ext.commands.errors import *
 import datetime
 
 from global_variables import BOT_COLOR
+from cogs.music import CreatePlayerError
+from custom_source import LoadError
 
 
 class slash_handlers(commands.Cog):
@@ -45,10 +47,7 @@ class slash_handlers(commands.Cog):
         #     )
         #     await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        elif (
-            isinstance(error, app_commands.AppCommandError)
-            and interaction.command.name in music_commands
-        ):
+        elif isinstance(error, CreatePlayerError):
             embed = discord.Embed(
                 title=error.args[0]["title"],
                 description=error.args[0]["description"],
@@ -69,6 +68,20 @@ class slash_handlers(commands.Cog):
             embed = discord.Embed(
                 title="Player Creation Error",
                 description="An error occured when creating a player. Please try again.",
+                color=BOT_COLOR,
+            )
+            embed.set_footer(
+                text=datetime.datetime.now(datetime.timezone.utc).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+                + " UTC"
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        elif isinstance(error, LoadError):
+            embed = discord.Embed(
+                title="Nothing Found",
+                description="Spotify does not allow direct play, meaning songs have to be found on a supported provider. In this case, the song couldn't be found. Please try again with a different song, or try searching for just the name and artist manually rather than sending a link.",
                 color=BOT_COLOR,
             )
             embed.set_footer(
