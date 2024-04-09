@@ -38,6 +38,14 @@ def validate_config(file_contents):
         elif len(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"]) != 19:
             LOG.critical("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
             errors += 1
+        # Validate SPOTIFY_CLIENT_ID
+        if not config["BOT_INFO"]["SPOTIFY_CLIENT_ID"]:
+            LOG.critical("SPOTIFY_CLIENT_ID has not been set.")
+            errors += 1
+        # Validate SPOTIFY_CLIENT_SECRET
+        if not config["BOT_INFO"]["SPOTIFY_CLIENT_SECRET"]:
+            LOG.critical("SPOTIFY_CLIENT_SECRET has not been set.")
+            errors += 1
         # Validate BUG_CHANNEL_ID
         if not config["BOT_INFO"]["BUG_CHANNEL_ID"]:
             LOG.critical("BUG_CHANNEL_ID has not been set.")
@@ -97,6 +105,8 @@ def create_config():
             "TOKEN": "",
             "BOT_COLOR": "",
             "FEEDBACK_CHANNEL_ID": "",
+            "SPOTIFY_CLIENT_ID": "",
+            "SPOTIFY_CLIENT_SECRET": "",
             "BUG_CHANNEL_ID": "",
         }
 

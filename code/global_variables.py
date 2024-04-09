@@ -47,6 +47,8 @@ config.read_string(file_contents)
 BOT_TOKEN = config["BOT_INFO"]["TOKEN"]
 BOT_COLOR = discord.Color(int((config["BOT_INFO"]["BOT_COLOR"]).replace("#", ""), 16))
 FEEDBACK_CHANNEL_ID = int(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"])
+SPOTIFY_CLIENT_ID = config["BOT_INFO"]["SPOTIFY_CLIENT_ID"]
+SPOTIFY_CLIENT_SECRET = config["BOT_INFO"]["SPOTIFY_CLIENT_SECRET"]
 BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
 BOT_INVITE_LINK = config["BOT_INFO"]["BOT_INVITE_LINK"]
 
