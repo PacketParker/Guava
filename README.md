@@ -27,8 +27,7 @@
 
 Guava is a Discord music bot with support for multiple different music and video streaming platforms. Guava is a part of >150 Discord servers and currently supports these services:
 
-- Spotify
-- YouTube (videos and streams)
+- Spotify (Links)
 - SoundCloud
 - Bandcamp
 - Deezer
@@ -60,7 +59,7 @@ As previously state, a Lavalink node running at least `v4` with the LavaSrc plug
 
 For instructions on setting up a Lavalink node, look [here](https://lavalink.dev/getting-started/), and for instructions on the LavaSrc plugin, look [here](https://github.com/topi314/LavaSrc).
 <br>
-*P.S. Only the Spotify, Deezer, and YouTube sources/search providers are needed.*
+*P.S. Only the Deezer/SoundCloud sources/search providers are needed.*
 
 It is also highly recommended to setup IPv6 rotation in order to avoid blocks and other issues. There are helpful guides for this both [here](https://blog.arbjerg.dev/2020/3/tunnelbroker-with-lavalink) and [here](https://gist.github.com/Drapersniper/11fee08f91ea7174e0d8af12496f3443).
 
