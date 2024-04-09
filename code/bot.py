@@ -1,9 +1,10 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
+import requests
 
 from validate_config import create_config
-from global_variables import LOG, BOT_TOKEN
+from global_variables import LOG, BOT_TOKEN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 
 
 class MyBot(commands.Bot):
@@ -16,6 +17,7 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         create_config()
+        get_access_token.start()
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
                 await self.load_extension(f"cogs.{ext[:-3]}")
@@ -31,6 +33,19 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     LOG.info(f"{bot.user} has connected to Discord.")
+
+
+@tasks.loop(minutes=45)
+async def get_access_token():
+    auth_url = "https://accounts.spotify.com/api/token"
+    data = {
+        "grant_type": "client_credentials",
+        "client_id": SPOTIFY_CLIENT_ID,
+        "client_secret": SPOTIFY_CLIENT_SECRET,
+    }
+    response = requests.post(auth_url, data=data)
+    access_token = response.json()["access_token"]
+    bot.spotify_headers = {"Authorization": f"Bearer {access_token}"}
 
 
 if __name__ == "__main__":
