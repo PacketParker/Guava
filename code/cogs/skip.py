@@ -6,6 +6,7 @@ from cogs.music import Music
 import asyncio
 
 from global_variables import BOT_COLOR
+from custom_source import LoadError
 
 
 class Skip(commands.Cog):
@@ -38,8 +39,13 @@ class Skip(commands.Cog):
             else:
                 for i in range(number - 2, -1, -1):
                     player.queue.pop(i)
-
-        await player.skip()
+        # Sometimes when a playlist/album of custom source tracks are loaded, one is not able to be found
+        # so, when a user attempts to skip to that track, we get a LoadError. In this case, just pass it.
+        try:
+            await player.skip()
+        except LoadError:
+            pass
+            await player.skip()
 
         if not player.current:
             embed = discord.Embed(
