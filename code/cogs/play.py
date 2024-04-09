@@ -24,23 +24,34 @@ class Play(commands.Cog):
         "Play a song from your favorite music provider"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
+        # Notify users that YouTube and Apple Music links are not allowed
+
+        if "youtube.com" in query or "youtu.be" in query:
+            embed = discord.Embed(
+                title="YouTube Not Supported",
+                description="Unfortunately, YouTube does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
+                color=BOT_COLOR,
+            )
+            return await interaction.response.send_message(embed=embed)
+
+        if "music.apple.com" in query:
+            embed = discord.Embed(
+                title="Apple Music Not Supported",
+                description="Unfortunately, Apple Music does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
+                color=BOT_COLOR,
+            )
+            return await interaction.response.send_message(embed=embed)
+
         if not url_rx.match(query):
-            ytsearch = f"ytsearch:{query}"
+            ytsearch = f"scsearch:{query}"
             results = await player.node.get_tracks(ytsearch)
 
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):
-                scsearch = f"scsearch:{query}"
+                scsearch = f"dzsearch:{query}"
                 results = await player.node.get_tracks(scsearch)
-
-                if not results.tracks or results.load_type in (
-                    LoadType.EMPTY,
-                    LoadType.ERROR,
-                ):
-                    dzsearch = f"dzsearch:{query}"
-                    results = await player.node.get_tracks(dzsearch)
         else:
             results = await player.node.get_tracks(query)
 
