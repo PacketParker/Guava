@@ -2,6 +2,8 @@
 token =
 bot_color =
 feedback_channel_id =
+spotify_client_id =
+spotify_client_secret =
 bug_channel_id =
 bot_invite_link =
 
