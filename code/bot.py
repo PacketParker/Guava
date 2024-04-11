@@ -28,6 +28,7 @@ class MyBot(commands.Bot):
 
 bot = MyBot()
 bot.remove_command("help")
+bot.temp_command_count = {} # command_name: count
 
 
 @bot.event
