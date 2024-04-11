@@ -11,9 +11,11 @@ class Stats(commands.Cog):
         self.bot = bot
 
     def cog_load(self):
-        connection = sqlite3.connect('count.db')
+        connection = sqlite3.connect("count.db")
         cursor = connection.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS count (command_name, count, PRIMARY KEY (command_name))")
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS count (command_name, count, PRIMARY KEY (command_name))"
+        )
         connection.commit()
         connection.close()
 
@@ -21,19 +23,24 @@ class Stats(commands.Cog):
 
     @tasks.loop(seconds=30)
     async def dump_count(self):
-        connection = sqlite3.connect('count.db')
+        connection = sqlite3.connect("count.db")
         cursor = connection.cursor()
 
         for command_name, count in self.bot.temp_command_count.items():
             try:
-                cursor.execute("INSERT INTO count (command_name, count) VALUES (?, ?)", (command_name, count))
+                cursor.execute(
+                    "INSERT INTO count (command_name, count) VALUES (?, ?)",
+                    (command_name, count),
+                )
             except sqlite3.IntegrityError:
-                cursor.execute("UPDATE count SET count = count + ? WHERE command_name = ?", (count, command_name))
+                cursor.execute(
+                    "UPDATE count SET count = count + ? WHERE command_name = ?",
+                    (count, command_name),
+                )
 
         connection.commit()
         connection.close()
         self.bot.temp_command_count = {}
-
 
     @commands.Cog.listener()
     async def on_app_command_completion(self, interaction, command):
@@ -42,18 +49,14 @@ class Stats(commands.Cog):
         except KeyError:
             self.bot.temp_command_count[interaction.command.name] = 1
 
-
     @commands.command()
     @commands.dm_only()
     @commands.is_owner()
     async def stats(self, ctx: commands.Context):
-        connection = sqlite3.connect('count.db')
+        connection = sqlite3.connect("count.db")
         cursor = connection.cursor()
 
-        embed = discord.Embed(
-            title="Command Statistics",
-            color=BOT_COLOR
-        )
+        embed = discord.Embed(title="Command Statistics", color=BOT_COLOR)
 
         total = 0
         data = cursor.execute("SELECT * FROM count").fetchall()
