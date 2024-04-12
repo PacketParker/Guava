@@ -37,6 +37,14 @@ commands_and_descriptions = {
         },
         "usage": "/remove <number>",
     },
+    "autoplay": {
+        "description": "Keep the music playing forever with music suggestions from OpenAI",
+        "arguments": {
+            "on": "Turn autoplay feature on",
+            "off": "Turn autoplay feature off",
+        },
+        "usage": "/autoplay <on/off>",
+    },
     "repeat": {
         "description": "Changes the looping state of the bot",
         "arguments": {
