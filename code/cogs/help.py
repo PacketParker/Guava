@@ -103,6 +103,7 @@ class Help(commands.Cog):
         self.bot = bot
 
     @app_commands.command()
+    @app_commands.describe(command="Name of the command you want more information on")
     async def help(self, interaction: discord.Interaction, command: str = None):
         "Sends the bots commands"
 
