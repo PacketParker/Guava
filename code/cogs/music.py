@@ -9,6 +9,7 @@ from global_variables import (
     LAVALINK_PORT,
     LOG,
 )
+from ai_recommendations import add_song_recommendations
 
 
 class LavalinkVoiceClient(discord.VoiceProtocol):
@@ -192,6 +193,16 @@ class Music(commands.Cog):
 
         if guild is not None:
             await guild.voice_client.disconnect(force=True)
+
+    @lavalink.listener(lavalink.events.TrackEndEvent)
+    async def on_track_end(self, event: lavalink.events.TrackEndEvent):
+        guild_id = event.player.guild_id
+
+        if len(event.player.queue) <= 10 and guild_id in self.bot.autoplay:
+            inputs = {}
+            for song in event.player.queue[:10]:
+                inputs[song.title] = song.author
+            await add_song_recommendations(self.bot.user, event.player, 5, inputs)
 
 
 async def setup(bot):
