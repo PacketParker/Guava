@@ -4,6 +4,7 @@ bot_color =
 feedback_channel_id =
 spotify_client_id =
 spotify_client_secret =
+openai_api_key =
 bug_channel_id =
 bot_invite_link =
 

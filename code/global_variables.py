@@ -2,6 +2,7 @@ import configparser
 import logging
 from colorlog import ColoredFormatter
 import discord
+import openai
 
 
 log_level = logging.DEBUG
@@ -49,6 +50,7 @@ BOT_COLOR = discord.Color(int((config["BOT_INFO"]["BOT_COLOR"]).replace("#", "")
 FEEDBACK_CHANNEL_ID = int(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"])
 SPOTIFY_CLIENT_ID = config["BOT_INFO"]["SPOTIFY_CLIENT_ID"]
 SPOTIFY_CLIENT_SECRET = config["BOT_INFO"]["SPOTIFY_CLIENT_SECRET"]
+CLIENT = openai.OpenAI(api_key=config["BOT_INFO"]["OPENAI_API_KEY"])
 BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
 BOT_INVITE_LINK = config["BOT_INFO"]["BOT_INVITE_LINK"]
 

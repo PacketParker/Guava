@@ -46,6 +46,10 @@ def validate_config(file_contents):
         if not config["BOT_INFO"]["SPOTIFY_CLIENT_SECRET"]:
             LOG.critical("SPOTIFY_CLIENT_SECRET has not been set.")
             errors += 1
+        # Validate OPENAI_API_KEY
+        if not config["BOT_INFO"]["OPENAI_API_KEY"]:
+            LOG.critical("OPENAI_API_KEY has not bee set.")
+            errors += 1
         # Validate BUG_CHANNEL_ID
         if not config["BOT_INFO"]["BUG_CHANNEL_ID"]:
             LOG.critical("BUG_CHANNEL_ID has not been set.")
@@ -107,7 +111,7 @@ def create_config():
             "FEEDBACK_CHANNEL_ID": "",
             "SPOTIFY_CLIENT_ID": "",
             "SPOTIFY_CLIENT_SECRET": "",
-            "BUG_CHANNEL_ID": "",
+            "OPENAI_API_KEY" "BUG_CHANNEL_ID": "",
         }
 
         config["LAVALINK"] = {"HOST": "", "PORT": "", "PASSWORD": ""}
