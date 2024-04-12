@@ -57,7 +57,7 @@ class Skip(commands.Cog):
 
         # It takes a sec for the new track to be grabbed and played
         # So just wait a sec before sending the message
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1)
         embed = discord.Embed(
             title="Track Skipped",
             description=f"**Now Playing: [{player.current.title}]({player.current.uri})** by {player.current.author}\n\nQueued by: {player.current.requester.mention}",
