@@ -132,15 +132,15 @@ class Play(commands.Cog):
 
         else:
             if not url_rx.match(query):
-                ytsearch = f"scsearch:{query}"
+                ytsearch = f"ytsearch:{query}"
                 results = await player.node.get_tracks(ytsearch)
 
                 if not results.tracks or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
-                    scsearch = f"dzsearch:{query}"
-                    results = await player.node.get_tracks(scsearch)
+                    dzsearch = f"dzsearch:{query}"
+                    results = await player.node.get_tracks(dzsearch)
             else:
                 results = await player.node.get_tracks(query)
 
@@ -151,7 +151,7 @@ class Play(commands.Cog):
                 LoadType.ERROR,
             ):
                 embed.title = "Nothing Found"
-                embed.description = "Nothing for that query could be found. If this continues happening for other songs, please run `/bug` to let the developer know."
+                embed.description = "Nothing for that query could be found. If this continues happening for other songs, please run </bug:1224840889906499626> to let the developer know."
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
