@@ -7,6 +7,8 @@ server: # REST and WS server
 plugins:
   lavasrc:
     providers: # Custom providers for track loading. This is the default
+      - "ytsearch:\"%ISRC%\""
+      - "ytsearch:%QUERY%"
       - "scsearch:\"%ISRC%\""
       - "scsearch:%QUERY%"
       - "dzisrc:\"%ISRC%\""
@@ -17,7 +19,7 @@ plugins:
       deezer: true # Enable Deezer source
       yandexmusic: false # Enable Yandex Music source
       flowerytts: false # Enable Flowery TTS source
-      youtube: false # Enable YouTube search source (https://github.com/topi314/LavaSearch)
+      youtube: true # Enable YouTube search source (https://github.com/topi314/LavaSearch)
     deezer:
       masterDecryptionKey: "" # the master key used for decrypting the deezer tracks. (yes this is not here you need to get it from somewhere else)
 
@@ -30,7 +32,7 @@ lavalink:
   server:
     password: "youshallnotpass"
     sources:
-      youtube: false
+      youtube: true
       bandcamp: true
       soundcloud: true
       twitch: true
