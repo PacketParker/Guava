@@ -13,14 +13,14 @@ class CustomAudioTrack(DeferredAudioTrack):
     async def load(
         self, client
     ):  # Load our 'actual' playback track using the metadata from this one.
-        scsearch = f"scsearch:{self.title} {self.author}"
-        results = await client.get_tracks(scsearch)
+        dzsearch = f"dzsearch:{self.title} {self.author}"
+        results = await client.get_tracks(dzsearch)
         if not results.tracks or results.load_type in (
             LoadType.EMPTY,
             LoadType.ERROR,
         ):
-            dzsearch = f"dzsearch:{self.title} {self.author}"
-            results = await client.get_tracks(dzsearch)
+            ytsearch = f"ytsearch:{self.title} {self.author}"
+            results = await client.get_tracks(ytsearch)
 
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,

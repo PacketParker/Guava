@@ -52,15 +52,15 @@ async def add_song_recommendations(bot_user, player, number, inputs, retries: in
         for entry in completion.split("\n"):
             song, artist = entry.split(" - ")
 
-            ytsearch = f"ytsearch:{song} {artist} audio"
-            results = await player.node.get_tracks(ytsearch)
+            dzsearch = f"dzsearch:{song} {artist}"
+            results = await player.node.get_tracks(dzsearch)
 
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):
-                dzsearch = f"dzsearch:{song} {artist}"
-                results = await player.node.get_tracks(dzsearch)
+                ytsearch = f"ytsearch:{song} {artist} audio"
+                results = await player.node.get_tracks(ytsearch)
 
                 if not results.tracks or results.load_type in (
                     LoadType.EMPTY,
