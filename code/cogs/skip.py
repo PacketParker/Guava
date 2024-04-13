@@ -39,6 +39,9 @@ class Skip(commands.Cog):
             else:
                 for i in range(number - 2, -1, -1):
                     player.queue.pop(i)
+
+        next_song = player.queue[0]
+
         # Sometimes when a playlist/album of custom source tracks are loaded, one is not able to be found
         # so, when a user attempts to skip to that track, we get a LoadError. In this case, just pass it.
         try:
@@ -57,13 +60,13 @@ class Skip(commands.Cog):
 
         # It takes a sec for the new track to be grabbed and played
         # So just wait a sec before sending the message
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
         embed = discord.Embed(
             title="Track Skipped",
-            description=f"**Now Playing: [{player.current.title}]({player.current.uri})** by {player.current.author}\n\nQueued by: {player.current.requester.mention}",
+            description=f"**Now Playing: [{next_song.title}]({next_song.uri})** by {next_song.author}\n\nQueued by: {next_song.requester.mention}",
             color=BOT_COLOR,
         )
-        embed.set_thumbnail(url=player.current.artwork_url)
+        embed.set_thumbnail(url=next_song.artwork_url)
         embed.set_footer(
             text=datetime.datetime.now(datetime.timezone.utc).strftime(
                 "%Y-%m-%d %H:%M:%S"
