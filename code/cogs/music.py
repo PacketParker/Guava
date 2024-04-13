@@ -190,6 +190,7 @@ class Music(commands.Cog):
     async def on_queue_end(self, event: lavalink.events.QueueEndEvent):
         guild_id = event.player.guild_id
         guild = self.bot.get_guild(guild_id)
+        self.bot.autoplay.remove(guild_id)
 
         if guild is not None:
             await guild.voice_client.disconnect(force=True)
