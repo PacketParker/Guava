@@ -57,3 +57,9 @@ BOT_INVITE_LINK = config["BOT_INFO"]["BOT_INVITE_LINK"]
 LAVALINK_HOST = config["LAVALINK"]["HOST"]
 LAVALINK_PORT = config["LAVALINK"]["PORT"]
 LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
+
+
+class CheckPlayerError(discord.app_commands.AppCommandError):
+    def __init__(self, info) -> None:
+        self.info = info
+        super().__init__()

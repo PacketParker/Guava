@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext.commands.errors import *
 import datetime
 
-from global_variables import BOT_COLOR
+from global_variables import BOT_COLOR, CheckPlayerError
 from custom_source import LoadError
 
 
@@ -46,10 +46,10 @@ class slash_handlers(commands.Cog):
         #     )
         #     await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        elif isinstance(error, app_commands.AppCommandError):
+        elif isinstance(error, CheckPlayerError):
             embed = discord.Embed(
-                title=error.args[0]["title"],
-                description=error.args[0]["description"],
+                title=error.info["title"],
+                description=error.info["description"],
                 color=BOT_COLOR,
             )
             embed.set_footer(
