@@ -36,14 +36,15 @@ class Skip(commands.Cog):
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
-            # If the number is just 1, pass so that it can be skipped normally
-            elif number == 1:
-                pass
             else:
                 for i in range(number - 2, -1, -1):
                     player.queue.pop(i)
 
-        next_song = player.queue[0]
+        # If there is a next song, get it
+        try:
+            next_song = player.queue[0]
+        except IndexError:
+            pass
 
         # Sometimes when a playlist/album of custom source tracks are loaded, one is not able to be found
         # so, when a user attempts to skip to that track, we get a LoadError. In this case, just pass it.
