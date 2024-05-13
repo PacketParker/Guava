@@ -17,7 +17,10 @@ class Stop(commands.Cog):
         "Disconnects the bot from the voice channel and clears the queue"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        self.bot.autoplay.remove(interaction.guild.id)
+        try:
+            self.bot.autoplay.remove(interaction.guild.id)
+        except ValueError:
+            pass
         player.queue.clear()
         await player.stop()
         await interaction.guild.voice_client.disconnect(force=True)
