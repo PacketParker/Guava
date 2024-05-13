@@ -49,6 +49,12 @@ Field | Description
 --- | ---
 TOKEN | The token for your bot. Create a bot at [discord.com/developers](https://discord.com/developers)
 BOT_COLOR | Hex color code that will be used for the color of message embeds
+FEEDBACK_CHANNEL_ID | Discord channel ID for feedback messages to be sent to
+BUG_CHANNEL_ID | Discord channel ID for bug messages to be sent to
+SPOTIFY_CLIENT_ID | Client ID from Spotify Developer account
+SPOTIFY_CLIENT_SECRET | Client Secret from Spotify Developer account
+OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations
+BOT_INVITE_LINK | Discord Invite link for your bot (shown on the `help` command)
 HOST | Host address for your Lavalink node
 PORT | Port for your Lavalink node
 PASSWORD | Password to authenticate into the Lavalink node
