@@ -36,6 +36,9 @@ class Skip(commands.Cog):
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
+            # If the number is just 1, pass so that it can be skipped normally
+            elif number == 1:
+                pass
             else:
                 for i in range(number - 2, -1, -1):
                     player.queue.pop(i)
