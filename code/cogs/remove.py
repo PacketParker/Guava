@@ -41,6 +41,7 @@ class Remove(commands.Cog):
         index = number - 1
         removed_title = player.queue[index].title
         removed_url = player.queue[index].uri
+        removed_artwork = player.queue[index].artwork_url
         player.queue.pop(index)
 
         embed = discord.Embed(
@@ -48,7 +49,7 @@ class Remove(commands.Cog):
             description=f"**Song Removed - [{removed_title}]({removed_url})**\n\nIssued by: {interaction.user.mention}",
             color=BOT_COLOR,
         )
-        embed.set_thumbnail(url=player.current.artwork_url)
+        embed.set_thumbnail(url=removed_artwork)
         embed.set_footer(
             text=datetime.datetime.now(datetime.timezone.utc).strftime(
                 "%Y-%m-%d %H:%M:%S"
