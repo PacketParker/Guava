@@ -29,6 +29,12 @@ except FileNotFoundError:
     config["BOT_INFO"] = {
         "TOKEN": "",
         "BOT_COLOR": "",
+        "FEEDBACK_CHANNEL_ID": "",
+        "SPOTIFY_CLIENT_ID": "",
+        "SPOTIFY_CLIENT_SECRET": "",
+        "OPENAI_API_KEY": "",
+        "BUG_CHANNEL_ID": "",
+        "BOT_INVITE_LINK": ""
     }
 
     config["LAVALINK"] = {"HOST": "", "PORT": "", "PASSWORD": ""}
