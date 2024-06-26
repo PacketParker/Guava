@@ -16,8 +16,15 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         get_access_token.start()
+        config.LOG.info("Loading cogs...")
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
+                if ext[:-3] == "feedback" and config.FEEDBACK_CHANNEL_ID == None:
+                    config.LOG.info("Skipped loading feedback cog - channel ID not provided")
+                    continue
+                if ext[:-3] == "bug" and config.BUG_CHANNEL_ID == None:
+                    config.LOG.info("Skipped loading bug cog - channel ID not provided")
+                    continue
                 await self.load_extension(f"cogs.{ext[:-3]}")
         for ext in os.listdir("./code/cogs/owner"):
             if ext.endswith(".py"):
@@ -33,6 +40,7 @@ bot.autoplay = []  # guild_id, guild_id, etc.
 @bot.event
 async def on_ready():
     config.LOG.info(f"{bot.user} has connected to Discord.")
+    config.LOG.info("Startup complete. Sync slash commands by DMing the bot ***sync")
 
 
 @tasks.loop(minutes=45)
