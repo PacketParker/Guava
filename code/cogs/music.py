@@ -100,27 +100,21 @@ class Music(commands.Cog):
             self.bot, "lavalink"
         ):  # This ensures the client isn't overwritten during cog reloads.
             self.bot.lavalink = lavalink.Client(self.bot.user.id)
-            # node = self.bot.lavalink.add_node(
-            #     LAVALINK_HOST,
-            #     LAVALINK_PORT,
-            #     LAVALINK_PASSWORD,
-            #     'us-central',
-            #     connect=False
-            # )  # Host, Port, Password, Region
-            # try:
-            #     await node.get_version()
-            # except lavalink.errors.AuthenticationError:
-            #     LOG.error("Authentication to lavalink node failed. Check your login credentials.")
-            # else:
-            #     await node.connect()
-            #     LOG.info(f"Connected to lavalink node {node.name}")
-            self.bot.lavalink.add_node(
+            node = self.bot.lavalink.add_node(
                 host=LAVALINK_HOST,
                 port=LAVALINK_PORT,
                 password=LAVALINK_PASSWORD,
-                region="us",
-                name="default-node",
-            )  # Host, Port, Password, Region
+                region='us-central',
+                connect=False
+            )  # Host, Port, Password, Region, Connect
+            try:
+                await node.get_version()
+            except lavalink.errors.ClientError:
+                LOG.error("Authentication to lavalink node failed. Check your login credentials.")
+            else:
+                await node.connect()
+                LOG.info(f"Connected to lavalink node {node.name}")
+
         self.lavalink: lavalink.Client = self.bot.lavalink
         self.lavalink.add_event_hooks(self)
 
