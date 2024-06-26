@@ -1,6 +1,7 @@
 from discord.ext import commands, tasks
 import sqlite3
 import discord
+import os
 
 from config import BOT_COLOR
 
@@ -10,7 +11,10 @@ class Stats(commands.Cog):
         self.bot = bot
 
     def cog_load(self):
-        connection = sqlite3.connect("count.db")
+        if not os.path.exists("data"):
+            os.makedirs("data")
+
+        connection = sqlite3.connect("data/count.db")
         cursor = connection.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS count (command_name, count, PRIMARY KEY (command_name))"
