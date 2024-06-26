@@ -56,16 +56,24 @@ class Stats(commands.Cog):
         connection = sqlite3.connect("count.db")
         cursor = connection.cursor()
 
-        embed = discord.Embed(title="Command Statistics", color=BOT_COLOR)
+        # Pull the top 5 commands being run
+        data = cursor.execute(
+            "SELECT * FROM count ORDER BY count DESC LIMIT 5"
+        ).fetchall()
 
-        total = 0
-        data = cursor.execute("SELECT * FROM count").fetchall()
+        # Get the combined total amount of commands run
+        total_commands = cursor.execute("SELECT SUM(count) FROM count").fetchone()[0]
+
+        embed = discord.Embed(
+            title="Statistics",
+            description=f"Total Guilds: `{len(self.bot.guilds):,}`\nTotal Commands: `{total_commands:,}`\n\nTotal Players: `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad: `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`",
+            color=BOT_COLOR,
+        )
+
         for entry in data:
-            embed.add_field(name=entry[0], value=f"` {entry[1]} `", inline=True)
-            total += entry[1]
+            embed.add_field(name=entry[0], value=f"` {entry[1]:,} `", inline=True)
 
-        embed.add_field(name="TOTAL", value=f"` {total} `", inline=False)
-
+        connection.close()
         await ctx.send(embed=embed)
 
 
