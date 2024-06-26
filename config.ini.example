@@ -1,14 +1,18 @@
 [BOT_INFO]
-token =
-bot_color =
-feedback_channel_id =
-spotify_client_id =
-spotify_client_secret =
-openai_api_key =
-bug_channel_id =
-bot_invite_link =
+token = 
+bot_color = 
+bot_invite_link = 
+feedback_channel_id = 
+bug_channel_id = 
+
+[SPOTIFY]
+spotify_client_id = 
+spotify_client_secret = 
+
+[OPENAI]
+openai_api_key = 
 
 [LAVALINK]
-host =
-port =
-password =
+host = 
+port = 
+password = 
