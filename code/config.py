@@ -46,7 +46,7 @@ def load_config():
     # Look for variables in the environment
     if "TOKEN" in os.environ or "BOT_COLOR" in os.environ or "BOT_INVITE_LINK" in os.environ:
         LOG.info("Detected environment variables. Checking for configuration options.")
-        validate_env_vars()
+        return validate_env_vars()
     else:
         LOG.info("Detected local environment. Checking for config.ini file.")
 
@@ -172,13 +172,20 @@ def validate_config(file_contents):
             BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
 
     # Assign the rest of the variables
-    TOKEN = config["BOT_INFO"]["TOKEN"]
-    SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
-    SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
-    CLIENT = openai.OpenAI(api_key=config["OPENAI"]["OPENAI_API_KEY"])
-    LAVALINK_HOST = config["LAVALINK"]["HOST"]
-    LAVALINK_PORT = config["LAVALINK"]["PORT"]
-    LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
+    try:
+        TOKEN = config["BOT_INFO"]["TOKEN"]
+        SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
+        SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
+        CLIENT = openai.OpenAI(api_key=config["OPENAI"]["OPENAI_API_KEY"])
+        LAVALINK_HOST = config["LAVALINK"]["HOST"]
+        LAVALINK_PORT = config["LAVALINK"]["PORT"]
+        LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
+    except KeyError:
+        sys.exit(
+            LOG.critical(
+                "One or more requires environment variables are missing. Please check the docs."
+            )
+        )
 
     if errors > 0:
         sys.exit(
