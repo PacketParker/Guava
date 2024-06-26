@@ -255,7 +255,7 @@ def validate_env_vars():
     except KeyError:
         sys.exit(
             LOG.critical(
-                "One or more requires environment variables are missing. Please check the docs."
+                "One or more required environment variables are missing. Please check the docs."
             )
         )
 
