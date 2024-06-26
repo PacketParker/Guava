@@ -26,7 +26,7 @@ class Stats(commands.Cog):
 
     @tasks.loop(seconds=30)
     async def dump_count(self):
-        connection = sqlite3.connect("count.db")
+        connection = sqlite3.connect("data/count.db")
         cursor = connection.cursor()
 
         for command_name, count in self.bot.temp_command_count.items():
@@ -56,7 +56,7 @@ class Stats(commands.Cog):
     @commands.dm_only()
     @commands.is_owner()
     async def stats(self, ctx: commands.Context):
-        connection = sqlite3.connect("count.db")
+        connection = sqlite3.connect("data/count.db")
         cursor = connection.cursor()
 
         # Pull the top 5 commands being run
