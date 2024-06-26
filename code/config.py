@@ -1,5 +1,6 @@
 import configparser
 import re
+import os
 import validators
 import sys
 import discord
@@ -42,6 +43,10 @@ create a new templated config.ini file if it doesn't exist.
 
 
 def load_config():
+    # Look for variables in the environment
+    if "TOKEN" in os.environ or "BOT_COLOR" in os.environ or "BOT_INVITE_LINK" in os.environ:
+        validate_env_vars()
+
     try:
         with open("config.ini", "r") as f:
             file_contents = f.read()
@@ -176,5 +181,72 @@ def validate_config(file_contents):
         sys.exit(
             LOG.critical(
                 f"Found {errors} error(s) in the config.ini file. Please fix them and try again."
+            )
+        )
+
+
+def validate_env_vars():
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLIENT, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+
+    hex_pattern_one = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+    hex_pattern_two = "^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+
+    errors = 0
+
+    # Make sure all required variables are present in the environment
+    required_vars = ["TOKEN", "BOT_COLOR", "BOT_INVITE_LINK", "SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET", "OPENAI_API_KEY", "LAVALINK_HOST", "LAVALINK_PORT", "LAVALINK_PASSWORD"]
+
+    for var in required_vars:
+        if var not in os.environ:
+            LOG.error(f"Missing environment variable: {var}")
+            errors += 1
+
+    # Make sure BOT_COLOR is a valid hex color
+    if not bool(re.match(hex_pattern_one, os.environ["BOT_COLOR"])) and not bool(re.match(hex_pattern_two, os.environ["BOT_COLOR"])):
+        LOG.error("BOT_COLOR is not a valid hex color.")
+        errors += 1
+    else:
+        BOT_COLOR = discord.Color(int((os.environ["BOT_COLOR"]).replace("#", ""), 16))
+
+    # Make sure BOT_INVITE_LINK is a valid URL
+    if not validators.url(os.environ["BOT_INVITE_LINK"]):
+        LOG.error("BOT_INVITE_LINK is not a valid URL.")
+        errors += 1
+    else:
+        BOT_INVITE_LINK = os.environ["BOT_INVITE_LINK"]
+
+    # Make sure FEEDBACK_CHANNEL_ID is either None or 19 characters long
+    if os.environ["FEEDBACK_CHANNEL_ID"] is not None:
+        if len(os.environ["FEEDBACK_CHANNEL_ID"]) != 19:
+            LOG.error("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
+            errors += 1
+        else:
+            FEEDBACK_CHANNEL_ID = int(os.environ["FEEDBACK_CHANNEL_ID"])
+    else:
+        FEEDBACK_CHANNEL_ID = None
+
+    # Make sure BUG_CHANNEL_ID is either None or 19 characters long
+    if os.environ["BUG_CHANNEL_ID"] is not None:
+        if len(os.environ["BUG_CHANNEL_ID"]) != 19:
+            LOG.error("BUG_CHANNEL_ID is not a valid Discord channel ID.")
+            errors += 1
+        else:
+            BUG_CHANNEL_ID = int(os.environ["BUG_CHANNEL_ID"])
+    else:
+        BUG_CHANNEL_ID = None
+
+    # Assign the rest of the variables
+    TOKEN = os.environ["TOKEN"]
+    SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
+    SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
+    CLIENT = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    LAVALINK_HOST = os.environ["LAVALINK_HOST"]
+    LAVALINK_PORT = os.environ["LAVALINK_PORT"]
+    LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]
+
+    if errors > 0:
+        sys.exit(
+            LOG.critical(
+                f"Found {errors} error(s) with environment variables. Please fix them and try again."
             )
         )
