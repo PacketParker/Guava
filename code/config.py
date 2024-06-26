@@ -185,6 +185,11 @@ def validate_config(file_contents):
         )
 
 
+"""
+Validate all of the environment variables.
+"""
+
+
 def validate_env_vars():
     global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLIENT, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
 
