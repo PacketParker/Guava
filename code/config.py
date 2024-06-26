@@ -243,25 +243,18 @@ def validate_env_vars():
     except KeyError:
         BUG_CHANNEL_ID = None
 
-    # Assign the rest of the variables
-    try:
-        TOKEN = os.environ["TOKEN"]
-        SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
-        SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
-        CLIENT = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-        LAVALINK_HOST = os.environ["LAVALINK_HOST"]
-        LAVALINK_PORT = os.environ["LAVALINK_PORT"]
-        LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]
-    except KeyError:
-        sys.exit(
-            LOG.critical(
-                "One or more required environment variables are missing. Please check the docs."
-            )
-        )
-
     if errors > 0:
         sys.exit(
             LOG.critical(
                 f"Found {errors} error(s) with environment variables. Please fix them and try again."
             )
         )
+
+    # Assign the rest of the variables
+    TOKEN = os.environ["TOKEN"]
+    SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
+    SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
+    CLIENT = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    LAVALINK_HOST = os.environ["LAVALINK_HOST"]
+    LAVALINK_PORT = os.environ["LAVALINK_PORT"]
+    LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]
