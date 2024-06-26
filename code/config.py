@@ -172,20 +172,13 @@ def validate_config(file_contents):
             BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
 
     # Assign the rest of the variables
-    try:
-        TOKEN = config["BOT_INFO"]["TOKEN"]
-        SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
-        SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
-        CLIENT = openai.OpenAI(api_key=config["OPENAI"]["OPENAI_API_KEY"])
-        LAVALINK_HOST = config["LAVALINK"]["HOST"]
-        LAVALINK_PORT = config["LAVALINK"]["PORT"]
-        LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
-    except KeyError:
-        sys.exit(
-            LOG.critical(
-                "One or more requires environment variables are missing. Please check the docs."
-            )
-        )
+    TOKEN = config["BOT_INFO"]["TOKEN"]
+    SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
+    SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
+    CLIENT = openai.OpenAI(api_key=config["OPENAI"]["OPENAI_API_KEY"])
+    LAVALINK_HOST = config["LAVALINK"]["HOST"]
+    LAVALINK_PORT = config["LAVALINK"]["PORT"]
+    LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
 
     if errors > 0:
         sys.exit(
@@ -250,15 +243,21 @@ def validate_env_vars():
     except KeyError:
         BUG_CHANNEL_ID = None
 
-
     # Assign the rest of the variables
-    TOKEN = os.environ["TOKEN"]
-    SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
-    SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
-    CLIENT = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-    LAVALINK_HOST = os.environ["LAVALINK_HOST"]
-    LAVALINK_PORT = os.environ["LAVALINK_PORT"]
-    LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]
+    try:
+        TOKEN = os.environ["TOKEN"]
+        SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
+        SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
+        CLIENT = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+        LAVALINK_HOST = os.environ["LAVALINK_HOST"]
+        LAVALINK_PORT = os.environ["LAVALINK_PORT"]
+        LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]
+    except KeyError:
+        sys.exit(
+            LOG.critical(
+                "One or more requires environment variables are missing. Please check the docs."
+            )
+        )
 
     if errors > 0:
         sys.exit(
