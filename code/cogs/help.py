@@ -85,7 +85,7 @@ class HelpView(discord.ui.View):
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         embed = discord.Embed(
-            title=":musical_note:  All Guava Commands  :musical_note:", color=BOT_COLOR
+            title=":musical_note:  All Commands  :musical_note:", color=BOT_COLOR
         )
 
         embed.add_field(
@@ -109,11 +109,11 @@ class Help(commands.Cog):
 
         if command == None:
             embed = discord.Embed(
-                title=f":musical_note:  Guava Help  :musical_note:", color=BOT_COLOR
+                title=f":musical_note:  Help  :musical_note:", color=BOT_COLOR
             )
 
             embed.add_field(
-                name="**Use Guava**",
+                name="**Use Me**",
                 value="> To get started, use the </play:1224840890368000172> command and enter the name or link to the song of your choice.",
                 inline=False,
             )

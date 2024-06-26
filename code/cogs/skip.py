@@ -57,7 +57,7 @@ class Skip(commands.Cog):
         if not player.current:
             embed = discord.Embed(
                 title="End of Queue",
-                description=f"All songs in queue have been played. Thank you for using Guava :wave:\n\nIssued by: {interaction.user.mention}",
+                description=f"All songs in queue have been played. Thank you for using me :wave:\n\nIssued by: {interaction.user.mention}",
                 color=BOT_COLOR,
             )
             return await interaction.response.send_message(embed=embed)

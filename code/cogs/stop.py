@@ -27,7 +27,7 @@ class Stop(commands.Cog):
 
         embed = discord.Embed(
             title="Queue Cleared and Music Stopped",
-            description=f"Thank you for using Guava :wave:\n\nIssued by: {interaction.user.mention}",
+            description=f"Thank you for using me :wave:\n\nIssued by: {interaction.user.mention}",
             color=BOT_COLOR,
         )
         embed.set_footer(
