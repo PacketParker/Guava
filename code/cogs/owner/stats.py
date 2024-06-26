@@ -1,5 +1,4 @@
 from discord.ext import commands, tasks
-from discord import app_commands
 import sqlite3
 import discord
 
