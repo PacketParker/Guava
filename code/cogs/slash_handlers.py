@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ext.commands.errors import *
 import datetime
+from lavalink import errors
 
 from global_variables import BOT_COLOR, CheckPlayerError
 from custom_source import LoadError
@@ -30,22 +31,8 @@ class slash_handlers(commands.Cog):
         if isinstance(error, CommandNotFound):
             return
 
-        # elif isinstance(error, app_commands.MissingPermissions):
-        #     embed = discord.Embed(
-        #         title="Missing Permissions!",
-        #         description=f"{error}",
-        #         color=BOT_COLOR
-        #     )
-        #     await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        # elif isinstance(error, app_commands.BotMissingPermissions):
-        #     embed = discord.Embed(
-        #         title="Bot Missing Permissions!",
-        #         description=f"{error}",
-        #         color=BOT_COLOR
-        #     )
-        #     await interaction.response.send_message(embed=embed, ephemeral=True)
-
+        # Custom Error class for the `create_player` function
+        # Issues that arise may be user not in vc, user not in correct vc, missing perms, etc.
         elif isinstance(error, CheckPlayerError):
             embed = discord.Embed(
                 title=error.info["title"],
@@ -60,6 +47,8 @@ class slash_handlers(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
+        # If a player cannot be created for any of the music commands
+        # Player creation is a command check for every music command
         elif (
             isinstance(error, app_commands.CheckFailure)
             and interaction.command.name in music_commands
@@ -77,6 +66,7 @@ class slash_handlers(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
+        # If a Spotify song is linked but cannot be found on a provider (e.g. YouTube)
         elif isinstance(error, LoadError):
             embed = discord.Embed(
                 title="Nothing Found",
