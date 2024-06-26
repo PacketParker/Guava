@@ -57,6 +57,5 @@ async def get_access_token():
 
 
 if __name__ == "__main__":
-    config_contents = config.load_config()
-    config.validate_config(config_contents)
+    config.load_config()
     bot.run(config.TOKEN)

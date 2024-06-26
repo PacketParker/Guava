@@ -45,12 +45,15 @@ create a new templated config.ini file if it doesn't exist.
 def load_config():
     # Look for variables in the environment
     if "TOKEN" in os.environ or "BOT_COLOR" in os.environ or "BOT_INVITE_LINK" in os.environ:
+        LOG.info("Detected environment variables. Checking for configuration options.")
         validate_env_vars()
+    else:
+        LOG.info("Detected local environment. Checking for config.ini file.")
 
     try:
         with open("config.ini", "r") as f:
             file_contents = f.read()
-            return file_contents
+            validate_config(file_contents)
 
     except FileNotFoundError:
         config = configparser.ConfigParser()
@@ -221,24 +224,25 @@ def validate_env_vars():
         BOT_INVITE_LINK = os.environ["BOT_INVITE_LINK"]
 
     # Make sure FEEDBACK_CHANNEL_ID is either None or 19 characters long
-    if os.environ["FEEDBACK_CHANNEL_ID"] is not None:
+    try:
         if len(os.environ["FEEDBACK_CHANNEL_ID"]) != 19:
             LOG.error("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
             errors += 1
         else:
             FEEDBACK_CHANNEL_ID = int(os.environ["FEEDBACK_CHANNEL_ID"])
-    else:
+    except KeyError:
         FEEDBACK_CHANNEL_ID = None
 
     # Make sure BUG_CHANNEL_ID is either None or 19 characters long
-    if os.environ["BUG_CHANNEL_ID"] is not None:
+    try:
         if len(os.environ["BUG_CHANNEL_ID"]) != 19:
             LOG.error("BUG_CHANNEL_ID is not a valid Discord channel ID.")
             errors += 1
         else:
             BUG_CHANNEL_ID = int(os.environ["BUG_CHANNEL_ID"])
-    else:
+    except KeyError:
         BUG_CHANNEL_ID = None
+
 
     # Assign the rest of the variables
     TOKEN = os.environ["TOKEN"]
