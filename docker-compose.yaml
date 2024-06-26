@@ -1,0 +1,19 @@
+services:
+    guava:
+        container_name: guava
+        image: ghcr.io/packetparker/guava:latest
+        environment:
+            - TOKEN=
+            - BOT_COLOR=
+            - BOT_INVITE_LINK=
+            - FEEDBACK_CHANNEL_ID=
+            - BUG_CHANNEL_ID=
+            - SPOTIFY_CLIENT_ID=
+            - SPOTIFY_CLIENT_SECRET=
+            - OPENAI_API_KEY=
+            - LAVALINK_HOST=
+            - LAVALINK_PORT=
+            - LAVALINK_PASSWORD=
+        volumes:
+            - /path/on/system:/data
+        restart: on-failure
