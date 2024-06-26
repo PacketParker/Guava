@@ -3,8 +3,7 @@ from discord.ext import commands, tasks
 import os
 import requests
 
-from validate_config import create_config
-from global_variables import LOG, BOT_TOKEN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
+import config
 
 
 class MyBot(commands.Bot):
@@ -16,7 +15,6 @@ class MyBot(commands.Bot):
         )
 
     async def setup_hook(self):
-        create_config()
         get_access_token.start()
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
@@ -34,7 +32,7 @@ bot.autoplay = []  # guild_id, guild_id, etc.
 
 @bot.event
 async def on_ready():
-    LOG.info(f"{bot.user} has connected to Discord.")
+    config.LOG.info(f"{bot.user} has connected to Discord.")
 
 
 @tasks.loop(minutes=45)
@@ -42,8 +40,8 @@ async def get_access_token():
     auth_url = "https://accounts.spotify.com/api/token"
     data = {
         "grant_type": "client_credentials",
-        "client_id": SPOTIFY_CLIENT_ID,
-        "client_secret": SPOTIFY_CLIENT_SECRET,
+        "client_id": config.SPOTIFY_CLIENT_ID,
+        "client_secret": config.SPOTIFY_CLIENT_SECRET,
     }
     response = requests.post(auth_url, data=data)
     access_token = response.json()["access_token"]
@@ -51,4 +49,6 @@ async def get_access_token():
 
 
 if __name__ == "__main__":
-    bot.run(BOT_TOKEN)
+    config_contents = config.load_config()
+    config.validate_config(config_contents)
+    bot.run(config.TOKEN)

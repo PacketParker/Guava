@@ -3,9 +3,9 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ext.commands.errors import *
 import datetime
-from lavalink import errors
 
-from global_variables import BOT_COLOR, CheckPlayerError
+from cogs.music import CheckPlayerError
+from config import BOT_COLOR
 from custom_source import LoadError
 
 

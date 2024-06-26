@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from global_variables import BOT_COLOR, FEEDBACK_CHANNEL_ID
+from config import BOT_COLOR, FEEDBACK_CHANNEL_ID
 
 
 class FeedbackForm(discord.ui.Modal, title="Give feedback about the bot"):

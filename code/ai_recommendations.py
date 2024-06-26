@@ -1,6 +1,6 @@
 from lavalink import LoadType
 
-from global_variables import CLIENT
+from config import CLIENT
 
 
 async def add_song_recommendations(bot_user, player, number, inputs, retries: int = 1):

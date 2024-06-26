@@ -6,7 +6,7 @@ from cogs.music import Music
 from typing import Literal
 from ai_recommendations import add_song_recommendations
 
-from global_variables import BOT_COLOR
+from config import BOT_COLOR
 
 
 class Autoplay(commands.Cog):

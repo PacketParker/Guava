@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from global_variables import BOT_COLOR, BUG_CHANNEL_ID
+from config import BOT_COLOR, BUG_CHANNEL_ID
 
 
 class BugReport(discord.ui.Modal, title="Report a bug"):

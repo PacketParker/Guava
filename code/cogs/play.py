@@ -8,7 +8,7 @@ import re
 from cogs.music import LavalinkVoiceClient
 import requests
 
-from global_variables import BOT_COLOR
+from config import BOT_COLOR
 from custom_source import CustomSource
 
 

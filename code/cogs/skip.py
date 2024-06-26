@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.music import Music
 import asyncio
 
-from global_variables import BOT_COLOR
+from config import BOT_COLOR
 from custom_source import LoadError
 
 

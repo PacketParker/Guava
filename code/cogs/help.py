@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-from global_variables import BOT_COLOR, BOT_INVITE_LINK
+from config import BOT_COLOR, BOT_INVITE_LINK
 
 commands_and_descriptions = {
     "play": {

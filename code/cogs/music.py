@@ -3,14 +3,19 @@ from discord.ext import commands
 import lavalink
 from lavalink import errors
 
-from global_variables import (
+from config import (
     LAVALINK_HOST,
     LAVALINK_PASSWORD,
     LAVALINK_PORT,
     LOG,
-    CheckPlayerError,
 )
 from ai_recommendations import add_song_recommendations
+
+
+class CheckPlayerError(discord.app_commands.AppCommandError):
+    def __init__(self, info) -> None:
+        self.info = info
+        super().__init__()
 
 
 class LavalinkVoiceClient(discord.VoiceProtocol):
@@ -104,13 +109,15 @@ class Music(commands.Cog):
                 host=LAVALINK_HOST,
                 port=LAVALINK_PORT,
                 password=LAVALINK_PASSWORD,
-                region='us-central',
-                connect=False
+                region="us-central",
+                connect=False,
             )  # Host, Port, Password, Region, Connect
             try:
                 await node.get_version()
             except lavalink.errors.ClientError:
-                LOG.error("Authentication to lavalink node failed. Check your login credentials.")
+                LOG.error(
+                    "Authentication to lavalink node failed. Check your login credentials."
+                )
             else:
                 await node.connect()
                 LOG.info(f"Connected to lavalink node {node.name}")
@@ -125,7 +132,9 @@ class Music(commands.Cog):
     async def create_player(interaction: discord.Interaction):
         """Create a player for the guild associated with the interaction, or raise an error"""
         try:
-            player = interaction.client.lavalink.player_manager.create(interaction.guild.id)
+            player = interaction.client.lavalink.player_manager.create(
+                interaction.guild.id
+            )
         except errors.ClientError:
             raise CheckPlayerError(
                 {

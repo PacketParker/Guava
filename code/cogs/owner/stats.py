@@ -3,7 +3,7 @@ from discord import app_commands
 import sqlite3
 import discord
 
-from global_variables import BOT_COLOR
+from config import BOT_COLOR
 
 
 class Stats(commands.Cog):
