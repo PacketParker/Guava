@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
 import lavalink
+from lavalink import errors
 
 from global_variables import (
     LAVALINK_HOST,
@@ -124,7 +124,15 @@ class Music(commands.Cog):
 
     async def create_player(interaction: discord.Interaction):
         """Create a player for the guild associated with the interaction, or raise an error"""
-        player = interaction.client.lavalink.player_manager.create(interaction.guild.id)
+        try:
+            player = interaction.client.lavalink.player_manager.create(interaction.guild.id)
+        except errors.ClientError:
+            raise CheckPlayerError(
+                {
+                    "title": "Lavalink Error",
+                    "description": "An error occured when attempting to use lavalink node. Please submit a bug report if this issue persists.",
+                }
+            )
         should_connect = interaction.command.name in ("play",)
         voice_client = interaction.guild.voice_client
 
