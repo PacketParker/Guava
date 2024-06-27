@@ -39,31 +39,48 @@ Getting started is easy, simply invite Guava to your server and run `/help` to s
 # Want to self-host?
 Guava is built on Python and requires a Lavalink node running release `v4` or higher with the LavaSrc plugin. If you would like to configure Guava and run it on your own, follow the steps below.
 
+*NOTE: For information on each configuration variable, look at the [Configuration](#configuration) section of this page.*
+
 *P.S. Some information on starting your own lavalink node can be found [here](#lavalink-information)*
 
-On first run you will likely get a critical warning in your console, don't worry, this is expected. It will automatically create a `config.ini` file for you in the root of the directory with all of the necessary configuration options.
+## Docker
+To run Guava in Docker, use the provided [docker-compose.yaml](docker-compose.yaml) file as a template for the container.
 
-Fill out the configuration options, then re-run the bot, and everything *should* just work. For information on each configuration option, look below.
+In addition to the Guava container, you must also create a Lavalink node however you choose (bare metal or docker)
 
-Field | Description
---- | ---
-TOKEN | The token for your bot. Create a bot at [discord.com/developers](https://discord.com/developers)
-BOT_COLOR | Hex color code that will be used for the color of message embeds
-FEEDBACK_CHANNEL_ID | Discord channel ID for feedback messages to be sent to
-BUG_CHANNEL_ID | Discord channel ID for bug messages to be sent to
-SPOTIFY_CLIENT_ID | Client ID from Spotify Developer account
-SPOTIFY_CLIENT_SECRET | Client Secret from Spotify Developer account
-OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations
-BOT_INVITE_LINK | Discord Invite link for your bot (shown on the `help` command)
-HOST | Host address for your Lavalink node
-PORT | Port for your Lavalink node
-PASSWORD | Password to authenticate into the Lavalink node
+## Bare metal
+To run Guava on bare metal, follow the steps below.
+
+*NOTE: On first run you will likely get a critical warning in your console, don't worry, this is expected. It will automatically create a `config.ini` file for you in the root of the directory with all of the necessary configuration options.*
+
+1. Install Python and Pip
+2. Clone this repository
+3. Install the requirements with `pip install -r requirements.txt`
+4. Run the `code/bot.py` file
+5. Input information into the newly created config.ini file.
+6. Re-run the `code/bot.py` file.
+
+# Configuration
+
+Field | Description | Requirement
+--- | --- | ---
+TOKEN | The token for your bot. Create a bot at [discord.com/developers](https://discord.com/developers) | **REQUIRED**
+BOT_COLOR | `HEX CODE`: Color that will be used for the color of message embeds | **REQUIRED**
+BOT_INVITE_LINK | `URL`: Discord Invite link for your bot (shown on the `help` command) | **REQUIRED**
+FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be sent to | **OPTIONAL**
+BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL**
+SPOTIFY_CLIENT_ID | Client ID from Spotify Developer account | **REQUIRED**
+SPOTIFY_CLIENT_SECRET | Client Secret from Spotify Developer account | **REQUIRED**
+OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations | **REQUIRED**
+HOST | Host address for your Lavalink node | **REQUIRED**
+PORT | Port for your Lavalink node | **REQUIRED**
+PASSWORD | Password to authenticate into the Lavalink node | **REQUIRED**
 
 # Lavalink Information
 
 As previously state, a Lavalink node running at least `v4` with the LavaSrc plugin is required. Due to the plugin requirement, it is unlikely that you will be able to use a free/public Lavalink node.
 
-For instructions on setting up a Lavalink node, look [here](https://lavalink.dev/getting-started/), and for instructions on the LavaSrc plugin, look [here](https://github.com/topi314/LavaSrc).
+For instructions on setting up a Lavalink node on bare metal, look [here](https://lavalink.dev/getting-started/), and for instructions on the LavaSrc plugin, look [here](https://github.com/topi314/LavaSrc).
 <br>
 *P.S. Only the Deezer/SoundCloud sources/search providers are needed.*
 
