@@ -194,10 +194,6 @@ class Music(commands.Cog):
 
         return True
 
-    @lavalink.listener(lavalink.events.NodeConnectedEvent)
-    async def on_node_connection(self, event: lavalink.events.NodeConnectedEvent):
-        LOG.info(f"Connected to lavalink node {event.node.name}")
-
     @lavalink.listener(lavalink.events.QueueEndEvent)
     async def on_queue_end(self, event: lavalink.events.QueueEndEvent):
         guild_id = event.player.guild_id
