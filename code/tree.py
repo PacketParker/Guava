@@ -1,5 +1,4 @@
 import discord
-from discord.ext import commands
 from discord import app_commands
 from discord.ext.commands.errors import *
 import datetime
@@ -9,12 +8,10 @@ from config import BOT_COLOR
 from custom_source import LoadError
 
 
-class slash_handlers(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        bot.tree.on_error = self.on_error
-
-    async def on_error(self, interaction: discord.Interaction, error):
+class Tree(app_commands.CommandTree):
+    async def on_error(
+        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ):
         music_commands = [
             "play",
             "clear",
@@ -83,11 +80,3 @@ class slash_handlers(commands.Cog):
 
         else:
             raise error
-
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        return
-
-
-async def setup(bot: commands.Bot):
-    await bot.add_cog(slash_handlers(bot))
