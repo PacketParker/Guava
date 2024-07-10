@@ -4,6 +4,7 @@ import os
 import requests
 
 import config
+from tree import Tree
 
 
 class MyBot(commands.Bot):
@@ -12,6 +13,7 @@ class MyBot(commands.Bot):
             command_prefix="***",
             activity=discord.Game(name="music!"),
             intents=discord.Intents.default(),
+            tree_cls=Tree
         )
 
     async def setup_hook(self):
@@ -41,6 +43,11 @@ bot.autoplay = []  # guild_id, guild_id, etc.
 async def on_ready():
     config.LOG.info(f"{bot.user} has connected to Discord.")
     config.LOG.info("Startup complete. Sync slash commands by DMing the bot ***sync")
+
+
+@bot.event
+async def on_command_error(ctx, error):
+        return
 
 
 @tasks.loop(minutes=45)
