@@ -79,4 +79,4 @@ class Tree(app_commands.CommandTree):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         else:
-            raise error#
+            raise error
