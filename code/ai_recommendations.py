@@ -5,7 +5,9 @@ from config import OPENAI_API_KEY
 import openai
 
 
-async def add_song_recommendations(openai_client, bot_user, player, number, inputs, retries: int = 1):
+async def add_song_recommendations(
+    openai_client, bot_user, player, number, inputs, retries: int = 1
+):
     input_list = [f'"{song} by {artist}"' for song, artist in inputs.items()]
 
     completion = (
@@ -14,25 +16,25 @@ async def add_song_recommendations(openai_client, bot_user, player, number, inpu
                 {
                     "role": "user",
                     "content": f"""
-                            BACKGROUND: You're an AI music recommendation system with a knack for understanding
-                            user preferences based on provided input. Your task is to generate a list
-                            of {number} songs that the user might enjoy, derived from a given list of {number} songs.
-                            The input will be in the format of
-                                ["Song-1-Name by Song-1-Artist", "Song-2-Name by Song-2-Artist", ...]
-                            and you need to return a list formatted in the same way.
+                        BACKGROUND: You're an AI music recommendation system with a knack for understanding
+                        user preferences based on provided input. Your task is to generate a list
+                        of {number} songs that the user might enjoy, derived from a given list of {number} songs.
+                        The input will be in the format of
+                            ["Song-1-Name by Song-1-Artist", "Song-2-Name by Song-2-Artist", ...]
+                        and you need to return a list formatted in the same way.
 
-                            When recommending songs, consider the genre, tempo, and mood of the input
-                            songs to suggest similar ones that align with the user's tastes. Also, it
-                            is important to mix up the artists, don't only give the same artists that
-                            are already in the queue. If you cannot find {number} songs that match the
-                            criteria or encounter any issues, return the list ["NOTHING FOUND"].
+                        When recommending songs, consider the genre, tempo, and mood of the input
+                        songs to suggest similar ones that align with the user's tastes. Also, it
+                        is important to mix up the artists, don't only give the same artists that
+                        are already in the queue. If you cannot find {number} songs that match the
+                        criteria or encounter any issues, return the list ["NOTHING FOUND"].
 
-                            Please be sure to also only use characters A-Z, a-z, 0-9, and spaces in the
-                            song and artist names. Do not include escape/special characters, emojis, or
-                            quotes in the output.
+                        Please be sure to also only use characters A-Z, a-z, 0-9, and spaces in the
+                        song and artist names. Do not include escape/special characters, emojis, or
+                        quotes in the output.
 
-                            INPUT: {input_list}
-                        """,
+                        INPUT: {input_list}
+                    """,
                 }
             ],
             model="gpt-3.5-turbo",
