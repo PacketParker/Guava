@@ -85,7 +85,9 @@ class HelpView(discord.ui.View):
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         embed = discord.Embed(
-            title=":musical_note:  All Commands  :musical_note:", color=BOT_COLOR
+            title=":musical_note:  All Commands  :musical_note:",
+            description="**Check out recent news and updates about the bot with the /news command!\n\u200b**",
+            color=BOT_COLOR,
         )
 
         embed.add_field(
@@ -109,7 +111,9 @@ class Help(commands.Cog):
 
         if command == None:
             embed = discord.Embed(
-                title=f":musical_note:  Help  :musical_note:", color=BOT_COLOR
+                title=f":musical_note:  Help  :musical_note:",
+                description="**Check out recent news and updates about the bot with the /news command!\n\u200b**",
+                color=BOT_COLOR,
             )
 
             embed.add_field(
