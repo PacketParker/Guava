@@ -1,34 +1,38 @@
 from lavalink import LoadType
+import re
 
-from config import CLIENT
+from config import OPENAI_API_KEY
+import openai
 
 
-async def add_song_recommendations(bot_user, player, number, inputs, retries: int = 1):
-    input_string = ""
-    for song, artist in inputs.items():
-        input_string += f"{song} - {artist}, "
-    # Remove the final ", "
-    input_string = input_string[:-2]
+async def add_song_recommendations(openai_client, bot_user, player, number, inputs, retries: int = 1):
+    input_list = [f'"{song} by {artist}"' for song, artist in inputs.items()]
 
     completion = (
-        CLIENT.chat.completions.create(
+        openai_client.chat.completions.create(
             messages=[
                 {
                     "role": "user",
-                    "content": f"""I need songs that are similar in nature to ones that I list.
-                            Send {number} songs formatted as:
+                    "content": f"""
+                            BACKGROUND: You're an AI music recommendation system with a knack for understanding
+                            user preferences based on provided input. Your task is to generate a list
+                            of {number} songs that the user might enjoy, derived from a given list of {number} songs.
+                            The input will be in the format of
+                                ["Song-1-Name by Song-1-Artist", "Song-2-Name by Song-2-Artist", ...]
+                            and you need to return a list formatted in the same way.
 
-                                SONG NAME - ARTIST NAME
-                                SONG NAME - ARTIST NAME
-                                ...
+                            When recommending songs, consider the genre, tempo, and mood of the input
+                            songs to suggest similar ones that align with the user's tastes. Also, it
+                            is important to mix up the artists, don't only give the same artists that
+                            are already in the queue. If you cannot find {number} songs that match the
+                            criteria or encounter any issues, return the list ["NOTHING FOUND"].
 
-                            Do not provide anything except for the exactly what I need, no
-                            list numbers, no quotations, only what I have shown.
+                            Please be sure to also only use characters A-Z, a-z, 0-9, and spaces in the
+                            song and artist names. Do not include escape/special characters, emojis, or
+                            quotes in the output.
 
-                            The songs you should base the list off of are: {input_string}
-
-                            NOTE: If you believe that there are not many songs that are similar to the ones I list, then please just respond with the message "SONG FIND ERROR"
-                """,
+                            INPUT: {input_list}
+                        """,
                 }
             ],
             model="gpt-3.5-turbo",
@@ -38,28 +42,32 @@ async def add_song_recommendations(bot_user, player, number, inputs, retries: in
         .strip('"')
     )
 
-    # Sometimes, we get false failures, so we check for a failure, and it we haven't tried
-    # at least 3 times, then continue retrying, otherwise, we actually can't get any songs
-    if completion == "SONG FIND ERROR":
+    # Sometimes ChatGPT will return `["NOTHING FOUND"]` even if it should
+    # have found something, so we check each prompt up to 3 times before
+    # giving up.
+    if completion == '["NOTHING FOUND"]':
         if retries <= 3:
             await add_song_recommendations(
-                bot_user, player, number, inputs, retries + 1
+                openai_client, bot_user, player, number, inputs, retries + 1
             )
         else:
             return False
 
     else:
-        for entry in completion.split("\n"):
-            song, artist = entry.split(" - ")
+        # Clean up the completion string to remove any potential issues
+        # with the eval function (e.g. OUTPUT: prefix, escaped quotes, etc.)
+        completion = re.sub(r"[\\\'\[\]\n]+|OUTPUT: ", "", completion)
 
-            ytsearch = f"ytsearch:{song} {artist} audio"
+        for entry in eval(completion):
+            song, artist = entry.split(" by ")
+            ytsearch = f"ytsearch:{song} by {artist} audio"
             results = await player.node.get_tracks(ytsearch)
 
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):
-                dzsearch = f"dzsearch:{song} {artist}"
+                dzsearch = f"dzsearch:{song}"
                 results = await player.node.get_tracks(dzsearch)
 
                 if not results.tracks or results.load_type in (

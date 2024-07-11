@@ -31,7 +31,7 @@ FEEDBACK_CHANNEL_ID = None
 BUG_CHANNEL_ID = None
 SPOTIFY_CLIENT_ID = None
 SPOTIFY_CLIENT_SECRET = None
-CLIENT = None
+OPENAI_API_KEY = None
 LAVALINK_HOST = None
 LAVALINK_PORT = None
 LAVALINK_PASSWORD = None
@@ -96,7 +96,7 @@ Validate all of the options in the config.ini file.
 
 
 def validate_config(file_contents):
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLIENT, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
     config = configparser.ConfigParser()
     config.read_string(file_contents)
 
@@ -175,7 +175,7 @@ def validate_config(file_contents):
     TOKEN = config["BOT_INFO"]["TOKEN"]
     SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
     SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
-    CLIENT = openai.OpenAI(api_key=config["OPENAI"]["OPENAI_API_KEY"])
+    OPENAI_API_KEY = config["OPENAI"]["OPENAI_API_KEY"]
     LAVALINK_HOST = config["LAVALINK"]["HOST"]
     LAVALINK_PORT = config["LAVALINK"]["PORT"]
     LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
@@ -194,7 +194,7 @@ Validate all of the environment variables.
 
 
 def validate_env_vars():
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLIENT, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
 
     hex_pattern_one = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
     hex_pattern_two = "^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
@@ -254,7 +254,7 @@ def validate_env_vars():
     TOKEN = os.environ["TOKEN"]
     SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
     SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
-    CLIENT = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
     LAVALINK_HOST = os.environ["LAVALINK_HOST"]
     LAVALINK_PORT = os.environ["LAVALINK_PORT"]
     LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]

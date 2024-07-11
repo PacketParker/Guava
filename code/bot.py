@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import os
 import requests
+import openai
 
 import config
 from tree import Tree
@@ -31,6 +32,8 @@ class MyBot(commands.Bot):
         for ext in os.listdir("./code/cogs/owner"):
             if ext.endswith(".py"):
                 await self.load_extension(f"cogs.owner.{ext[:-3]}")
+
+        bot.openai = openai.OpenAI(api_key=config.OPENAI_API_KEY)
 
 
 bot = MyBot()

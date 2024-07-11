@@ -214,7 +214,7 @@ class Music(commands.Cog):
             inputs = {}
             for song in event.player.queue[:10]:
                 inputs[song.title] = song.author
-            await add_song_recommendations(self.bot.user, event.player, 5, inputs)
+            await add_song_recommendations(self.bot.openai, self.bot.user, event.player, 5, inputs)
 
 
 async def setup(bot):

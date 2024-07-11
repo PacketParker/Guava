@@ -4,8 +4,8 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 from typing import Literal
-from ai_recommendations import add_song_recommendations
 
+from ai_recommendations import add_song_recommendations
 from config import BOT_COLOR
 
 
@@ -67,7 +67,7 @@ class Autoplay(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-        if await add_song_recommendations(self.bot.user, player, 5, inputs):
+        if await add_song_recommendations(self.bot.openai, self.bot.user, player, 5, inputs):
             self.bot.autoplay.append(interaction.guild.id)
             embed = discord.Embed(
                 title=":infinity: Autoplay Enabled :infinity:",
