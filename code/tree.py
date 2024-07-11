@@ -44,8 +44,8 @@ class Tree(app_commands.CommandTree):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If a player cannot be created for any of the music commands
-        # Player creation is a command check for every music command
+        # If `create_player` fails to create a player and fails
+        # to raise a `CheckPlayerError`, this will catch it
         elif (
             isinstance(error, app_commands.CheckFailure)
             and interaction.command.name in music_commands
@@ -79,4 +79,4 @@ class Tree(app_commands.CommandTree):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         else:
-            raise error
+            raise error#
