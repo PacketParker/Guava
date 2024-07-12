@@ -37,22 +37,15 @@ class MyBot(commands.Bot):
 
         bot.openai = openai.OpenAI(api_key=config.OPENAI_API_KEY)
 
+    async def on_ready(self):
+        config.LOG.info(f"{bot.user} has connected to Discord.")
+        config.LOG.info("Startup complete. Sync slash commands by DMing the bot ***sync")
+
 
 bot = MyBot()
 bot.remove_command("help")
 bot.temp_command_count = {}  # command_name: count
 bot.autoplay = []  # guild_id, guild_id, etc.
-
-
-@bot.event
-async def on_ready():
-    config.LOG.info(f"{bot.user} has connected to Discord.")
-    config.LOG.info("Startup complete. Sync slash commands by DMing the bot ***sync")
-
-
-@bot.event
-async def on_command_error(ctx, error):
-    return
 
 
 @tasks.loop(minutes=45)
