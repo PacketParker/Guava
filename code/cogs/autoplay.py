@@ -35,7 +35,7 @@ class Autoplay(commands.Cog):
         if interaction.guild.id in self.bot.autoplay:
             embed = discord.Embed(
                 title="Autoplay Already Enabled",
-                description="Autoplay is already enabled. If you would like to turn it off, choose the `OFF` option in the `/autoplay` command.",
+                description="Autoplay is already enabled. If you would like to turn it off, choose the `OFF` option in the </autoplay:1228216490386391052> command.",
                 color=BOT_COLOR,
             )
             return await interaction.response.send_message(embed=embed, ephemeral=True)

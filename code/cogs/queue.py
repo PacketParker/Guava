@@ -23,7 +23,7 @@ class Queue(commands.Cog):
         if not player.queue:
             embed = discord.Embed(
                 title="Nothing Queued",
-                description="Nothing is currently in the queue, add a song with the `/play` command.",
+                description="Nothing is currently in the queue, add a song with the </play:1224840890368000172> command.",
                 color=BOT_COLOR,
             )
             embed.set_footer(

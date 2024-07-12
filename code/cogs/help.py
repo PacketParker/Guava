@@ -62,6 +62,18 @@ commands_and_descriptions = {
         },
         "usage": "/shuffle <on/off>",
     },
+    "pause": {
+        "description": "Pause the song that is currently playing",
+        "usage": "/pause",
+    },
+    "resume": {
+        "description": "Resume the song that is currently paused",
+        "usage": "/resume",
+    },
+    "news": {
+        "description": "Get recent news and updates about the bot",
+        "usage": "/news",
+    },
     "bug": {
         "description": "Fill out a bug report form to alert the developer of issues",
         "usage": "/bug",

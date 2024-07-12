@@ -70,7 +70,7 @@ class Repeat(commands.GroupCog, name="repeat"):
 
         embed = discord.Embed(
             title=f"Repeating Current Song 🔁",
-            description=f"The song that is currently playing will be repeated until the `/repeat off` command is run",
+            description=f"The song that is currently playing will be repeated until the </repeat off:1224840891395608737> command is run",
             color=BOT_COLOR,
         )
         embed.set_footer(
@@ -105,7 +105,7 @@ class Repeat(commands.GroupCog, name="repeat"):
 
         embed = discord.Embed(
             title=f"Repeating Current Song 🔂",
-            description=f"All songs in the queue will continue to repeat until the `/repeat off` command is run.",
+            description=f"All songs in the queue will continue to repeat until the </repeat off:1224840891395608737> command is run.",
             color=BOT_COLOR,
         )
         embed.set_footer(

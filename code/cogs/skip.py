@@ -32,7 +32,7 @@ class Skip(commands.Cog):
 
             elif number > len(player.queue):
                 embed.title = "Number too Large"
-                embed.description = "The number you entered is larger than the number of songs in queue. If you want to stop playing music entirely, try the `/stop` command."
+                embed.description = "The number you entered is larger than the number of songs in queue. If you want to stop playing music entirely, try the </stop:1224840890866991305> command."
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
