@@ -1,9 +1,6 @@
 from lavalink import LoadType
 import re
 
-from config import OPENAI_API_KEY
-import openai
-
 
 async def add_song_recommendations(
     openai_client, bot_user, player, number, inputs, retries: int = 1
