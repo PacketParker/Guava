@@ -10,7 +10,7 @@ class TreeSync(commands.Cog):
     @commands.dm_only()
     @commands.is_owner()
     async def tree(self, ctx):
-        await ctx.author.send(f"This is a group command. You either `{self.bot.command_prefix}tree sync` or `{self.bot.command_prefix}tree clear` followed by an optional guild ID.")
+        await ctx.author.send(f"This is a group command. Use either `{self.bot.command_prefix}tree sync` or `{self.bot.command_prefix}tree clear` followed by an optional guild ID.")
 
     @commands.dm_only()
     @commands.is_owner()
