@@ -86,7 +86,7 @@ class HelpView(discord.ui.View):
     ):
         embed = discord.Embed(
             title=":musical_note:  All Commands  :musical_note:",
-            description="**Check out recent news and updates about the bot with the /news command!\n\u200b**",
+            description="**Check out recent news and updates about the bot with the </news:1260842465666007040> command!\n\u200b**",
             color=BOT_COLOR,
         )
 
@@ -112,7 +112,7 @@ class Help(commands.Cog):
         if command == None:
             embed = discord.Embed(
                 title=f":musical_note:  Help  :musical_note:",
-                description="**Check out recent news and updates about the bot with the /news command!\n\u200b**",
+                description="**Check out recent news and updates about the bot with the </news:1260842465666007040> command!\n\u200b**",
                 color=BOT_COLOR,
             )
 
