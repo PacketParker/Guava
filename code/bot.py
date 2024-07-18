@@ -23,9 +23,7 @@ class MyBot(commands.Bot):
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
                 if ext[:-3] == "feedback" and config.FEEDBACK_CHANNEL_ID == None:
-                    config.LOG.info(
-                        "Skipped loading feedback cog - channel ID not provided"
-                    )
+                    config.LOG.info("Skipped loading feedback cog - channel ID not provided")
                     continue
                 if ext[:-3] == "bug" and config.BUG_CHANNEL_ID == None:
                     config.LOG.info("Skipped loading bug cog - channel ID not provided")
