@@ -34,7 +34,7 @@ async def add_song_recommendations(
                     """,
                 }
             ],
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
         )
         .choices[0]
         .message.content.strip()
