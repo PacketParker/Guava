@@ -2,17 +2,21 @@ import discord
 import datetime
 from discord import app_commands
 from discord.ext import commands
-from cogs.music import Music
 from lavalink import LoadType
 import re
-from cogs.music import LavalinkVoiceClient
 import requests
 
-from config import BOT_COLOR
-from custom_source import CustomSource
+from cogs.music import Music, LavalinkVoiceClient
+from config import BOT_COLOR, APPLE_MUSIC_KEY
+from custom_sources import SpotifySource, AppleSource
 
 
 url_rx = re.compile(r"https?://(?:www\.)?.+")
+
+apple_headers = {
+    "Authorization": f"Bearer {APPLE_MUSIC_KEY}",
+    "Origin": "https://apple.com",
+}
 
 
 class Play(commands.Cog):
@@ -26,7 +30,7 @@ class Play(commands.Cog):
         "Play a song from your favorite music provider"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        # Notify users that YouTube and Apple Music links are not allowed
+        # Notify users that YouTube links are not allowed
 
         if "youtube.com" in query or "youtu.be" in query:
             embed = discord.Embed(
@@ -36,18 +40,107 @@ class Play(commands.Cog):
             )
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        if "music.apple.com" in query:
-            embed = discord.Embed(
-                title="Apple Music Not Supported",
-                description="Unfortunately, Apple Music does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
-                color=BOT_COLOR,
-            )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        ###
+        ### APPLE MUSIC links, perform API requests and load all tracks from the playlist/album/track
+        ###
 
-        # If a Spotify link is found, act accordingly
-        # We use a custom source for this (I tried the LavaSrc plugin, but Spotify
-        # links would just result in random shit being played whenever ytsearch was removed)
-        if "open.spotify.com" in query:
+        if "music.apple.com" in query:
+            embed = discord.Embed(color=BOT_COLOR)
+
+            if "/playlist/" in query and "?i=" not in query:
+                playlist_id = query.split("/playlist/")[1].split("/")[1]
+                # Get all of the tracks in the playlist (limit at 250)
+                playlist_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}/tracks?limit=100"
+                response = requests.get(playlist_url, headers=apple_headers)
+                if response.status_code == 200:
+                    playlist = response.json()
+                    # Get the general playlist info (name, artwork)
+                    playlist_info_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}"
+                    playlist_info = requests.get(playlist_info_url, headers=apple_headers)
+                    playlist_info = playlist_info.json()
+                    artwork_url = playlist_info["data"][0]["attributes"]["artwork"]["url"].replace(
+                        "{w}x{h}", "300x300"
+                    )
+
+                    embed.title = "Playlist Queued"
+                    embed.description = f"**{playlist_info['data'][0]['attributes']['name']}**\n` {len(playlist['data'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                    embed.set_thumbnail(url=artwork_url)
+                    embed.set_footer(
+                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                        + " UTC"
+                    )
+                    # Add small alert if the playlist is the max size
+                    if len(playlist["data"]) == 100:
+                        embed.description += "\n\n*This playlist is longer than the 100 song maximum. Only the first 100 songs will be queued.*"
+
+                    await interaction.response.send_message(embed=embed)
+
+                    tracks = await AppleSource.load_playlist(
+                        self, interaction.user, playlist
+                    )
+                    for track in tracks["tracks"]:
+                        player.add(requester=interaction.user, track=track)
+
+            # If there is an album, not a specific song within the album
+            if "/album/" in query and "?i=" not in query:
+                album_id = query.split("/album/")[1].split("/")[1]
+                album_url = f"https://api.music.apple.com/v1/catalog/us/albums/{album_id}"
+                response = requests.get(album_url, headers=apple_headers)
+                if response.status_code == 200:
+                    album = response.json()
+
+                    embed.title = "Album Queued"
+                    embed.description = f"**{album['data'][0]['attributes']['name']}** by **{album['data'][0]['attributes']['artistName']}**\n` {len(album['data'][0]['relationships']['tracks']['data'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                    embed.set_thumbnail(
+                        url=album["data"][0]["attributes"]["artwork"]["url"].replace(
+                            "{w}x{h}", "300x300"
+                        )
+                    )
+                    embed.set_footer(
+                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                        + " UTC"
+                    )
+                    await interaction.response.send_message(embed=embed)
+
+                    tracks = await AppleSource.load_album(self, interaction.user, album)
+                    for track in tracks["tracks"]:
+                        player.add(requester=interaction.user, track=track)
+
+            # If there is a specific song
+            if "/album/" in query and "?i=" in query:
+                song_id = query.split("/album/")[1].split("?i=")[1]
+                song_url = f"https://api.music.apple.com/v1/catalog/us/songs/{song_id}"
+                response = requests.get(song_url, headers=apple_headers)
+                if response.status_code == 200:
+                    song = response.json()
+
+                    embed.title = "Song Queued"
+                    embed.description = f"**{song['data'][0]['attributes']['name']}** by **{song['data'][0]['attributes']['artistName']}**\n\nQueued by: {interaction.user.mention}"
+                    embed.set_thumbnail(
+                        url=song["data"][0]["attributes"]["artwork"]["url"].replace(
+                            "{w}x{h}", "300x300"
+                        )
+                    )
+                    embed.set_footer(
+                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        )
+                        + " UTC"
+                    )
+                    await interaction.response.send_message(embed=embed)
+
+                    results = await AppleSource.load_item(self, interaction.user, song)
+                    player.add(requester=interaction.user, track=results.tracks[0])
+
+        ###
+        ### SPOTIFY links, perform API requests and load all tracks from the playlist/album/track
+        ###
+
+        elif "open.spotify.com" in query:
             embed = discord.Embed(color=BOT_COLOR)
 
             if "open.spotify.com/playlist" in query:
@@ -68,7 +161,7 @@ class Play(commands.Cog):
                     )
                     await interaction.response.send_message(embed=embed)
 
-                    tracks = await CustomSource.load_playlist(
+                    tracks = await SpotifySource.load_playlist(
                         self, interaction.user, playlist
                     )
                     for track in tracks["tracks"]:
@@ -92,7 +185,7 @@ class Play(commands.Cog):
                     )
                     await interaction.response.send_message(embed=embed)
 
-                    tracks = await CustomSource.load_album(
+                    tracks = await SpotifySource.load_album(
                         self, interaction.user, album
                     )
                     for track in tracks["tracks"]:
@@ -116,7 +209,7 @@ class Play(commands.Cog):
                     )
                     await interaction.response.send_message(embed=embed)
 
-                    results = await CustomSource.load_item(
+                    results = await SpotifySource.load_item(
                         self, interaction.user, track
                     )
                     player.add(requester=interaction.user, track=results.tracks[0])
@@ -128,7 +221,9 @@ class Play(commands.Cog):
                     embed=embed, ephemeral=True
                 )
 
-        # For anything else, do default searches and attempt to find track and play
+        ###
+        ### For anything else, use default Lavalink providers to search the query
+        ###
 
         else:
             if not url_rx.match(query):

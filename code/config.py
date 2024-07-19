@@ -31,6 +31,7 @@ FEEDBACK_CHANNEL_ID = None
 BUG_CHANNEL_ID = None
 SPOTIFY_CLIENT_ID = None
 SPOTIFY_CLIENT_SECRET = None
+APPLE_MUSIC_KEY = None
 OPENAI_API_KEY = None
 LAVALINK_HOST = None
 LAVALINK_PORT = None
@@ -70,6 +71,10 @@ def load_config():
             "SPOTIFY_CLIENT_SECRET": "",
         }
 
+        config["APPLE_MUSIC"] = {
+            "APPLE_MUSIC_KEY": "",
+        }
+
         config["OPENAI"] = {
             "OPENAI_API_KEY": "",
         }
@@ -96,7 +101,7 @@ Validate all of the options in the config.ini file.
 
 
 def validate_config(file_contents):
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, APPLE_MUSIC_KEY, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
     config = configparser.ConfigParser()
     config.read_string(file_contents)
 
@@ -106,7 +111,7 @@ def validate_config(file_contents):
     errors = 0
 
     # Make sure all sections are present
-    if ["BOT_INFO", "SPOTIFY", "OPENAI", "LAVALINK"] != config.sections():
+    if ["BOT_INFO", "SPOTIFY", "APPLE_MUSIC", "OPENAI", "LAVALINK"] != config.sections():
         sys.exit(
             LOG.critical(
                 "Missing sections in config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
@@ -124,6 +129,13 @@ def validate_config(file_contents):
         sys.exit(
             LOG.critical(
                 "Missing options in SPOTIFY section of config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
+            )
+        )
+
+    if ["apple_music_key"] != config.options("APPLE_MUSIC"):
+        sys.exit(
+            LOG.critical(
+                "Missing options in APPLE_MUSIC section of config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
             )
         )
 
@@ -175,6 +187,7 @@ def validate_config(file_contents):
     TOKEN = config["BOT_INFO"]["TOKEN"]
     SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
     SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
+    APPLE_MUSIC_KEY = config["APPLE_MUSIC"]["APPLE_MUSIC_KEY"]
     OPENAI_API_KEY = config["OPENAI"]["OPENAI_API_KEY"]
     LAVALINK_HOST = config["LAVALINK"]["HOST"]
     LAVALINK_PORT = config["LAVALINK"]["PORT"]
@@ -194,7 +207,7 @@ Validate all of the environment variables.
 
 
 def validate_env_vars():
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, APPLE_MUSIC_KEY, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
 
     hex_pattern_one = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
     hex_pattern_two = "^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
@@ -202,7 +215,7 @@ def validate_env_vars():
     errors = 0
 
     # Make sure all required variables are present in the environment
-    required_vars = ["TOKEN", "BOT_COLOR", "BOT_INVITE_LINK", "SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET", "OPENAI_API_KEY", "LAVALINK_HOST", "LAVALINK_PORT", "LAVALINK_PASSWORD"]
+    required_vars = ["TOKEN", "BOT_COLOR", "BOT_INVITE_LINK", "SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET", "APPLE_MUSIC_KEY", "OPENAI_API_KEY", "LAVALINK_HOST", "LAVALINK_PORT", "LAVALINK_PASSWORD"]
 
     for var in required_vars:
         if var not in os.environ:
@@ -254,6 +267,7 @@ def validate_env_vars():
     TOKEN = os.environ["TOKEN"]
     SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
     SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
+    APPLE_MUSIC_KEY = os.environ["APPLE_MUSIC_KEY"]
     OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
     LAVALINK_HOST = os.environ["LAVALINK_HOST"]
     LAVALINK_PORT = os.environ["LAVALINK_PORT"]
