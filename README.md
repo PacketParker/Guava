@@ -27,7 +27,8 @@
 
 Guava is a Discord music bot with support for multiple different music and video streaming platforms. Guava is a part of >200 Discord servers and currently supports these services:
 
-- Spotify (Links)
+- Apple Music
+- Spotify
 - SoundCloud
 - Bandcamp
 - Deezer
@@ -71,10 +72,23 @@ FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be 
 BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL**
 SPOTIFY_CLIENT_ID | Client ID from Spotify Developer account | **REQUIRED**
 SPOTIFY_CLIENT_SECRET | Client Secret from Spotify Developer account | **REQUIRED**
+APPLE_MUSIC_KEY | See the `note` below to get a media api key without a developer account | **REQUIRED**
 OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations | **REQUIRED**
 HOST | Host address for your Lavalink node | **REQUIRED**
 PORT | Port for your Lavalink node | **REQUIRED**
 PASSWORD | Password to authenticate into the Lavalink node | **REQUIRED**
+
+<br>
+<details>
+<summary><strong>NOTE: Media API Key</strong></summary>
+
+1. Go to https://music.apple.com
+2. Open the debuger tab in dev tools
+3. Regex this `"(?<token>(ey[\w-]+)\.([\w-]+)\.([\w-]+))"`
+4. Copy the entire token from the JS file
+
+</details>
+<br>
 
 # Lavalink Information
 
