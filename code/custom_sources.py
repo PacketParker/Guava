@@ -5,6 +5,11 @@ class LoadError(Exception):  # We'll raise this if we have trouble loading our t
     pass
 
 
+"""
+Retrieve the playback URL for a custom track
+"""
+
+
 class CustomAudioTrack(DeferredAudioTrack):
     # A DeferredAudioTrack allows us to load metadata now, and a playback URL later.
     # This makes the DeferredAudioTrack highly efficient, particularly in cases
@@ -36,7 +41,12 @@ class CustomAudioTrack(DeferredAudioTrack):
         return base64
 
 
-class CustomSource(Source):
+"""
+Custom Source for Spotify links
+"""
+
+
+class SpotifySource(Source):
     def __init__(self):
         super().__init__(
             name="custom"
@@ -106,6 +116,85 @@ class CustomSource(Source):
                         "uri": track["track"]["external_urls"]["spotify"],
                         "duration": track["track"]["duration_ms"],
                         "artworkUrl": track["track"]["album"]["images"][0]["url"],
+                    },
+                    requster=user,
+                )
+            )
+
+        return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
+
+
+"""
+Custom Source for Apple Music links
+"""
+
+
+class AppleSource(Source):
+    def __init__(self):
+        super().__init__(name="custom")
+
+    async def load_item(self, user, metadata):
+        track = CustomAudioTrack(
+            {  # Create an instance of our CustomAudioTrack.
+                "identifier": metadata["data"][0]["id"],
+                "isSeekable": True,
+                "author": metadata["data"][0]["attributes"]["artistName"],
+                "length": metadata["data"][0]["attributes"]["durationInMillis"],
+                "isStream": False,
+                "title": metadata["data"][0]["attributes"]["name"],
+                "uri": metadata["data"][0]["attributes"]["url"],
+                "duration": metadata["data"][0]["attributes"]["durationInMillis"],
+                "artworkUrl": metadata["data"][0]["attributes"]["artwork"]["url"].replace(
+                    "{w}x{h}", "300x300"
+                ),
+            },
+            requester=user,
+        )
+        return LoadResult(LoadType.TRACK, [track], playlist_info=PlaylistInfo.none())
+
+    async def load_album(self, user, metadata):
+        tracks = []
+        for track in metadata["data"][0]["relationships"]["tracks"][
+            "data"
+        ]:  # Loop through each track in the album.
+            tracks.append(
+                CustomAudioTrack(
+                    {  # Create an instance of our CustomAudioTrack.
+                        "identifier": track["id"],
+                        "isSeekable": True,
+                        "author": track["attributes"]["artistName"],
+                        "length": track["attributes"]["durationInMillis"],
+                        "isStream": False,
+                        "title": track["attributes"]["name"],
+                        "uri": track["attributes"]["url"],
+                        "duration": track["attributes"]["durationInMillis"],
+                        "artworkUrl": track["attributes"]["artwork"]["url"].replace(
+                            "{w}x{h}", "300x300"
+                        ),
+                    },
+                    requster=user,
+                )
+            )
+
+        return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
+
+    async def load_playlist(self, user, metadata):
+        tracks = []
+        for track in metadata["data"]:  # Loop through each track in the playlist.
+            tracks.append(
+                CustomAudioTrack(
+                    {  # Create an instance of our CustomAudioTrack.
+                        "identifier": track["id"],
+                        "isSeekable": True,
+                        "author": track["attributes"]["artistName"],
+                        "length": track["attributes"]["durationInMillis"],
+                        "isStream": False,
+                        "title": track["attributes"]["name"],
+                        "uri": track["attributes"]["url"],
+                        "duration": track["attributes"]["durationInMillis"],
+                        "artworkUrl": track["attributes"]["artwork"]["url"].replace(
+                            "{w}x{h}", "300x300"
+                        ),
                     },
                     requster=user,
                 )

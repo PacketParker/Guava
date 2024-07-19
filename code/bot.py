@@ -37,7 +37,7 @@ class MyBot(commands.Bot):
 
     async def on_ready(self):
         config.LOG.info(f"{bot.user} has connected to Discord.")
-        config.LOG.info("Startup complete. Sync slash commands by DMing the bot ***sync")
+        config.LOG.info(f"Startup complete. Sync slash commands by DMing the bot {bot.command_prefix}tree sync (guild id)")
 
 
 bot = MyBot()

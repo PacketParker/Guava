@@ -10,6 +10,7 @@ services:
             - BUG_CHANNEL_ID=
             - SPOTIFY_CLIENT_ID=
             - SPOTIFY_CLIENT_SECRET=
+            - APPLE_MUSIC_KEY=
             - OPENAI_API_KEY=
             - LAVALINK_HOST=
             - LAVALINK_PORT=

@@ -19,6 +19,11 @@ class News(commands.Cog):
         )
 
         embed.add_field(
+            name="**Apple Music Support!**",
+            value="> You can now play music through Apple Music links. Just paste the link and the bot will do the rest!",
+        )
+
+        embed.add_field(
             name="**Autoplay Update**",
             value="> Autoplay is now much more stable after a revamp of the previous system. If you experienced short outages recently, this was due to the update. Thank you for your patience!",
             inline=False,
