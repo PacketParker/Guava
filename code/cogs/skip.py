@@ -6,7 +6,7 @@ from cogs.music import Music
 import asyncio
 
 from config import BOT_COLOR
-from custom_source import LoadError
+from custom_sources import LoadError
 
 
 class Skip(commands.Cog):

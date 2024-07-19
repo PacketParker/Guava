@@ -5,7 +5,7 @@ import datetime
 
 from cogs.music import CheckPlayerError
 from config import BOT_COLOR
-from custom_source import LoadError
+from custom_sources import LoadError
 
 
 class Tree(app_commands.CommandTree):

@@ -5,6 +5,11 @@ class LoadError(Exception):  # We'll raise this if we have trouble loading our t
     pass
 
 
+"""
+Retrieve the playback URL for a custom track
+"""
+
+
 class CustomAudioTrack(DeferredAudioTrack):
     # A DeferredAudioTrack allows us to load metadata now, and a playback URL later.
     # This makes the DeferredAudioTrack highly efficient, particularly in cases
@@ -36,7 +41,12 @@ class CustomAudioTrack(DeferredAudioTrack):
         return base64
 
 
-class CustomSource(Source):
+"""
+Custom Source for Spotify links
+"""
+
+
+class SpotifySource(Source):
     def __init__(self):
         super().__init__(
             name="custom"
