@@ -13,7 +13,7 @@ class News(commands.Cog):
     async def news(self, interaction: discord.Interaction):
         "Get recent news and updates about the bot"
         embed = discord.Embed(
-            title="Updated News (July 11, 2024) :newspaper2:",
+            title="Recent News :newspaper2:",
             description="View recent code commits [here](https://github.com/packetparker/guava/commits)\n\u200b",
             color=BOT_COLOR,
         )
