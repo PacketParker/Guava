@@ -5,7 +5,7 @@ import requests
 import openai
 
 import config
-from tree import Tree
+from utils.command_tree import Tree
 
 
 class MyBot(commands.Bot):

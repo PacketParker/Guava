@@ -3,9 +3,14 @@ from discord import app_commands
 from discord.ext.commands.errors import *
 import datetime
 
-from cogs.music import CheckPlayerError
 from config import BOT_COLOR
 from custom_sources import LoadError
+
+
+# Create a custom AppCommandError for the create_player function
+class CheckPlayerError(app_commands.AppCommandError):
+    def __init__(self, info):
+        self.info = info
 
 
 class Tree(app_commands.CommandTree):
@@ -42,7 +47,10 @@ class Tree(app_commands.CommandTree):
                 )
                 + " UTC"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            try:
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+            except discord.errors.InteractionResponded:
+                await interaction.followup.send(embed=embed, ephemeral=True)
 
         # If `create_player` fails to create a player and fails
         # to raise a `CheckPlayerError`, this will catch it
@@ -52,7 +60,7 @@ class Tree(app_commands.CommandTree):
         ):
             embed = discord.Embed(
                 title="Player Creation Error",
-                description="An error occured when creating a player. Please try again.",
+                description="An error occured when trying to create a player. Please submit a bug report with </bug:1224840889906499626> if this issue persists.",
                 color=BOT_COLOR,
             )
             embed.set_footer(
@@ -61,7 +69,10 @@ class Tree(app_commands.CommandTree):
                 )
                 + " UTC"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            try:
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+            except discord.errors.InteractionResponded:
+                await interaction.followup.send(embed=embed, ephemeral=True)
 
         # If a Spotify song is linked but cannot be found on a provider (e.g. YouTube)
         elif isinstance(error, LoadError):
@@ -76,7 +87,10 @@ class Tree(app_commands.CommandTree):
                 )
                 + " UTC"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            try:
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+            except discord.errors.InteractionResponded:
+                await interaction.followup.send(embed=embed, ephemeral=True)
 
         else:
             raise error

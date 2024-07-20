@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import lavalink
 from lavalink import errors
 
@@ -9,13 +10,8 @@ from config import (
     LAVALINK_PORT,
     LOG,
 )
+from utils.command_tree import CheckPlayerError
 from ai_recommendations import add_song_recommendations
-
-
-class CheckPlayerError(discord.app_commands.AppCommandError):
-    def __init__(self, info) -> None:
-        self.info = info
-        super().__init__()
 
 
 class LavalinkVoiceClient(discord.VoiceProtocol):
@@ -139,9 +135,10 @@ class Music(commands.Cog):
             raise CheckPlayerError(
                 {
                     "title": "Lavalink Error",
-                    "description": "An error occured when attempting to use lavalink node. Please submit a bug report if this issue persists.",
+                    "description": "An error occured with the Lavalink server. Please submit a bug report with </bug:1224840889906499626> if this issue persists.",
                 }
             )
+
         should_connect = interaction.command.name in ("play",)
         voice_client = interaction.guild.voice_client
 
