@@ -58,9 +58,12 @@ class Play(commands.Cog):
                     playlist_info_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}"
                     playlist_info = requests.get(playlist_info_url, headers=apple_headers)
                     playlist_info = playlist_info.json()
-                    artwork_url = playlist_info["data"][0]["attributes"]["artwork"]["url"].replace(
-                        "{w}x{h}", "300x300"
-                    )
+                    try:
+                        artwork_url = playlist_info["data"][0]["attributes"]["artwork"]["url"].replace(
+                            "{w}x{h}", "300x300"
+                        )
+                    except KeyError:
+                        artwork_url = None
 
                     embed.title = "Playlist Queued"
                     embed.description = f"**{playlist_info['data'][0]['attributes']['name']}**\n` {len(playlist['data'])} ` tracks\n\nQueued by: {interaction.user.mention}"
