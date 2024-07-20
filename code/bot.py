@@ -4,7 +4,7 @@ import os
 import requests
 import openai
 
-import config
+import utils.config as config
 from utils.command_tree import Tree
 
 

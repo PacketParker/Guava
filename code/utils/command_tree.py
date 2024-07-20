@@ -3,8 +3,8 @@ from discord import app_commands
 from discord.ext.commands.errors import *
 import datetime
 
-from config import BOT_COLOR
-from custom_sources import LoadError
+from utils.config import BOT_COLOR
+from utils.custom_sources import LoadError
 
 
 # Create a custom AppCommandError for the create_player function

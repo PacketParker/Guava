@@ -5,8 +5,8 @@ from discord.ext import commands
 from cogs.music import Music
 from typing import Literal
 
-from ai_recommendations import add_song_recommendations
-from config import BOT_COLOR
+from utils.ai_recommendations import add_song_recommendations
+from utils.config import BOT_COLOR
 
 
 class Autoplay(commands.Cog):

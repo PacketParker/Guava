@@ -6,7 +6,7 @@ from cogs.music import Music
 import math
 import lavalink
 
-from config import BOT_COLOR
+from utils.config import BOT_COLOR
 
 
 class Queue(commands.Cog):

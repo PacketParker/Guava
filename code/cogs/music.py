@@ -4,14 +4,14 @@ from discord import app_commands
 import lavalink
 from lavalink import errors
 
-from config import (
+from utils.config import (
     LAVALINK_HOST,
     LAVALINK_PASSWORD,
     LAVALINK_PORT,
     LOG,
 )
 from utils.command_tree import CheckPlayerError
-from ai_recommendations import add_song_recommendations
+from utils.ai_recommendations import add_song_recommendations
 
 
 class LavalinkVoiceClient(discord.VoiceProtocol):

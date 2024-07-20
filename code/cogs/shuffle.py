@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from config import BOT_COLOR
+from utils.config import BOT_COLOR
 
 
 class Shuffle(commands.GroupCog, name="shuffle"):

@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.music import Music
 import lavalink
 
-from config import BOT_COLOR
+from utils.config import BOT_COLOR
 
 
 class NowPlaying(commands.Cog):

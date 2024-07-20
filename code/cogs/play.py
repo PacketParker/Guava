@@ -7,8 +7,8 @@ import re
 import requests
 
 from cogs.music import Music, LavalinkVoiceClient
-from config import BOT_COLOR, APPLE_MUSIC_KEY
-from custom_sources import SpotifySource, AppleSource
+from utils.config import BOT_COLOR, APPLE_MUSIC_KEY
+from utils.custom_sources import SpotifySource, AppleSource
 
 
 url_rx = re.compile(r"https?://(?:www\.)?.+")
