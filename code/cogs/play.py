@@ -7,16 +7,11 @@ import re
 import requests
 
 from cogs.music import Music, LavalinkVoiceClient
-from utils.config import BOT_COLOR, APPLE_MUSIC_KEY
+from utils.config import BOT_COLOR
 from utils.custom_sources import SpotifySource, AppleSource
 
 
 url_rx = re.compile(r"https?://(?:www\.)?.+")
-
-apple_headers = {
-    "Authorization": f"Bearer {APPLE_MUSIC_KEY}",
-    "Origin": "https://apple.com",
-}
 
 
 class Play(commands.Cog):
@@ -45,18 +40,26 @@ class Play(commands.Cog):
         ###
 
         if "music.apple.com" in query:
+            if not self.bot.apple_headers:
+                embed = discord.Embed(
+                    title="Apple Music Error",
+                    description="Apple Music support seems to be broken at the moment. Please try again and fill out a bug report with </bug:1224840889906499626> if this continues to happen.",
+                    color=BOT_COLOR,
+                )
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+
             embed = discord.Embed(color=BOT_COLOR)
 
             if "/playlist/" in query and "?i=" not in query:
                 playlist_id = query.split("/playlist/")[1].split("/")[1]
                 # Get all of the tracks in the playlist (limit at 250)
                 playlist_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}/tracks?limit=100"
-                response = requests.get(playlist_url, headers=apple_headers)
+                response = requests.get(playlist_url, headers=self.bot.apple_headers)
                 if response.status_code == 200:
                     playlist = response.json()
                     # Get the general playlist info (name, artwork)
                     playlist_info_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}"
-                    playlist_info = requests.get(playlist_info_url, headers=apple_headers)
+                    playlist_info = requests.get(playlist_info_url, headers=self.bot.apple_headers)
                     playlist_info = playlist_info.json()
                     try:
                         artwork_url = playlist_info["data"][0]["attributes"]["artwork"]["url"].replace(
@@ -90,7 +93,7 @@ class Play(commands.Cog):
             if "/album/" in query and "?i=" not in query:
                 album_id = query.split("/album/")[1].split("/")[1]
                 album_url = f"https://api.music.apple.com/v1/catalog/us/albums/{album_id}"
-                response = requests.get(album_url, headers=apple_headers)
+                response = requests.get(album_url, headers=self.bot.apple_headers)
                 if response.status_code == 200:
                     album = response.json()
 
@@ -117,7 +120,7 @@ class Play(commands.Cog):
             if "/album/" in query and "?i=" in query:
                 song_id = query.split("/album/")[1].split("?i=")[1]
                 song_url = f"https://api.music.apple.com/v1/catalog/us/songs/{song_id}"
-                response = requests.get(song_url, headers=apple_headers)
+                response = requests.get(song_url, headers=self.bot.apple_headers)
                 if response.status_code == 200:
                     song = response.json()
 

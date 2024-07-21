@@ -6,6 +6,7 @@ import openai
 
 import utils.config as config
 from utils.command_tree import Tree
+from utils.media_api_key import get_media_api_key
 
 
 class MyBot(commands.Bot):
@@ -19,6 +20,7 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         get_access_token.start()
+        refresh_media_api_key.start()
         config.LOG.info("Loading cogs...")
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
@@ -57,6 +59,18 @@ async def get_access_token():
     response = requests.post(auth_url, data=data)
     access_token = response.json()["access_token"]
     bot.spotify_headers = {"Authorization": f"Bearer {access_token}"}
+
+
+@tasks.loop(hours=24)
+async def refresh_media_api_key():
+    media_api_key = get_media_api_key()
+    if media_api_key is not None:
+        bot.apple_headers = {
+            "Authorization": f"Bearer {media_api_key}",
+            "Origin": "https://apple.com",
+        }
+    else:
+        bot.apple_headers = None
 
 
 if __name__ == "__main__":
