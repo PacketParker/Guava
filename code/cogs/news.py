@@ -20,7 +20,7 @@ class News(commands.Cog):
 
         embed.add_field(
             name="**Apple Music Support!**",
-            value="> You can now play music through Apple Music links. Just paste the link and the bot will do the rest!",
+            value="> After some trial and error, you can now play music through Apple Music links. Just paste the link and the bot will do the rest!",
         )
 
         embed.add_field(
