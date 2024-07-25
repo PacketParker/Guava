@@ -233,15 +233,22 @@ class Play(commands.Cog):
 
         else:
             if not url_rx.match(query):
-                ytsearch = f"ytsearch:{query}"
-                results = await player.node.get_tracks(ytsearch)
+                dzsearch = f"dzsearch:{query}"
+                results = await player.node.get_tracks(dzsearch)
 
                 if not results.tracks or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
-                    dzsearch = f"dzsearch:{query}"
-                    results = await player.node.get_tracks(dzsearch)
+                    scsearch = f"scsearch:{query}"
+                    results = await player.node.get_tracks(scsearch)
+
+                    if not results.tracks or results.load_type in (
+                        LoadType.EMPTY,
+                        LoadType.ERROR,
+                    ):
+                        ytsearch = f"ytsearch:{query}"
+                        results = await player.node.get_tracks(ytsearch)
             else:
                 results = await player.node.get_tracks(query)
 

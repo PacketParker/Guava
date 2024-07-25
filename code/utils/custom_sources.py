@@ -18,20 +18,27 @@ class CustomAudioTrack(DeferredAudioTrack):
     async def load(
         self, client
     ):  # Load our 'actual' playback track using the metadata from this one.
-        ytsearch = f"ytsearch:{self.title} {self.author} audio"
-        results = await client.get_tracks(ytsearch)
+        dzsearch = f"dzsearch:{self.title} {self.author}"
+        results = await client.get_tracks(dzsearch)
         if not results.tracks or results.load_type in (
             LoadType.EMPTY,
             LoadType.ERROR,
         ):
-            dzsearch = f"dzsearch:{self.title} {self.author}"
-            results = await client.get_tracks(dzsearch)
+            scsearch = f"scsearch:{self.title} {self.author}"
+            results = await client.get_tracks(scsearch)
 
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):
-                raise LoadError
+                ytsearch = f"ytsearch:{self.title} {self.author} audio"
+                results = await client.get_tracks(ytsearch)
+
+                if not results.tracks or results.load_type in (
+                    LoadType.EMPTY,
+                    LoadType.ERROR,
+                ):
+                    raise LoadError
 
         first_track = results.tracks[0]  # Grab the first track from the results.
         base64 = first_track.track  # Extract the base64 string from the track.
