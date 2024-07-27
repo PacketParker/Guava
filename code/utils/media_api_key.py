@@ -18,7 +18,8 @@ def get_media_api_key():
     # Look for `const Ga="TOKEN HERE"`
     for js_file in js_files:
         response = requests.get(f"{url}/assets/{js_file}")
-        match = re.search(r"const Ga=\"(.*?)\"", response.text)
+        # "(?<token>(ey[\w-]+)\.([\w-]+)\.([\w-]+))" - Credit to https://github.com/topi314/LavaSrc
+        match = re.search(r'"(?P<token>ey[\w-]+\.[\w-]+\.[\w-]+)"', response.text)
         if match:
             return match.group(1)
 
