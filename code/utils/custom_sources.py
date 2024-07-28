@@ -24,8 +24,8 @@ class CustomAudioTrack(DeferredAudioTrack):
             LoadType.EMPTY,
             LoadType.ERROR,
         ):
-            scsearch = f"scsearch:{self.title} {self.author}"
-            results = await client.get_tracks(scsearch)
+            ytmsearch = f"ytmsearch:{self.title} {self.author}"
+            results = await client.get_tracks(ytmsearch)
 
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,

@@ -240,8 +240,8 @@ class Play(commands.Cog):
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
-                    scsearch = f"scsearch:{query}"
-                    results = await player.node.get_tracks(scsearch)
+                    ytmsearch = f"ytmsearch:{query}"
+                    results = await player.node.get_tracks(ytmsearch)
 
                     if not results.tracks or results.load_type in (
                         LoadType.EMPTY,
