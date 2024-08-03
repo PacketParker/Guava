@@ -18,7 +18,7 @@ class Lyrics(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # If the Genius API client is not setup, send an error message
-        if self.bot.genius is not None:
+        if not self.bot.genius:
             embed = discord.Embed(
                 title="Lyrics Feature Error",
                 description="The lyrics feature is currently disabled due to errors with the Genius API.",
