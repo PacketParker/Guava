@@ -70,6 +70,10 @@ commands_and_descriptions = {
         "description": "Resume the song that is currently paused",
         "usage": "/resume",
     },
+    "lyrics": {
+        "description": "Get the lyrics of the song that is currently playing",
+        "usage": "/lyrics",
+    },
     "news": {
         "description": "Get recent news and updates about the bot",
         "usage": "/news",

@@ -19,6 +19,11 @@ class News(commands.Cog):
         )
 
         embed.add_field(
+            name="**Lyrics!**",
+            value="> You can now get lyrics for the song that is currently playing. Just use the `/lyrics` command! Some songs may not have lyrics available, but the bot will do its best to find them.",
+        )
+
+        embed.add_field(
             name="**Apple Music Support!**",
             value="> After some trial and error, you can now play music through Apple Music links. Just paste the link and the bot will do the rest!",
         )
