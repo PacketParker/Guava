@@ -105,7 +105,7 @@ def load_config():
 
     except FileNotFoundError:
         # Create a new config.yaml file with the template
-        with open("config.yaml", "w") as f:
+        with open(file_path, "w") as f:
             f.write(
                 """
 bot_info:
