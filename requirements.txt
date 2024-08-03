@@ -4,3 +4,6 @@ colorlog==6.8.2
 validators==0.28.3
 openai==1.35.0
 requests==2.32.3
+lyricsgenius==3.0.1
+PyYAML==6.0.1
+jsonschema==4.23.0

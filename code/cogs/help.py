@@ -70,6 +70,10 @@ commands_and_descriptions = {
         "description": "Resume the song that is currently paused",
         "usage": "/resume",
     },
+    "lyrics": {
+        "description": "Get the lyrics of the song that is currently playing",
+        "usage": "/lyrics",
+    },
     "news": {
         "description": "Get recent news and updates about the bot",
         "usage": "/news",
@@ -88,7 +92,8 @@ commands_and_descriptions = {
 class HelpView(discord.ui.View):
     def __init__(self, timeout=180.0):
         super().__init__(timeout=timeout)
-        self.add_item(discord.ui.Button(label="Invite Me", url=BOT_INVITE_LINK, row=1))
+        if BOT_INVITE_LINK:
+            self.add_item(discord.ui.Button(label="Invite Me", url=BOT_INVITE_LINK, row=1))
 
     @discord.ui.button(
         label="View All Commands", style=discord.ButtonStyle.green, row=1

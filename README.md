@@ -72,6 +72,8 @@ FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be 
 BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL**
 SPOTIFY_CLIENT_ID | Client ID from Spotify Developer account | **REQUIRED**
 SPOTIFY_CLIENT_SECRET | Client Secret from Spotify Developer account | **REQUIRED**
+GENIUS_CLIENT_ID | Client ID from Genius API Dashboard | **OPTIONAL**
+GENIUS_CLIENT_SECRET | Client Secret from Genius API Dashboard | **OPTIONAL**
 OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations | **REQUIRED**
 HOST | Host address for your Lavalink node | **REQUIRED**
 PORT | Port for your Lavalink node | **REQUIRED**
