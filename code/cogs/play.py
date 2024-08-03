@@ -147,6 +147,14 @@ class Play(commands.Cog):
         ###
 
         elif "open.spotify.com" in query:
+            if not self.bot.spotify_headers:
+                embed = discord.Embed(
+                    title="Spotify Error",
+                    description="Spotify support seems to be broken at the moment. Please try again and fill out a bug report with </bug:1224840889906499626> if this continues to happen.",
+                    color=BOT_COLOR,
+                )
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+
             embed = discord.Embed(color=BOT_COLOR)
 
             if "open.spotify.com/playlist" in query:

@@ -1,10 +1,13 @@
-import configparser
+import jsonschema
 import re
 import os
+import yaml
 import validators
+import openai
 import sys
 import discord
 import logging
+import requests
 from colorlog import ColoredFormatter
 
 log_level = logging.DEBUG
@@ -30,230 +33,225 @@ FEEDBACK_CHANNEL_ID = None
 BUG_CHANNEL_ID = None
 SPOTIFY_CLIENT_ID = None
 SPOTIFY_CLIENT_SECRET = None
+GENIUS_CLIENT_ID = None
+GENIUS_CLIENT_SECRET = None
 OPENAI_API_KEY = None
 LAVALINK_HOST = None
 LAVALINK_PORT = None
 LAVALINK_PASSWORD = None
 
-"""
-Load the config.ini file and return the contents for validation or
-create a new templated config.ini file if it doesn't exist.
-"""
+schema = {
+    "type": "object",
+    "properties": {
+        "bot_info": {
+            "type": "object",
+            "properties": {
+                "token": {"type": "string"},
+                "bot_color": {"type": "string"},
+                "bot_invite_link": {"type": "string"},
+                "feedback_channel_id": {"type": "integer"},
+                "bug_channel_id": {"type": "integer"},
+            },
+            "required": ["token"],
+        },
+        "spotify": {
+            "type": "object",
+            "properties": {
+                "spotify_client_id": {"type": "string"},
+                "spotify_client_secret": {"type": "string"},
+            },
+            "required": ["spotify_client_id", "spotify_client_secret"],
+        },
+        "genius": {
+            "type": "object",
+            "properties": {
+                "genius_client_id": {"type": "string"},
+                "genius_client_secret": {"type": "string"},
+            },
+            "required": ["genius_client_id", "genius_client_secret"],
+        },
+        "openai": {
+            "type": "object",
+            "properties": {
+                "openai_api_key": {"type": "string"},
+            },
+            "required": ["openai_api_key"],
+        },
+        "lavalink": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "port": {"type": "integer"},
+                "password": {"type": "string"},
+            },
+            "required": ["host", "port", "password"],
+        },
+    },
+    "required": ["bot_info", "lavalink"],
+}
 
 
+# Attempt to load the config file, otherwise create a new template
 def load_config():
-    # Look for variables in the environment
-    if "TOKEN" in os.environ or "BOT_COLOR" in os.environ or "BOT_INVITE_LINK" in os.environ:
-        LOG.info("Detected environment variables. Checking for configuration options.")
-        return validate_env_vars()
+    if os.path.exists("/.dockerenv"):
+        file_path = "/config/config.yaml"
     else:
-        LOG.info("Detected local environment. Checking for config.ini file.")
+        file_path = "config.yaml"
 
     try:
-        with open("config.ini", "r") as f:
+        with open(file_path, "r") as f:
             file_contents = f.read()
             validate_config(file_contents)
 
     except FileNotFoundError:
-        config = configparser.ConfigParser()
-        config["BOT_INFO"] = {
-            "TOKEN": "",
-            "BOT_COLOR": "",
-            "BOT_INVITE_LINK": "",
-            "FEEDBACK_CHANNEL_ID": "",
-            "BUG_CHANNEL_ID": "",
-        }
+        # Create a new config.yaml file with the template
+        with open("config.yaml", "w") as f:
+            f.write(
+                """
+bot_info:
+    token: ""
+    bot_color: ""
+    bot_invite_link: ""
+    feedback_channel_id: ""
+    bug_channel_id: ""
 
-        config["SPOTIFY"] = {
-            "SPOTIFY_CLIENT_ID": "",
-            "SPOTIFY_CLIENT_SECRET": "",
-        }
+spotify:
+    spotify_client_id: ""
+    spotify_client_secret: ""
 
-        config["OPENAI"] = {
-            "OPENAI_API_KEY": "",
-        }
+genius:
+    genius_client_id: ""
+    genius_client_secret: ""
 
-        config["LAVALINK"] = {
-            "HOST": "",
-            "PORT": "",
-            "PASSWORD": "",
-        }
+openai:
+    openai_api_key: ""
 
-        with open("config.ini", "w") as configfile:
-            config.write(configfile)
+lavalink:
+    host: ""
+    port: ""
+    password: ""
+                """
+            )
 
         sys.exit(
             LOG.critical(
-                "Configuration file `config.ini` has been generated. Please fill out all of the necessary information. Refer to the docs for information on what a specific configuration option is."
+                "Configuration file `config.yaml` has been generated. Please fill out all of the necessary information. Refer to the docs for information on what a specific configuration option is."
             )
         )
 
 
-"""
-Validate all of the options in the config.ini file.
-"""
-
-
+# Thouroughly validate all of the options in the config.yaml file
 def validate_config(file_contents):
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
-    config = configparser.ConfigParser()
-    config.read_string(file_contents)
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_CLIENT_ID, GENIUS_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    config = yaml.safe_load(file_contents)
 
+    try:
+        jsonschema.validate(config, schema)
+    except jsonschema.ValidationError as e:
+        sys.exit(LOG.critical(f"Error in config.yaml file: {e.message}"))
+
+    #
+    # Begin validation for optional BOT_INFO values
+    #
+
+    # If there is a "bot_invite_link" option, make sure it's a valid URL
+    if "bot_invite_link" in config["bot_info"]:
+        if not validators.url(config["bot_info"]["bot_invite_link"]):
+            LOG.critical(
+                "Error in config.yaml file: bot_invite_link is not a valid URL"
+            )
+        else:
+            BOT_INVITE_LINK = config["bot_info"]["bot_invite_link"]
+
+    # Make sure "bot_color" is a valid hex color
     hex_pattern_one = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
     hex_pattern_two = "^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
 
-    errors = 0
-
-    # Make sure all sections are present
-    if ["BOT_INFO", "SPOTIFY", "OPENAI", "LAVALINK"] != config.sections():
-        sys.exit(
+    if "bot_color" in config["bot_info"]:
+        if not bool(
+            re.match(hex_pattern_one, config["bot_info"]["bot_color"])
+        ) and not bool(re.match(hex_pattern_two, config["bot_info"]["bot_color"])):
             LOG.critical(
-                "Missing sections in config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
+                "Error in config.yaml file: bot_color is not a valid hex color"
             )
-        )
-
-    if ["token","bot_color","bot_invite_link", "feedback_channel_id","bug_channel_id",] != config.options("BOT_INFO"):
-        sys.exit(
-            LOG.critical(
-                "Missing options in BOT_INFO section of config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
-            )
-        )
-
-    if ["spotify_client_id", "spotify_client_secret"] != config.options("SPOTIFY"):
-        sys.exit(
-            LOG.critical(
-                "Missing options in SPOTIFY section of config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
-            )
-        )
-
-    if ["openai_api_key"] != config.options("OPENAI"):
-        sys.exit(
-            LOG.critical(
-                "Missing options in OPENAI section of config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
-            )
-        )
-
-    if ["host", "port", "password"] != config.options("LAVALINK"):
-        sys.exit(
-            LOG.critical(
-                "Missing options in LAVALINK section of config.ini file. Delete the file and re-run the bot to generate a blank config.ini file."
-            )
-        )
-
-    # Make sure BOT_COLOR is a valid hex color
-    if not bool(re.match(hex_pattern_one, config["BOT_INFO"]["BOT_COLOR"])) and not bool(re.match(hex_pattern_two, config["BOT_INFO"]["BOT_COLOR"])):
-        LOG.error("BOT_COLOR is not a valid hex color.")
-        errors += 1
-    else:
-        BOT_COLOR = discord.Color(int((config["BOT_INFO"]["BOT_COLOR"]).replace("#", ""), 16))
-
-    # Make sure BOT_INVITE_LINK is a valid URL
-    if not validators.url(config["BOT_INFO"]["BOT_INVITE_LINK"]):
-        LOG.error("BOT_INVITE_LINK is not a valid URL.")
-        errors += 1
-    else:
-        BOT_INVITE_LINK = config["BOT_INFO"]["BOT_INVITE_LINK"]
-
-    # Make sure FEEDBACK_CHANNEL_ID is either exactly 0 or 19 characters long
-    if len(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"]) != 0:
-        if len(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"]) != 19:
-            LOG.error("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
-            errors += 1
         else:
-            FEEDBACK_CHANNEL_ID = int(config["BOT_INFO"]["FEEDBACK_CHANNEL_ID"])
-
-    # Make sure BUG_CHANNEL_ID is either exactly 0 or 19 characters long
-    if len(config["BOT_INFO"]["BUG_CHANNEL_ID"]) != 0:
-        if len(config["BOT_INFO"]["BUG_CHANNEL_ID"]) != 19:
-            LOG.error("BUG_CHANNEL_ID is not a valid Discord channel ID.")
-            errors += 1
-        else:
-            BUG_CHANNEL_ID = int(config["BOT_INFO"]["BUG_CHANNEL_ID"])
-
-    # Assign the rest of the variables
-    TOKEN = config["BOT_INFO"]["TOKEN"]
-    SPOTIFY_CLIENT_ID = config["SPOTIFY"]["SPOTIFY_CLIENT_ID"]
-    SPOTIFY_CLIENT_SECRET = config["SPOTIFY"]["SPOTIFY_CLIENT_SECRET"]
-    OPENAI_API_KEY = config["OPENAI"]["OPENAI_API_KEY"]
-    LAVALINK_HOST = config["LAVALINK"]["HOST"]
-    LAVALINK_PORT = config["LAVALINK"]["PORT"]
-    LAVALINK_PASSWORD = config["LAVALINK"]["PASSWORD"]
-
-    if errors > 0:
-        sys.exit(
-            LOG.critical(
-                f"Found {errors} error(s) in the config.ini file. Please fix them and try again."
+            BOT_COLOR = discord.Color(
+                int((config["bot_info"]["bot_color"]).replace("#", ""), 16)
             )
-        )
 
+    # Make sure "feedback_channel_id" and "bug_channel_id" are exactly 19 characters long
+    if "feedback_channel_id" in config["bot_info"]:
+        if len(str(config["bot_info"]["feedback_channel_id"])) != 0:
+            if len(str(config["bot_info"]["feedback_channel_id"])) != 19:
+                LOG.critical(
+                    "Error in config.yaml file: feedback_channel_id is not a valid Discord channel ID"
+                )
+            else:
+                FEEDBACK_CHANNEL_ID = config["bot_info"]["feedback_channel_id"]
 
-"""
-Validate all of the environment variables.
-"""
+    if "bug_channel_id" in config["bot_info"]:
+        if len(str(config["bot_info"]["bug_channel_id"])) != 0:
+            if len(str(config["bot_info"]["bug_channel_id"])) != 19:
+                LOG.critical(
+                    "Error in config.yaml file: bug_channel_id is not a valid Discord channel ID"
+                )
+            else:
+                BUG_CHANNEL_ID = config["bot_info"]["bug_channel_id"]
 
+    #
+    # If the SPOTIFY section is present, make sure the client ID and secret are valid
+    #
 
-def validate_env_vars():
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
-
-    hex_pattern_one = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-    hex_pattern_two = "^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-
-    errors = 0
-
-    # Make sure all required variables are present in the environment
-    required_vars = ["TOKEN", "BOT_COLOR", "BOT_INVITE_LINK", "SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET", "OPENAI_API_KEY", "LAVALINK_HOST", "LAVALINK_PORT", "LAVALINK_PASSWORD"]
-
-    for var in required_vars:
-        if var not in os.environ:
-            LOG.error(f"Missing environment variable: {var}")
-            errors += 1
-
-    # Make sure BOT_COLOR is a valid hex color
-    if not bool(re.match(hex_pattern_one, os.environ["BOT_COLOR"])) and not bool(re.match(hex_pattern_two, os.environ["BOT_COLOR"])):
-        LOG.error("BOT_COLOR is not a valid hex color.")
-        errors += 1
-    else:
-        BOT_COLOR = discord.Color(int((os.environ["BOT_COLOR"]).replace("#", ""), 16))
-
-    # Make sure BOT_INVITE_LINK is a valid URL
-    if not validators.url(os.environ["BOT_INVITE_LINK"]):
-        LOG.error("BOT_INVITE_LINK is not a valid URL.")
-        errors += 1
-    else:
-        BOT_INVITE_LINK = os.environ["BOT_INVITE_LINK"]
-
-    # Make sure FEEDBACK_CHANNEL_ID is either None or 19 characters long
-    try:
-        if len(os.environ["FEEDBACK_CHANNEL_ID"]) != 19:
-            LOG.error("FEEDBACK_CHANNEL_ID is not a valid Discord channel ID.")
-            errors += 1
+    if "spotify" in config:
+        auth_url = "https://accounts.spotify.com/api/token"
+        data = {
+            "grant_type": "client_credentials",
+            "client_id": config["spotify"]["spotify_client_id"],
+            "client_secret": config["spotify"]["spotify_client_secret"],
+        }
+        response = requests.post(auth_url, data=data)
+        if response.status_code == 200:
+            SPOTIFY_CLIENT_ID = config["spotify"]["spotify_client_id"]
+            SPOTIFY_CLIENT_SECRET = config["spotify"]["spotify_client_secret"]
         else:
-            FEEDBACK_CHANNEL_ID = int(os.environ["FEEDBACK_CHANNEL_ID"])
-    except KeyError:
-        FEEDBACK_CHANNEL_ID = None
-
-    # Make sure BUG_CHANNEL_ID is either None or 19 characters long
-    try:
-        if len(os.environ["BUG_CHANNEL_ID"]) != 19:
-            LOG.error("BUG_CHANNEL_ID is not a valid Discord channel ID.")
-            errors += 1
-        else:
-            BUG_CHANNEL_ID = int(os.environ["BUG_CHANNEL_ID"])
-    except KeyError:
-        BUG_CHANNEL_ID = None
-
-    if errors > 0:
-        sys.exit(
             LOG.critical(
-                f"Found {errors} error(s) with environment variables. Please fix them and try again."
+                "Error in config.yaml file: Spotify client ID or secret is invalid"
             )
-        )
 
-    # Assign the rest of the variables
-    TOKEN = os.environ["TOKEN"]
-    SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
-    SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
-    OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-    LAVALINK_HOST = os.environ["LAVALINK_HOST"]
-    LAVALINK_PORT = os.environ["LAVALINK_PORT"]
-    LAVALINK_PASSWORD = os.environ["LAVALINK_PASSWORD"]
+    #
+    # If the GENIUS section is present, make sure the client ID and secret are valid
+    #
+
+    if "genius" in config:
+        auth_url = "https://api.genius.com/oauth/token"
+        data = {
+            "grant_type": "client_credentials",
+            "client_id": config["genius"]["genius_client_id"],
+            "client_secret": config["genius"]["genius_client_secret"],
+        }
+        response = requests.post(auth_url, data=data)
+        if response.status_code == 200:
+            GENIUS_CLIENT_ID = config["genius"]["genius_client_id"]
+            GENIUS_CLIENT_SECRET = config["genius"]["genius_client_secret"]
+        else:
+            LOG.critical(
+                "Error in config.yaml file: Genius client ID or secret is invalid"
+            )
+
+    #
+    # If the OPENAI section is present, make sure the API key is valid
+    #
+
+    if "openai" in config:
+        client = openai.OpenAI(api_key=config["openai"]["openai_api_key"])
+        try:
+            client.models.list()
+            OPENAI_API_KEY = config["openai"]["openai_api_key"]
+        except openai.AuthenticationError:
+            LOG.critical("Error in config.yaml file: OpenAI API key is invalid")
+
+    # Set appropriate values for all non-optional variables
+    TOKEN = config["bot_info"]["token"]
+    LAVALINK_HOST = config["lavalink"]["host"]
+    LAVALINK_PORT = config["lavalink"]["port"]
+    LAVALINK_PASSWORD = config["lavalink"]["password"]
