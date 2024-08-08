@@ -32,6 +32,10 @@ class Lyrics(commands.Cog):
             )
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
+        # Defer the interaction to avoid getting 404 Not Found errors
+        # if fetching the lyrics takes a long time
+        await interaction.response.defer(ephemeral=True)
+
         # Search for the songs lyrics with Genius
         song = self.bot.genius.search_song(player.current.title, player.current.author)
 
@@ -49,8 +53,7 @@ class Lyrics(commands.Cog):
                 )
                 + " UTC"
             )
-
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.edit_original_response(embed=embed)
 
         # Remove unwanted text
         lyrics = song.lyrics
@@ -70,8 +73,7 @@ class Lyrics(commands.Cog):
             )
             + " UTC"
         )
-
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.edit_original_response(embed=embed)
 
 
 async def setup(bot):
