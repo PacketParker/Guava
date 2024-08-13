@@ -75,7 +75,7 @@ class Lyrics(commands.Cog):
                 )
                 + " UTC"
             )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.edit_original_response(embed=embed)
 
         # If everything is successful, send the lyrics
         embed = discord.Embed(
