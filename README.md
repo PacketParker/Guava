@@ -68,6 +68,7 @@ BOT_COLOR | `HEX CODE`: Color that will be used for the color of message embeds 
 BOT_INVITE_LINK | `URL`: Discord Invite link for your bot (shown on the `help` command) | **OPTIONAL** - *Adds an "Invite Me" button to the /help message*
 FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be sent to | **OPTIONAL** - *Used for feedback messages*
 BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL** - *Used for bug reporting*
+YOUTUBE_SUPPORT | `BOOLEAN`: Whether or not YouTube links are supported | **OPTIONAL**
 SPOTIFY_CLIENT_ID | `CLIENT ID`: ID from Spotify Developer account | **OPTIONAL** - *Used for Spotify support*
 SPOTIFY_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Spotify Developer account | **OPTIONAL** - *Used for Sporify support*
 GENIUS_CLIENT_ID | `CLIENT ID`: ID from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
