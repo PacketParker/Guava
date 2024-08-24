@@ -28,6 +28,7 @@ class MyBot(commands.Bot):
             bot.openai = openai.OpenAI(api_key=config.OPENAI_API_KEY)
 
         config.LOG.info("Loading cogs...")
+        config.LOG.info("YouTube support is enabled" if config.YOUTUBE_SUPPORT else "YouTube support is disabled")
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
                 # Load the OPTIONAL feedback cog

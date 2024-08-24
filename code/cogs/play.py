@@ -7,7 +7,7 @@ import re
 import requests
 
 from cogs.music import Music, LavalinkVoiceClient
-from utils.config import BOT_COLOR
+from utils.config import BOT_COLOR, YOUTUBE_SUPPORT
 from utils.custom_sources import SpotifySource, AppleSource
 
 
@@ -25,15 +25,15 @@ class Play(commands.Cog):
         "Play a song from your favorite music provider"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        # Notify users that YouTube links are not allowed
-
+        # Notify users that YouTube links are not allowed if YouTube support is disabled
         if "youtube.com" in query or "youtu.be" in query:
-            embed = discord.Embed(
-                title="YouTube Not Supported",
-                description="Unfortunately, YouTube does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
-                color=BOT_COLOR,
-            )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            if not YOUTUBE_SUPPORT:
+                embed = discord.Embed(
+                    title="YouTube Not Supported",
+                    description="Unfortunately, YouTube does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
+                    color=BOT_COLOR,
+                )
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         ###
         ### APPLE MUSIC links, perform API requests and load all tracks from the playlist/album/track
