@@ -31,6 +31,7 @@ BOT_COLOR = None
 BOT_INVITE_LINK = None
 FEEDBACK_CHANNEL_ID = None
 BUG_CHANNEL_ID = None
+YOUTUBE_SUPPORT = None
 SPOTIFY_CLIENT_ID = None
 SPOTIFY_CLIENT_SECRET = None
 GENIUS_CLIENT_ID = None
@@ -51,6 +52,7 @@ schema = {
                 "bot_invite_link": {"type": "string"},
                 "feedback_channel_id": {"type": "integer"},
                 "bug_channel_id": {"type": "integer"},
+                "youtube_support": {"type": "boolean"},
             },
             "required": ["token"],
         },
@@ -114,6 +116,7 @@ bot_info:
     bot_invite_link: ""
     feedback_channel_id: ""
     bug_channel_id: ""
+    youtube_support: false
 
 spotify:
     spotify_client_id: ""
@@ -142,7 +145,7 @@ lavalink:
 
 # Thouroughly validate all of the options in the config.yaml file
 def validate_config(file_contents):
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_CLIENT_ID, GENIUS_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, YOUTUBE_SUPPORT, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_CLIENT_ID, GENIUS_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
     config = yaml.safe_load(file_contents)
 
     try:
@@ -197,6 +200,11 @@ def validate_config(file_contents):
                 )
             else:
                 BUG_CHANNEL_ID = config["bot_info"]["bug_channel_id"]
+
+    if "youtube_support" in config["bot_info"]:
+        YOUTUBE_SUPPORT = bool(config["bot_info"]["youtube_support"])
+    else:
+        YOUTUBE_SUPPORT = False
 
     #
     # If the SPOTIFY section is present, make sure the client ID and secret are valid
