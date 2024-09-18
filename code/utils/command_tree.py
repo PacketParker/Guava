@@ -92,8 +92,5 @@ class Tree(app_commands.CommandTree):
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, NotOwner):
-            pass
-
         else:
             raise error

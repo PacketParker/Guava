@@ -79,6 +79,10 @@ class Stats(commands.Cog):
         connection.close()
         await ctx.send(embed=embed)
 
+    @stats.error
+    async def stats_error(self, ctx, error):
+        return
+
 
 async def setup(bot):
     await bot.add_cog(Stats(bot))
