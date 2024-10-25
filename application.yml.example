@@ -1,45 +1,57 @@
-server: # REST and WS server
+server:
   port: 2333
-  address: localhost
+  address: 127.0.0.1
   http2:
-    enabled: false # Whether to enable HTTP/2 support
+    enabled: false
 
 plugins:
+  # (https://github.com/topi314/LavaSrc)
   lavasrc:
-    providers: # Custom providers for track loading. This is the default
-      - "ytsearch:\"%ISRC%\""
-      - "ytsearch:%QUERY%"
-      - "scsearch:\"%ISRC%\""
-      - "scsearch:%QUERY%"
+    providers:
       - "dzisrc:\"%ISRC%\""
       - "dzsearch:%QUERY%"
     sources:
-      spotify: false # Enable Spotify source
-      applemusic: false # Enable Apple Music source
-      deezer: true # Enable Deezer source
-      yandexmusic: false # Enable Yandex Music source
-      flowerytts: false # Enable Flowery TTS source
-      youtube: true # Enable YouTube search source (https://github.com/topi314/LavaSearch)
+      spotify: false
+      applemusic: false
+      deezer: true
+      yandexmusic: false
+      flowerytts: false
+      youtube: false
     deezer:
-      masterDecryptionKey: "" # the master key used for decrypting the deezer tracks. (yes this is not here you need to get it from somewhere else)
+      masterDecryptionKey: "" (this is not provided, you must obtain this yourself)
+
+  youtube:
+    enabled: true
+    allowSearch: true
+    allowDirectVideoIds: true
+    allowDirectPlaylistIds: true
+    clients:
+      - WEB
+      - ANDROID_VR
+      - WEBEMBEDDED
+      - MUSIC
+      - ANDROID_TESTSUITE
+      - ANDROID_MUSIC
 
 lavalink:
   plugins:
-    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.0.1"
-      repository: "https://maven.lavalink.dev/releases" # this is optional for lavalink v4.0.0-beta.5 or greater
-      snapshot: false # set to true if you want to use snapshot builds (see below)
+    - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.3.0"
+      repository: "https://maven.lavalink.dev/releases"
+      snapshot: false
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.8.3"
+      snapshot: false # Set to true if you want to use a snapshot version.
 
   server:
-    password: "youshallnotpass"
+    password: ""
     sources:
-      youtube: true
+      youtube: false
       bandcamp: true
       soundcloud: true
       twitch: true
       vimeo: true
       http: true
       local: false
-    filters: # All filters are enabled by default
+    filters:
       volume: true
       equalizer: true
       karaoke: true
@@ -52,17 +64,18 @@ lavalink:
       lowPass: true
 
     bufferDurationMs: 400 # The duration of the NAS buffer. Higher values fare better against longer GC pauses. Duration <= 0 to disable JDA-NAS. Minimum of 40ms, lower values may introduce pauses.
-    frameBufferDurationMs: 5000 # How many milliseconds of audio to keep buffered
+    frameBufferDurationMs: 8000 # How many milliseconds of audio to keep buffered
     opusEncodingQuality: 10 # Opus encoder quality. Valid values range from 0 to 10, where 10 is best quality but is the most expensive on the CPU.
     resamplingQuality: LOW # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
     trackStuckThresholdMs: 10000 # The threshold for how long a track can be stuck. A track is stuck if does not return any audio data.
     useSeekGhosting: true # Seek ghosting is the effect where whilst a seek is in progress, the audio buffer is read from until empty, or until seek is ready.
+    youtubePlaylistLoadLimit: 6 # Number of pages at 100 each
     playerUpdateInterval: 5 # How frequently to send player updates to clients, in seconds
-    youtubeSearchEnabled: false
+    youtubeSearchEnabled: true
     soundcloudSearchEnabled: true
     gc-warnings: true
     ratelimit:
-      ipBlocks: ["IPv6 Block"] # list of ip blocks
+      ipBlocks: [""] # list of ip blocks
       excludedIps: [] # ips which should be explicit excluded from usage by lavalink
       strategy: "LoadBalance" # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
       searchTriggersFail: true # Whether a search 429 should trigger marking the ip as failing
