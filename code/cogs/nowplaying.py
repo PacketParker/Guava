@@ -27,7 +27,11 @@ class NowPlaying(commands.Cog):
 
         embed = discord.Embed(
             title="Now Playing 🎶",
-            description=f"**[{player.current.title}]({player.current.uri})** by {player.current.author}\n{f'` {time_in}/{total_duration} `'}\n\nQueued by: {player.current.requester.mention}",
+            description=(
+                f"**[{player.current.title}]({player.current.uri})** by"
+                f" {player.current.author}\n{f'` {time_in}/{total_duration} `'}\n\nQueued"
+                f" by: {player.current.requester.mention}"
+            ),
             color=BOT_COLOR,
         )
         embed.set_thumbnail(url=player.current.artwork_url)

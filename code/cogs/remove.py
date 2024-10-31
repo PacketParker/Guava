@@ -21,7 +21,10 @@ class Remove(commands.Cog):
         if not player.queue:
             embed = discord.Embed(
                 title="Nothing Queued",
-                description="Nothing is currently in the queue, so there is nothing for me to remove.",
+                description=(
+                    "Nothing is currently in the queue, so there is nothing"
+                    " for me to remove."
+                ),
                 color=BOT_COLOR,
             )
             embed.set_footer(
@@ -34,7 +37,8 @@ class Remove(commands.Cog):
 
         if number > len(player.queue) or number < 1:
             return await interaction.response.send_message(
-                "The number entered is not a number within the queue - please try again!",
+                "The number entered is not a number within the queue - please"
+                " try again!",
                 ephemeral=True,
             )
 
@@ -46,7 +50,11 @@ class Remove(commands.Cog):
 
         embed = discord.Embed(
             title="Song Removed from Queue",
-            description=f"**Song Removed - [{removed_title}]({removed_url})**\n\nIssued by: {interaction.user.mention}",
+            description=(
+                "**Song Removed -"
+                f" [{removed_title}]({removed_url})**\n\nIssued by:"
+                f" {interaction.user.mention}"
+            ),
             color=BOT_COLOR,
         )
         embed.set_thumbnail(url=removed_artwork)

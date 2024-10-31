@@ -112,7 +112,8 @@ class Music(commands.Cog):
                 await node.get_version()
             except lavalink.errors.ClientError:
                 LOG.error(
-                    "Authentication to lavalink node failed. Check your login credentials."
+                    "Authentication to lavalink node failed. Check your login"
+                    " credentials."
                 )
             else:
                 await node.connect()
@@ -135,7 +136,11 @@ class Music(commands.Cog):
             raise CheckPlayerError(
                 {
                     "title": "Lavalink Error",
-                    "description": "An error occured with the Lavalink server. Please submit a bug report with </bug:1224840889906499626> if this issue persists.",
+                    "description": (
+                        "An error occured with the Lavalink server. Please"
+                        " submit a bug report with </bug:1224840889906499626>"
+                        " if this issue persists."
+                    ),
                 }
             )
 
@@ -147,14 +152,20 @@ class Music(commands.Cog):
                 raise CheckPlayerError(
                     {
                         "title": "Not in my VC",
-                        "description": "You must join my voice channel to run that command.",
+                        "description": (
+                            "You must join my voice channel to run that"
+                            " command."
+                        ),
                     }
                 )
 
             raise CheckPlayerError(
                 {
                     "title": "No Channel",
-                    "description": "You must join a voice channel before you can run that command.",
+                    "description": (
+                        "You must join a voice channel before you can run that"
+                        " command."
+                    ),
                 }
             )
 
@@ -163,7 +174,10 @@ class Music(commands.Cog):
                 raise CheckPlayerError(
                     {
                         "title": "Not Connected",
-                        "description": "I am not connected and playing music right now, therefore that command will not work.",
+                        "description": (
+                            "I am not connected and playing music right now,"
+                            " therefore that command will not work."
+                        ),
                     }
                 )
 
@@ -175,7 +189,10 @@ class Music(commands.Cog):
                 raise CheckPlayerError(
                     {
                         "title": "Missing Permissions",
-                        "description": "I need the `CONNECT` and `SPEAK` permissions in order to work.",
+                        "description": (
+                            "I need the `CONNECT` and `SPEAK` permissions in"
+                            " order to work."
+                        ),
                     }
                 )
 
@@ -185,7 +202,10 @@ class Music(commands.Cog):
                 raise CheckPlayerError(
                     {
                         "title": "Not in my VC",
-                        "description": "You must join my voice channel to run that command.",
+                        "description": (
+                            "You must join my voice channel to run that"
+                            " command."
+                        ),
                     }
                 )
 
@@ -211,7 +231,9 @@ class Music(commands.Cog):
             inputs = {}
             for song in event.player.queue[:10]:
                 inputs[song.title] = song.author
-            await add_song_recommendations(self.bot.openai, self.bot.user, event.player, 5, inputs)
+            await add_song_recommendations(
+                self.bot.openai, self.bot.user, event.player, 5, inputs
+            )
 
 
 async def setup(bot):

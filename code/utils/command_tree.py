@@ -15,7 +15,9 @@ class CheckPlayerError(app_commands.AppCommandError):
 
 class Tree(app_commands.CommandTree):
     async def on_error(
-        self, interaction: discord.Interaction, error: app_commands.AppCommandError
+        self,
+        interaction: discord.Interaction,
+        error: app_commands.AppCommandError,
     ):
         music_commands = [
             "play",
@@ -48,7 +50,9 @@ class Tree(app_commands.CommandTree):
                 + " UTC"
             )
             try:
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(embed=embed, ephemeral=True)
 
@@ -60,7 +64,11 @@ class Tree(app_commands.CommandTree):
         ):
             embed = discord.Embed(
                 title="Player Creation Error",
-                description="An error occured when trying to create a player. Please submit a bug report with </bug:1224840889906499626> if this issue persists.",
+                description=(
+                    "An error occured when trying to create a player. Please"
+                    " submit a bug report with </bug:1224840889906499626> if"
+                    " this issue persists."
+                ),
                 color=BOT_COLOR,
             )
             embed.set_footer(
@@ -70,7 +78,9 @@ class Tree(app_commands.CommandTree):
                 + " UTC"
             )
             try:
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(embed=embed, ephemeral=True)
 
@@ -78,7 +88,13 @@ class Tree(app_commands.CommandTree):
         elif isinstance(error, LoadError):
             embed = discord.Embed(
                 title="Nothing Found",
-                description="Spotify does not allow direct play, meaning songs have to be found on a supported provider. In this case, the song couldn't be found. Please try again with a different song, or try searching for just the name and artist manually rather than sending a link.",
+                description=(
+                    "Spotify does not allow direct play, meaning songs have to"
+                    " be found on a supported provider. In this case, the song"
+                    " couldn't be found. Please try again with a different"
+                    " song, or try searching for just the name and artist"
+                    " manually rather than sending a link."
+                ),
                 color=BOT_COLOR,
             )
             embed.set_footer(
@@ -88,7 +104,9 @@ class Tree(app_commands.CommandTree):
                 + " UTC"
             )
             try:
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(embed=embed, ephemeral=True)
 

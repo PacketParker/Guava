@@ -20,7 +20,10 @@ class Clear(commands.Cog):
         player.queue.clear()
         embed = discord.Embed(
             title="Queue Cleared",
-            description=f"The queue has been cleared of all songs!\n\nIssued by: {interaction.user.mention}",
+            description=(
+                "The queue has been cleared of all songs!\n\nIssued by:"
+                f" {interaction.user.mention}"
+            ),
             color=BOT_COLOR,
         )
         embed.set_footer(
