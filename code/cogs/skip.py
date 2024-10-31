@@ -46,7 +46,7 @@ class Skip(commands.Cog):
         except IndexError:
             # If the song is on repeat, catch the IndexError and get the current song
             # Otherwise, pass
-            if player.repeat:
+            if player.loop == 1:
                 embed = discord.Embed(
                     title="Song on Repeat",
                     description="There is nothing in queue, but the current song is on repeat. Use </stop:1224840890866991305> to stop playing music.",
