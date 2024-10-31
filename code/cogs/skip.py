@@ -44,7 +44,17 @@ class Skip(commands.Cog):
         try:
             next_song = player.queue[0]
         except IndexError:
-            pass
+            # If the song is on repeat, catch the IndexError and get the current song
+            # Otherwise, pass
+            if player.repeat:
+                embed = discord.Embed(
+                    title="Song on Repeat",
+                    description="There is nothing in queue, but the current song is on repeat. Use </stop:1224840890866991305> to stop playing music.",
+                    color=BOT_COLOR,
+                )
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            else:
+                pass
 
         # Sometimes when a playlist/album of custom source tracks are loaded, one is not able to be found
         # so, when a user attempts to skip to that track, we get a LoadError. In this case, just pass it.
