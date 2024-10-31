@@ -27,7 +27,8 @@ class BugReport(discord.ui.Modal, title="Report a bug"):
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            f"Thanks for your bug report. We will get back to you as soon as possible",
+            f"Thanks for your bug report. We will get back to you as soon as"
+            f" possible",
             ephemeral=True,
         )
         channel = self.bot.get_channel(BUG_CHANNEL_ID)

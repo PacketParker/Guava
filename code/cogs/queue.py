@@ -15,7 +15,9 @@ class Queue(commands.Cog):
 
     @app_commands.command()
     @app_commands.check(Music.create_player)
-    @app_commands.describe(page="Queue page number - leave blank if you are unsure")
+    @app_commands.describe(
+        page="Queue page number - leave blank if you are unsure"
+    )
     async def queue(self, interaction: discord.Interaction, page: int = 1):
         "See the current queue of songs"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
@@ -23,7 +25,10 @@ class Queue(commands.Cog):
         if not player.queue:
             embed = discord.Embed(
                 title="Nothing Queued",
-                description="Nothing is currently in the queue, add a song with the </play:1224840890368000172> command.",
+                description=(
+                    "Nothing is currently in the queue, add a song with the"
+                    " </play:1224840890368000172> command."
+                ),
                 color=BOT_COLOR,
             )
             embed.set_footer(
@@ -32,7 +37,9 @@ class Queue(commands.Cog):
                 )
                 + " UTC"
             )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
 
         items_per_page = 10
         pages = math.ceil(len(player.queue) / items_per_page)
@@ -48,11 +55,16 @@ class Queue(commands.Cog):
             if track_duration.split(":")[0] == "00":
                 track_duration = track_duration[3:]
 
-            queue_list += f"`{index+1}. ` [{track.title}]({track.uri}) - {track.author} `({track_duration})`\n"
+            queue_list += (
+                f"`{index+1}. ` [{track.title}]({track.uri}) -"
+                f" {track.author} `({track_duration})`\n"
+            )
 
         embed = discord.Embed(
             title=f"Queue for {interaction.guild.name}",
-            description=f"**{len(player.queue)} tracks total**\n\n{queue_list}",
+            description=(
+                f"**{len(player.queue)} tracks total**\n\n{queue_list}"
+            ),
             color=BOT_COLOR,
         )
         embed.set_footer(text=f"Viewing page {page}/{pages}")

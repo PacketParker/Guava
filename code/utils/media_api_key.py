@@ -19,11 +19,14 @@ def get_media_api_key():
     for js_file in js_files:
         response = requests.get(f"{url}/assets/{js_file}")
         # "(?<token>(ey[\w-]+)\.([\w-]+)\.([\w-]+))" - Credit to https://github.com/topi314/LavaSrc
-        match = re.search(r'"(?P<token>ey[\w-]+\.[\w-]+\.[\w-]+)"', response.text)
+        match = re.search(
+            r'"(?P<token>ey[\w-]+\.[\w-]+\.[\w-]+)"', response.text
+        )
         if match:
             return match.group(1)
 
     LOG.error(
-        "Failed to find media API key. Apple Music support will not work until a key is found or manually set."
+        "Failed to find media API key. Apple Music support will not work until"
+        " a key is found or manually set."
     )
     return None

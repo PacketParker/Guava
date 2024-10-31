@@ -12,7 +12,8 @@ from colorlog import ColoredFormatter
 
 log_level = logging.DEBUG
 log_format = (
-    "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
+    "  %(log_color)s%(levelname)-8s%(reset)s |"
+    " %(log_color)s%(message)s%(reset)s"
 )
 
 logging.root.setLevel(log_level)
@@ -138,7 +139,9 @@ lavalink:
 
         sys.exit(
             LOG.critical(
-                "Configuration file `config.yaml` has been generated. Please fill out all of the necessary information. Refer to the docs for information on what a specific configuration option is."
+                "Configuration file `config.yaml` has been generated. Please"
+                " fill out all of the necessary information. Refer to the docs"
+                " for information on what a specific configuration option is."
             )
         )
 
@@ -173,7 +176,9 @@ def validate_config(file_contents):
     if "bot_color" in config["bot_info"]:
         if not bool(
             re.match(hex_pattern_one, config["bot_info"]["bot_color"])
-        ) and not bool(re.match(hex_pattern_two, config["bot_info"]["bot_color"])):
+        ) and not bool(
+            re.match(hex_pattern_two, config["bot_info"]["bot_color"])
+        ):
             LOG.critical(
                 "Error in config.yaml file: bot_color is not a valid hex color"
             )
@@ -187,7 +192,8 @@ def validate_config(file_contents):
         if len(str(config["bot_info"]["feedback_channel_id"])) != 0:
             if len(str(config["bot_info"]["feedback_channel_id"])) != 19:
                 LOG.critical(
-                    "Error in config.yaml file: feedback_channel_id is not a valid Discord channel ID"
+                    "Error in config.yaml file: feedback_channel_id is not a"
+                    " valid Discord channel ID"
                 )
             else:
                 FEEDBACK_CHANNEL_ID = config["bot_info"]["feedback_channel_id"]
@@ -196,7 +202,8 @@ def validate_config(file_contents):
         if len(str(config["bot_info"]["bug_channel_id"])) != 0:
             if len(str(config["bot_info"]["bug_channel_id"])) != 19:
                 LOG.critical(
-                    "Error in config.yaml file: bug_channel_id is not a valid Discord channel ID"
+                    "Error in config.yaml file: bug_channel_id is not a valid"
+                    " Discord channel ID"
                 )
             else:
                 BUG_CHANNEL_ID = config["bot_info"]["bug_channel_id"]
@@ -223,7 +230,8 @@ def validate_config(file_contents):
             SPOTIFY_CLIENT_SECRET = config["spotify"]["spotify_client_secret"]
         else:
             LOG.critical(
-                "Error in config.yaml file: Spotify client ID or secret is invalid"
+                "Error in config.yaml file: Spotify client ID or secret is"
+                " invalid"
             )
 
     #
@@ -243,7 +251,8 @@ def validate_config(file_contents):
             GENIUS_CLIENT_SECRET = config["genius"]["genius_client_secret"]
         else:
             LOG.critical(
-                "Error in config.yaml file: Genius client ID or secret is invalid"
+                "Error in config.yaml file: Genius client ID or secret is"
+                " invalid"
             )
 
     #
@@ -256,7 +265,9 @@ def validate_config(file_contents):
             client.models.list()
             OPENAI_API_KEY = config["openai"]["openai_api_key"]
         except openai.AuthenticationError:
-            LOG.critical("Error in config.yaml file: OpenAI API key is invalid")
+            LOG.critical(
+                "Error in config.yaml file: OpenAI API key is invalid"
+            )
 
     # Set appropriate values for all non-optional variables
     TOKEN = config["bot_info"]["token"]

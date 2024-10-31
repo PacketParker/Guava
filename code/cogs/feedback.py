@@ -31,7 +31,8 @@ class FeedbackForm(discord.ui.Modal, title="Give feedback about the bot"):
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            f"Thank you for your feedback. We love hearing from users!", ephemeral=True
+            f"Thank you for your feedback. We love hearing from users!",
+            ephemeral=True,
         )
         channel = self.bot.get_channel(FEEDBACK_CHANNEL_ID)
 
@@ -40,8 +41,12 @@ class FeedbackForm(discord.ui.Modal, title="Give feedback about the bot"):
             description=f"Submitted by {self.name} (<@{interaction.user.id}>)",
             color=BOT_COLOR,
         )
-        embed.add_field(name="Positive:", value=f"{self.positive}", inline=False)
-        embed.add_field(name="Negative:", value=f"{self.negative}", inline=False)
+        embed.add_field(
+            name="Positive:", value=f"{self.positive}", inline=False
+        )
+        embed.add_field(
+            name="Negative:", value=f"{self.negative}", inline=False
+        )
 
         await channel.send(embed=embed)
 

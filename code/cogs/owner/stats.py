@@ -17,7 +17,8 @@ class Stats(commands.Cog):
         connection = sqlite3.connect("data/count.db")
         cursor = connection.cursor()
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS count (command_name, count, PRIMARY KEY (command_name))"
+            "CREATE TABLE IF NOT EXISTS count (command_name, count, PRIMARY"
+            " KEY (command_name))"
         )
         connection.commit()
         connection.close()
@@ -37,7 +38,8 @@ class Stats(commands.Cog):
                 )
             except sqlite3.IntegrityError:
                 cursor.execute(
-                    "UPDATE count SET count = count + ? WHERE command_name = ?",
+                    "UPDATE count SET count = count + ? WHERE"
+                    " command_name = ?",
                     (count, command_name),
                 )
 
@@ -65,16 +67,25 @@ class Stats(commands.Cog):
         ).fetchall()
 
         # Get the combined total amount of commands run
-        total_commands = cursor.execute("SELECT SUM(count) FROM count").fetchone()[0]
+        total_commands = cursor.execute(
+            "SELECT SUM(count) FROM count"
+        ).fetchone()[0]
 
         embed = discord.Embed(
             title="Statistics",
-            description=f"Total Guilds: `{len(self.bot.guilds):,}`\nTotal Commands: `{total_commands:,}`\n\nTotal Players: `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad: `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`",
+            description=(
+                f"Total Guilds: `{len(self.bot.guilds):,}`\nTotal Commands:"
+                f" `{total_commands:,}`\n\nTotal Players:"
+                f" `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad:"
+                f" `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`"
+            ),
             color=BOT_COLOR,
         )
 
         for entry in data:
-            embed.add_field(name=entry[0], value=f"` {entry[1]:,} `", inline=True)
+            embed.add_field(
+                name=entry[0], value=f"` {entry[1]:,} `", inline=True
+            )
 
         connection.close()
         await ctx.send(embed=embed)

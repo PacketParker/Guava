@@ -28,24 +28,42 @@ class MyBot(commands.Bot):
             bot.openai = openai.OpenAI(api_key=config.OPENAI_API_KEY)
 
         config.LOG.info("Loading cogs...")
-        config.LOG.info("YouTube support is enabled" if config.YOUTUBE_SUPPORT else "YouTube support is disabled")
+        config.LOG.info(
+            "YouTube support is enabled"
+            if config.YOUTUBE_SUPPORT
+            else "YouTube support is disabled"
+        )
         for ext in os.listdir("./code/cogs"):
             if ext.endswith(".py"):
                 # Load the OPTIONAL feedback cog
-                if ext[:-3] == "feedback" and config.FEEDBACK_CHANNEL_ID == None:
-                    config.LOG.info("Skipped loading feedback cog - channel ID not provided")
+                if (
+                    ext[:-3] == "feedback"
+                    and config.FEEDBACK_CHANNEL_ID == None
+                ):
+                    config.LOG.info(
+                        "Skipped loading feedback cog - channel ID not"
+                        " provided"
+                    )
                     continue
                 # Load the OPTIONAL bug cog
                 if ext[:-3] == "bug" and config.BUG_CHANNEL_ID == None:
-                    config.LOG.info("Skipped loading bug cog - channel ID not provided")
+                    config.LOG.info(
+                        "Skipped loading bug cog - channel ID not provided"
+                    )
                     continue
                 # Load the OPTIONAL lyrics cog
                 if ext[:-3] == "lyrics" and config.GENIUS_CLIENT_ID == None:
-                    config.LOG.info("Skipped loading lyrics cog - Genius API credentials not provided")
+                    config.LOG.info(
+                        "Skipped loading lyrics cog - Genius API credentials"
+                        " not provided"
+                    )
                     continue
                 # Load the OPTIONAL autoplay cog
                 if ext[:-3] == "autoplay" and config.OPENAI_API_KEY == None:
-                    config.LOG.info("Skipped loading autoplay cog - OpenAI API credentials not provided")
+                    config.LOG.info(
+                        "Skipped loading autoplay cog - OpenAI API credentials"
+                        " not provided"
+                    )
                     continue
 
                 await self.load_extension(f"cogs.{ext[:-3]}")
@@ -55,7 +73,10 @@ class MyBot(commands.Bot):
 
     async def on_ready(self):
         config.LOG.info(f"{bot.user} has connected to Discord.")
-        config.LOG.info(f"Startup complete. Sync slash commands by DMing the bot {bot.command_prefix}tree sync (guild id)")
+        config.LOG.info(
+            "Startup complete. Sync slash commands by DMing the bot"
+            f" {bot.command_prefix}tree sync (guild id)"
+        )
 
 
 bot = MyBot()

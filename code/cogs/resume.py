@@ -20,7 +20,10 @@ class Resume(commands.Cog):
         await player.set_pause(pause=False)
         embed = discord.Embed(
             title=f"Music Now Resumed ⏯️",
-            description=f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
+            description=(
+                f"**[{player.current.title}]({player.current.uri})**\n\nQueued"
+                f" by: {player.current.requester.mention}"
+            ),
             color=BOT_COLOR,
         )
         embed.set_thumbnail(url=player.current.artwork_url)

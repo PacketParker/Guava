@@ -1,7 +1,15 @@
-from lavalink import LoadResult, LoadType, Source, DeferredAudioTrack, PlaylistInfo
+from lavalink import (
+    LoadResult,
+    LoadType,
+    Source,
+    DeferredAudioTrack,
+    PlaylistInfo,
+)
 
 
-class LoadError(Exception):  # We'll raise this if we have trouble loading our track.
+class LoadError(
+    Exception
+):  # We'll raise this if we have trouble loading our track.
     pass
 
 
@@ -40,7 +48,9 @@ class CustomAudioTrack(DeferredAudioTrack):
                 ):
                     raise LoadError
 
-        first_track = results.tracks[0]  # Grab the first track from the results.
+        first_track = results.tracks[
+            0
+        ]  # Grab the first track from the results.
         base64 = first_track.track  # Extract the base64 string from the track.
         self.track = base64  # We'll store this for later, as it allows us to save making network requests
         # if this track is re-used (e.g. repeat).
@@ -76,7 +86,9 @@ class SpotifySource(Source):
             },
             requester=user,
         )
-        return LoadResult(LoadType.TRACK, [track], playlist_info=PlaylistInfo.none())
+        return LoadResult(
+            LoadType.TRACK, [track], playlist_info=PlaylistInfo.none()
+        )
 
     async def load_album(self, user, metadata):
         tracks = []
@@ -102,7 +114,9 @@ class SpotifySource(Source):
                 )
             )
 
-        return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
+        return LoadResult(
+            LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
+        )
 
     async def load_playlist(self, user, metadata):
         tracks = []
@@ -122,13 +136,17 @@ class SpotifySource(Source):
                         "title": track["track"]["name"],
                         "uri": track["track"]["external_urls"]["spotify"],
                         "duration": track["track"]["duration_ms"],
-                        "artworkUrl": track["track"]["album"]["images"][0]["url"],
+                        "artworkUrl": track["track"]["album"]["images"][0][
+                            "url"
+                        ],
                     },
                     requster=user,
                 )
             )
 
-        return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
+        return LoadResult(
+            LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
+        )
 
 
 """
@@ -146,18 +164,24 @@ class AppleSource(Source):
                 "identifier": metadata["data"][0]["id"],
                 "isSeekable": True,
                 "author": metadata["data"][0]["attributes"]["artistName"],
-                "length": metadata["data"][0]["attributes"]["durationInMillis"],
+                "length": metadata["data"][0]["attributes"][
+                    "durationInMillis"
+                ],
                 "isStream": False,
                 "title": metadata["data"][0]["attributes"]["name"],
                 "uri": metadata["data"][0]["attributes"]["url"],
-                "duration": metadata["data"][0]["attributes"]["durationInMillis"],
-                "artworkUrl": metadata["data"][0]["attributes"]["artwork"]["url"].replace(
-                    "{w}x{h}", "300x300"
-                ),
+                "duration": metadata["data"][0]["attributes"][
+                    "durationInMillis"
+                ],
+                "artworkUrl": metadata["data"][0]["attributes"]["artwork"][
+                    "url"
+                ].replace("{w}x{h}", "300x300"),
             },
             requester=user,
         )
-        return LoadResult(LoadType.TRACK, [track], playlist_info=PlaylistInfo.none())
+        return LoadResult(
+            LoadType.TRACK, [track], playlist_info=PlaylistInfo.none()
+        )
 
     async def load_album(self, user, metadata):
         tracks = []
@@ -175,19 +199,23 @@ class AppleSource(Source):
                         "title": track["attributes"]["name"],
                         "uri": track["attributes"]["url"],
                         "duration": track["attributes"]["durationInMillis"],
-                        "artworkUrl": track["attributes"]["artwork"]["url"].replace(
-                            "{w}x{h}", "300x300"
-                        ),
+                        "artworkUrl": track["attributes"]["artwork"][
+                            "url"
+                        ].replace("{w}x{h}", "300x300"),
                     },
                     requster=user,
                 )
             )
 
-        return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
+        return LoadResult(
+            LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
+        )
 
     async def load_playlist(self, user, metadata):
         tracks = []
-        for track in metadata["data"]:  # Loop through each track in the playlist.
+        for track in metadata[
+            "data"
+        ]:  # Loop through each track in the playlist.
             tracks.append(
                 CustomAudioTrack(
                     {  # Create an instance of our CustomAudioTrack.
@@ -199,12 +227,14 @@ class AppleSource(Source):
                         "title": track["attributes"]["name"],
                         "uri": track["attributes"]["url"],
                         "duration": track["attributes"]["durationInMillis"],
-                        "artworkUrl": track["attributes"]["artwork"]["url"].replace(
-                            "{w}x{h}", "300x300"
-                        ),
+                        "artworkUrl": track["attributes"]["artwork"][
+                            "url"
+                        ].replace("{w}x{h}", "300x300"),
                     },
                     requster=user,
                 )
             )
 
-        return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
+        return LoadResult(
+            LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
+        )

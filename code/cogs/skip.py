@@ -15,7 +15,9 @@ class Skip(commands.Cog):
 
     @app_commands.command()
     @app_commands.check(Music.create_player)
-    @app_commands.describe(number="Optional: Number of songs to skip, default is 1")
+    @app_commands.describe(
+        number="Optional: Number of songs to skip, default is 1"
+    )
     async def skip(self, interaction: discord.Interaction, number: int = 1):
         "Skips the song that is currently playing"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
@@ -32,7 +34,11 @@ class Skip(commands.Cog):
 
             elif number > len(player.queue):
                 embed.title = "Number too Large"
-                embed.description = "The number you entered is larger than the number of songs in queue. If you want to stop playing music entirely, try the </stop:1224840890866991305> command."
+                embed.description = (
+                    "The number you entered is larger than the number of songs"
+                    " in queue. If you want to stop playing music entirely,"
+                    " try the </stop:1224840890866991305> command."
+                )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
@@ -49,10 +55,16 @@ class Skip(commands.Cog):
             if player.loop == 1:
                 embed = discord.Embed(
                     title="Song on Repeat",
-                    description="There is nothing in queue, but the current song is on repeat. Use </stop:1224840890866991305> to stop playing music.",
+                    description=(
+                        "There is nothing in queue, but the current song is on"
+                        " repeat. Use </stop:1224840890866991305> to stop"
+                        " playing music."
+                    ),
                     color=BOT_COLOR,
                 )
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                return await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
             else:
                 pass
 
@@ -67,7 +79,10 @@ class Skip(commands.Cog):
         if not player.current:
             embed = discord.Embed(
                 title="End of Queue",
-                description=f"All songs in queue have been played. Thank you for using me :wave:\n\nIssued by: {interaction.user.mention}",
+                description=(
+                    "All songs in queue have been played. Thank you for using"
+                    f" me :wave:\n\nIssued by: {interaction.user.mention}"
+                ),
                 color=BOT_COLOR,
             )
             return await interaction.response.send_message(embed=embed)
@@ -77,7 +92,11 @@ class Skip(commands.Cog):
         await asyncio.sleep(0.5)
         embed = discord.Embed(
             title="Track Skipped",
-            description=f"**Now Playing: [{next_song.title}]({next_song.uri})** by {next_song.author}\n\nQueued by: {next_song.requester.mention}",
+            description=(
+                f"**Now Playing: [{next_song.title}]({next_song.uri})** by"
+                f" {next_song.author}\n\nQueued by:"
+                f" {next_song.requester.mention}"
+            ),
             color=BOT_COLOR,
         )
         embed.set_thumbnail(url=next_song.artwork_url)

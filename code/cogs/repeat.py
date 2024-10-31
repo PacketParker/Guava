@@ -29,7 +29,9 @@ class Repeat(commands.GroupCog, name="repeat"):
                 )
                 + " UTC"
             )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
 
         player.loop = 0
 
@@ -64,13 +66,18 @@ class Repeat(commands.GroupCog, name="repeat"):
                 )
                 + " UTC"
             )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
 
         player.loop = 1
 
         embed = discord.Embed(
             title=f"Repeating Current Song 🔁",
-            description=f"The song that is currently playing will be repeated until the </repeat off:1224840891395608737> command is run",
+            description=(
+                f"The song that is currently playing will be repeated until"
+                f" the </repeat off:1224840891395608737> command is run"
+            ),
             color=BOT_COLOR,
         )
         embed.set_footer(
@@ -99,13 +106,18 @@ class Repeat(commands.GroupCog, name="repeat"):
                 )
                 + " UTC"
             )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
 
         player.loop = 2
 
         embed = discord.Embed(
             title=f"Repeating Current Song 🔂",
-            description=f"All songs in the queue will continue to repeat until the </repeat off:1224840891395608737> command is run.",
+            description=(
+                f"All songs in the queue will continue to repeat until the"
+                f" </repeat off:1224840891395608737> command is run."
+            ),
             color=BOT_COLOR,
         )
         embed.set_footer(

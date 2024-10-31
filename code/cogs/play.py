@@ -30,10 +30,18 @@ class Play(commands.Cog):
             if not YOUTUBE_SUPPORT:
                 embed = discord.Embed(
                     title="YouTube Not Supported",
-                    description="Unfortunately, YouTube does not allow bots to stream from their platform. Try sending a link for a different platform, or simply type the name of the song and I will automatically find it on a supported platform.",
+                    description=(
+                        "Unfortunately, YouTube does not allow bots to stream"
+                        " from their platform. Try sending a link for a"
+                        " different platform, or simply type the name of the"
+                        " song and I will automatically find it on a supported"
+                        " platform."
+                    ),
                     color=BOT_COLOR,
                 )
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                return await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
 
         ###
         ### APPLE MUSIC links, perform API requests and load all tracks from the playlist/album/track
@@ -43,10 +51,17 @@ class Play(commands.Cog):
             if not self.bot.apple_headers:
                 embed = discord.Embed(
                     title="Apple Music Error",
-                    description="Apple Music support seems to be broken at the moment. Please try again and fill out a bug report with </bug:1224840889906499626> if this continues to happen.",
+                    description=(
+                        "Apple Music support seems to be broken at the moment."
+                        " Please try again and fill out a bug report with"
+                        " </bug:1224840889906499626> if this continues to"
+                        " happen."
+                    ),
                     color=BOT_COLOR,
                 )
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                return await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
 
             embed = discord.Embed(color=BOT_COLOR)
 
@@ -54,32 +69,44 @@ class Play(commands.Cog):
                 playlist_id = query.split("/playlist/")[1].split("/")[1]
                 # Get all of the tracks in the playlist (limit at 250)
                 playlist_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}/tracks?limit=100"
-                response = requests.get(playlist_url, headers=self.bot.apple_headers)
+                response = requests.get(
+                    playlist_url, headers=self.bot.apple_headers
+                )
                 if response.status_code == 200:
                     playlist = response.json()
                     # Get the general playlist info (name, artwork)
                     playlist_info_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}"
-                    playlist_info = requests.get(playlist_info_url, headers=self.bot.apple_headers)
+                    playlist_info = requests.get(
+                        playlist_info_url, headers=self.bot.apple_headers
+                    )
                     playlist_info = playlist_info.json()
                     try:
-                        artwork_url = playlist_info["data"][0]["attributes"]["artwork"]["url"].replace(
-                            "{w}x{h}", "300x300"
-                        )
+                        artwork_url = playlist_info["data"][0]["attributes"][
+                            "artwork"
+                        ]["url"].replace("{w}x{h}", "300x300")
                     except KeyError:
                         artwork_url = None
 
                     embed.title = "Playlist Queued"
-                    embed.description = f"**{playlist_info['data'][0]['attributes']['name']}**\n` {len(playlist['data'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                    embed.description = (
+                        f"**{playlist_info['data'][0]['attributes']['name']}**\n`"
+                        f" {len(playlist['data'])} ` tracks\n\nQueued by:"
+                        f" {interaction.user.mention}"
+                    )
                     embed.set_thumbnail(url=artwork_url)
                     embed.set_footer(
-                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
+                        text=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime("%Y-%m-%d %H:%M:%S")
                         + " UTC"
                     )
                     # Add small alert if the playlist is the max size
                     if len(playlist["data"]) == 100:
-                        embed.description += "\n\n*This playlist is longer than the 100 song maximum. Only the first 100 songs will be queued.*"
+                        embed.description += (
+                            "\n\n*This playlist is longer than the 100 song"
+                            " maximum. Only the first 100 songs will be"
+                            " queued.*"
+                        )
 
                     await interaction.response.send_message(embed=embed)
 
@@ -93,26 +120,35 @@ class Play(commands.Cog):
             if "/album/" in query and "?i=" not in query:
                 album_id = query.split("/album/")[1].split("/")[1]
                 album_url = f"https://api.music.apple.com/v1/catalog/us/albums/{album_id}"
-                response = requests.get(album_url, headers=self.bot.apple_headers)
+                response = requests.get(
+                    album_url, headers=self.bot.apple_headers
+                )
                 if response.status_code == 200:
                     album = response.json()
 
                     embed.title = "Album Queued"
-                    embed.description = f"**{album['data'][0]['attributes']['name']}** by **{album['data'][0]['attributes']['artistName']}**\n` {len(album['data'][0]['relationships']['tracks']['data'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                    embed.description = (
+                        f"**{album['data'][0]['attributes']['name']}** by"
+                        f" **{album['data'][0]['attributes']['artistName']}**\n`"
+                        f" {len(album['data'][0]['relationships']['tracks']['data'])} `"
+                        f" tracks\n\nQueued by: {interaction.user.mention}"
+                    )
                     embed.set_thumbnail(
-                        url=album["data"][0]["attributes"]["artwork"]["url"].replace(
-                            "{w}x{h}", "300x300"
-                        )
+                        url=album["data"][0]["attributes"]["artwork"][
+                            "url"
+                        ].replace("{w}x{h}", "300x300")
                     )
                     embed.set_footer(
-                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
+                        text=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime("%Y-%m-%d %H:%M:%S")
                         + " UTC"
                     )
                     await interaction.response.send_message(embed=embed)
 
-                    tracks = await AppleSource.load_album(self, interaction.user, album)
+                    tracks = await AppleSource.load_album(
+                        self, interaction.user, album
+                    )
                     for track in tracks["tracks"]:
                         player.add(requester=interaction.user, track=track)
 
@@ -120,27 +156,37 @@ class Play(commands.Cog):
             if "/album/" in query and "?i=" in query:
                 song_id = query.split("/album/")[1].split("?i=")[1]
                 song_url = f"https://api.music.apple.com/v1/catalog/us/songs/{song_id}"
-                response = requests.get(song_url, headers=self.bot.apple_headers)
+                response = requests.get(
+                    song_url, headers=self.bot.apple_headers
+                )
                 if response.status_code == 200:
                     song = response.json()
 
                     embed.title = "Song Queued"
-                    embed.description = f"**{song['data'][0]['attributes']['name']}** by **{song['data'][0]['attributes']['artistName']}**\n\nQueued by: {interaction.user.mention}"
+                    embed.description = (
+                        f"**{song['data'][0]['attributes']['name']}** by"
+                        f" **{song['data'][0]['attributes']['artistName']}**\n\nQueued"
+                        f" by: {interaction.user.mention}"
+                    )
                     embed.set_thumbnail(
-                        url=song["data"][0]["attributes"]["artwork"]["url"].replace(
-                            "{w}x{h}", "300x300"
-                        )
+                        url=song["data"][0]["attributes"]["artwork"][
+                            "url"
+                        ].replace("{w}x{h}", "300x300")
                     )
                     embed.set_footer(
-                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
+                        text=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime("%Y-%m-%d %H:%M:%S")
                         + " UTC"
                     )
                     await interaction.response.send_message(embed=embed)
 
-                    results = await AppleSource.load_item(self, interaction.user, song)
-                    player.add(requester=interaction.user, track=results.tracks[0])
+                    results = await AppleSource.load_item(
+                        self, interaction.user, song
+                    )
+                    player.add(
+                        requester=interaction.user, track=results.tracks[0]
+                    )
 
         ###
         ### SPOTIFY links, perform API requests and load all tracks from the playlist/album/track
@@ -150,27 +196,43 @@ class Play(commands.Cog):
             if not self.bot.spotify_headers:
                 embed = discord.Embed(
                     title="Spotify Error",
-                    description="Spotify support seems to be broken at the moment. Please try again and fill out a bug report with </bug:1224840889906499626> if this continues to happen.",
+                    description=(
+                        "Spotify support seems to be broken at the moment."
+                        " Please try again and fill out a bug report with"
+                        " </bug:1224840889906499626> if this continues to"
+                        " happen."
+                    ),
                     color=BOT_COLOR,
                 )
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                return await interaction.response.send_message(
+                    embed=embed, ephemeral=True
+                )
 
             embed = discord.Embed(color=BOT_COLOR)
 
             if "open.spotify.com/playlist" in query:
                 playlist_id = query.split("playlist/")[1].split("?si=")[0]
-                playlist_url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
-                response = requests.get(playlist_url, headers=self.bot.spotify_headers)
+                playlist_url = (
+                    f"https://api.spotify.com/v1/playlists/{playlist_id}"
+                )
+                response = requests.get(
+                    playlist_url, headers=self.bot.spotify_headers
+                )
                 if response.status_code == 200:
                     playlist = response.json()
 
                     embed.title = "Playlist Queued"
-                    embed.description = f"**{playlist['name']}** from **{playlist['owner']['display_name']}**\n` {len(playlist['tracks']['items'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                    embed.description = (
+                        f"**{playlist['name']}** from"
+                        f" **{playlist['owner']['display_name']}**\n`"
+                        f" {len(playlist['tracks']['items'])} `"
+                        f" tracks\n\nQueued by: {interaction.user.mention}"
+                    )
                     embed.set_thumbnail(url=playlist["images"][0]["url"])
                     embed.set_footer(
-                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
+                        text=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime("%Y-%m-%d %H:%M:%S")
                         + " UTC"
                     )
                     await interaction.response.send_message(embed=embed)
@@ -184,17 +246,24 @@ class Play(commands.Cog):
             if "open.spotify.com/album" in query:
                 album_id = query.split("album/")[1]
                 album_url = f"https://api.spotify.com/v1/albums/{album_id}"
-                response = requests.get(album_url, headers=self.bot.spotify_headers)
+                response = requests.get(
+                    album_url, headers=self.bot.spotify_headers
+                )
                 if response.status_code == 200:
                     album = response.json()
 
                     embed.title = "Album Queued"
-                    embed.description = f"**{album['name']}** by **{album['artists'][0]['name']}**\n` {len(album['tracks']['items'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                    embed.description = (
+                        f"**{album['name']}** by"
+                        f" **{album['artists'][0]['name']}**\n`"
+                        f" {len(album['tracks']['items'])} ` tracks\n\nQueued"
+                        f" by: {interaction.user.mention}"
+                    )
                     embed.set_thumbnail(url=album["images"][0]["url"])
                     embed.set_footer(
-                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
+                        text=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime("%Y-%m-%d %H:%M:%S")
                         + " UTC"
                     )
                     await interaction.response.send_message(embed=embed)
@@ -208,17 +277,23 @@ class Play(commands.Cog):
             if "open.spotify.com/track" in query:
                 track_id = query.split("track/")[1]
                 track_url = f"https://api.spotify.com/v1/tracks/{track_id}"
-                response = requests.get(track_url, headers=self.bot.spotify_headers)
+                response = requests.get(
+                    track_url, headers=self.bot.spotify_headers
+                )
                 if response.status_code == 200:
                     track = response.json()
 
                     embed.title = "Track Queued"
-                    embed.description = f"**{track['name']}** by **{track['artists'][0]['name']}**\n\nQueued by: {interaction.user.mention}"
+                    embed.description = (
+                        f"**{track['name']}** by"
+                        f" **{track['artists'][0]['name']}**\n\nQueued by:"
+                        f" {interaction.user.mention}"
+                    )
                     embed.set_thumbnail(url=track["album"]["images"][0]["url"])
                     embed.set_footer(
-                        text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        )
+                        text=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime("%Y-%m-%d %H:%M:%S")
                         + " UTC"
                     )
                     await interaction.response.send_message(embed=embed)
@@ -226,11 +301,16 @@ class Play(commands.Cog):
                     results = await SpotifySource.load_item(
                         self, interaction.user, track
                     )
-                    player.add(requester=interaction.user, track=results.tracks[0])
+                    player.add(
+                        requester=interaction.user, track=results.tracks[0]
+                    )
 
             if "open.spotify.com/artists" in query:
                 embed.title = "Artists Cannot Be Played"
-                embed.description = "I cannot play just artists, you must provide a song/album/playlist. Please try again."
+                embed.description = (
+                    "I cannot play just artists, you must provide a"
+                    " song/album/playlist. Please try again."
+                )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
@@ -267,7 +347,11 @@ class Play(commands.Cog):
                 LoadType.ERROR,
             ):
                 embed.title = "Nothing Found"
-                embed.description = "Nothing for that query could be found. If this continues happening for other songs, please run </bug:1224840889906499626> to let the developer know."
+                embed.description = (
+                    "Nothing for that query could be found. If this continues"
+                    " happening for other songs, please run"
+                    " </bug:1224840889906499626> to let the developer know."
+                )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
@@ -279,7 +363,10 @@ class Play(commands.Cog):
                     player.add(requester=interaction.user, track=track)
 
                 embed.title = "Songs Queued!"
-                embed.description = f"**{results.playlist_info.name}**\n` {len(tracks)} ` tracks\n\nQueued by: {interaction.user.mention}"
+                embed.description = (
+                    f"**{results.playlist_info.name}**\n` {len(tracks)} `"
+                    f" tracks\n\nQueued by: {interaction.user.mention}"
+                )
                 embed.set_footer(
                     text=datetime.datetime.now(datetime.timezone.utc).strftime(
                         "%Y-%m-%d %H:%M:%S"
@@ -293,7 +380,10 @@ class Play(commands.Cog):
                 player.add(requester=interaction.user, track=track)
 
                 embed.title = "Track Queued"
-                embed.description = f"**{track.title}** by **{track.author}**\n\nQueued by: {interaction.user.mention}"
+                embed.description = (
+                    f"**{track.title}** by **{track.author}**\n\nQueued by:"
+                    f" {interaction.user.mention}"
+                )
                 embed.set_thumbnail(url=track.artwork_url)
                 embed.set_footer(
                     text=datetime.datetime.now(datetime.timezone.utc).strftime(
