@@ -74,9 +74,10 @@ class Stats(commands.Cog):
         embed = discord.Embed(
             title="Statistics",
             description=(
-                f"Total Guilds: `{len(self.bot.guilds):,}`\nTotal Commands:"
-                f" `{total_commands:,}`\n\nTotal Players:"
-                f" `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad:"
+                f"Total Guilds: `{len(self.bot.guilds):,}`\n"
+                f"Total Commands: `{total_commands:,}`\n\n"
+                f"Total Players: `{len(self.bot.lavalink.get_players())}`\n"
+                "Load:"
                 f" `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`"
             ),
             color=BOT_COLOR,
