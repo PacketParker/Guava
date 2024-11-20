@@ -2,6 +2,7 @@ from discord.ext import commands, tasks
 import sqlite3
 import discord
 import os
+import lavalink
 
 from utils.config import BOT_COLOR, LOG
 
@@ -80,12 +81,23 @@ class Stats(commands.Cog):
             description=(
                 f"Total Guilds: `{len(self.bot.guilds):,}`\n"
                 f"Total Commands: `{total_commands:,}`\n\n"
-                f"Total Players: `{len(self.bot.lavalink.get_players())}`\n"
-                "Load:"
-                f" `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`"
             ),
             color=BOT_COLOR,
         )
+
+        # Determine the content of the Lavalink description
+        if self.bot.lavalink:
+            embed.description += (
+                "Total Players:"
+                f" `{len(self.bot.lavalink.get_players())}`\n"
+                "Load:"
+                f" `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`"
+            )
+        else:
+            embed.description += (
+                "Total Players: `NO LAVALINK CONNECTION`\n"
+                "Load: `NO LAVALINK CONNECTION`"
+            )
 
         for entry in data:
             embed.add_field(
