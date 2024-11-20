@@ -3,7 +3,7 @@ import sqlite3
 import discord
 import os
 
-from utils.config import BOT_COLOR
+from utils.config import BOT_COLOR, LOG
 
 
 class Stats(commands.Cog):
@@ -15,6 +15,12 @@ class Stats(commands.Cog):
             os.makedirs("data")
 
         connection = sqlite3.connect("data/count.db")
+        if not connection:
+            LOG.error(
+                "Could not create connection to database. Likely permissions"
+                " issue."
+            )
+
         cursor = connection.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS count (command_name, count, PRIMARY"
@@ -28,6 +34,9 @@ class Stats(commands.Cog):
     @tasks.loop(seconds=30)
     async def dump_count(self):
         connection = sqlite3.connect("data/count.db")
+        if not connection:
+            LOG.warning("No database connection. Skipping dump.")
+
         cursor = connection.cursor()
 
         for command_name, count in self.bot.temp_command_count.items():
