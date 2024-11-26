@@ -29,7 +29,7 @@ class MyBot(commands.Bot):
 
         config.LOG.info("Loading cogs...")
         config.LOG.info(
-            "YouTube support is enabled"
+            "YouTube support is enabled, make sure to set a poToken"
             if config.YOUTUBE_SUPPORT
             else "YouTube support is disabled"
         )
