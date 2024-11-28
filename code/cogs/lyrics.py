@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Lyrics(commands.Cog):
@@ -19,19 +19,12 @@ class Lyrics(commands.Cog):
 
         # If the Genius API client is not setup, send an error message
         if not self.bot.genius:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Lyrics Feature Error",
                 description=(
                     "The lyrics feature is currently disabled due to errors"
                     " with the Genius API."
                 ),
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
@@ -48,20 +41,13 @@ class Lyrics(commands.Cog):
 
         # If no lyrics are found, send an error message
         if song is None:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Lyrics Not Found",
                 description=(
                     "Unfortunately, I wasn't able to find any lyrics for the"
                     " song that is currently playing."
                 ),
-                color=BOT_COLOR,
-            )
-            embed.set_thumbnail(url=player.current.artwork_url)
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
+                thumbnail=player.current.artwork_url,
             )
             return await interaction.edit_original_response(embed=embed)
 
@@ -73,7 +59,7 @@ class Lyrics(commands.Cog):
 
         # If the lyrics are too long, send just a link to the lyrics
         if len(lyrics) > 2048:
-            embed = discord.Embed(
+            embed = create_embed(
                 title=(
                     f"Lyrics for {player.current.title} by"
                     f" {player.current.author}"
@@ -82,31 +68,17 @@ class Lyrics(commands.Cog):
                     "Song lyrics are too long to display on Discord. [Click"
                     f" here to view the lyrics on Genius]({song.url})."
                 ),
-                color=BOT_COLOR,
-            )
-            embed.set_thumbnail(url=player.current.artwork_url)
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
+                thumbnail=player.current.artwork_url,
             )
             return await interaction.edit_original_response(embed=embed)
 
         # If everything is successful, send the lyrics
-        embed = discord.Embed(
+        embed = create_embed(
             title=(
                 f"Lyrics for {player.current.title} by {player.current.author}"
             ),
             description=f"Provided from [Genius]({song.url})\n\n" + lyrics,
-            color=BOT_COLOR,
-        )
-        embed.set_thumbnail(url=player.current.artwork_url)
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+            thumbnail=player.current.artwork_url,
         )
         await interaction.edit_original_response(embed=embed)
 

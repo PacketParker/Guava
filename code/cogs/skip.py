@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.music import Music
 import asyncio
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 from utils.custom_sources import LoadError
 
 
@@ -22,22 +22,25 @@ class Skip(commands.Cog):
         "Skips the song that is currently playing"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        embed = discord.Embed(color=BOT_COLOR)
-
         if number != 1:
             if number < 1:
-                embed.title = "Invalid Number"
-                embed.description = "The number option cannot be less than 1"
+                embed = create_embed(
+                    title="Invalid Number",
+                    description="The number option cannot be less than 1",
+                )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
 
             elif number > len(player.queue):
-                embed.title = "Number too Large"
-                embed.description = (
-                    "The number you entered is larger than the number of songs"
-                    " in queue. If you want to stop playing music entirely,"
-                    " try the </stop:1224840890866991305> command."
+                embed = create_embed(
+                    title="Number too Large",
+                    description=(
+                        "The number you entered is larger than the number of"
+                        " songs in queue. If you want to stop playing music"
+                        " entirely, try the </stop:1224840890866991305>"
+                        " command."
+                    ),
                 )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
@@ -53,14 +56,13 @@ class Skip(commands.Cog):
             # If the song is on repeat, catch the IndexError and get the current song
             # Otherwise, pass
             if player.loop == 1:
-                embed = discord.Embed(
+                embed = create_embed(
                     title="Song on Repeat",
                     description=(
                         "There is nothing in queue, but the current song is on"
                         " repeat. Use </stop:1224840890866991305> to stop"
                         " playing music."
                     ),
-                    color=BOT_COLOR,
                 )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
@@ -77,34 +79,26 @@ class Skip(commands.Cog):
             await player.skip()
 
         if not player.current:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="End of Queue",
                 description=(
                     "All songs in queue have been played. Thank you for using"
                     f" me :wave:\n\nIssued by: {interaction.user.mention}"
                 ),
-                color=BOT_COLOR,
             )
             return await interaction.response.send_message(embed=embed)
 
         # It takes a sec for the new track to be grabbed and played
         # So just wait a sec before sending the message
         await asyncio.sleep(0.5)
-        embed = discord.Embed(
+        embed = create_embed(
             title="Track Skipped",
             description=(
                 f"**Now Playing: [{next_song.title}]({next_song.uri})** by"
                 f" {next_song.author}\n\nQueued by:"
                 f" {next_song.requester.mention}"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_thumbnail(url=next_song.artwork_url)
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+            thumbnail=next_song.artwork_url,
         )
         await interaction.response.send_message(embed=embed)
 

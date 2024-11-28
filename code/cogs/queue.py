@@ -6,7 +6,7 @@ from cogs.music import Music
 import math
 import lavalink
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Queue(commands.Cog):
@@ -23,19 +23,12 @@ class Queue(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.queue:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Nothing Queued",
                 description=(
                     "Nothing is currently in the queue, add a song with the"
                     " </play:1224840890368000172> command."
                 ),
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
@@ -60,14 +53,13 @@ class Queue(commands.Cog):
                 f" {track.author} `({track_duration})`\n"
             )
 
-        embed = discord.Embed(
+        embed = create_embed(
             title=f"Queue for {interaction.guild.name}",
             description=(
                 f"**{len(player.queue)} tracks total**\n\n{queue_list}"
             ),
-            color=BOT_COLOR,
+            footer=f"Viewing page {page}/{pages}",
         )
-        embed.set_footer(text=f"Viewing page {page}/{pages}")
         await interaction.response.send_message(embed=embed)
 
 

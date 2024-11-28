@@ -8,6 +8,7 @@ import sys
 import discord
 import logging
 import requests
+from datetime import datetime
 from colorlog import ColoredFormatter
 
 log_level = logging.DEBUG
@@ -274,3 +275,30 @@ def validate_config(file_contents):
     LAVALINK_HOST = config["lavalink"]["host"]
     LAVALINK_PORT = config["lavalink"]["port"]
     LAVALINK_PASSWORD = config["lavalink"]["password"]
+
+
+"""
+Template for embeds
+"""
+
+
+def create_embed(
+    title: str, description: str, color=None, footer=None, thumbnail=None
+):
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color if color else BOT_COLOR,
+    )
+
+    if footer:
+        embed.set_footer(text=footer)
+    else:
+        embed.set_footer(
+            text=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") + " UTC"
+        )
+
+    if thumbnail:
+        embed.set_thumbnail(url=thumbnail)
+
+    return embed

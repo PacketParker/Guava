@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Pause(commands.Cog):
@@ -18,20 +18,13 @@ class Pause(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         await player.set_pause(pause=True)
-        embed = discord.Embed(
+        embed = create_embed(
             title=f"Music Now Paused ⏸️",
             description=(
                 f"**[{player.current.title}]({player.current.uri})**\n\nQueued"
                 f" by: {player.current.requester.mention}"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_thumbnail(url=player.current.artwork_url)
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+            thumbnail=player.current.artwork_url,
         )
         await interaction.response.send_message(embed=embed)
 

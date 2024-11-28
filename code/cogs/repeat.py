@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Repeat(commands.GroupCog, name="repeat"):
@@ -18,16 +18,9 @@ class Repeat(commands.GroupCog, name="repeat"):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         if player.loop == 0:
-            embed = discord.Embed(
-                title=f"Repeating Already Off",
-                description=f"Music repetition is already turned off.",
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
+            embed = create_embed(
+                title="Repeating Already Off",
+                description="Music repetition is already turned off.",
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
@@ -35,16 +28,9 @@ class Repeat(commands.GroupCog, name="repeat"):
 
         player.loop = 0
 
-        embed = discord.Embed(
-            title=f"Repeating Off",
-            description=f"Music will no longer be repeated.",
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+        embed = create_embed(
+            title="Repeating Off",
+            description="Music will no longer be repeated.",
         )
         await interaction.response.send_message(embed=embed)
 
@@ -55,36 +41,21 @@ class Repeat(commands.GroupCog, name="repeat"):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         if player.loop == 1:
-            embed = discord.Embed(
-                title=f"Repeating Already On",
-                description=f"The current song is already being repeated.",
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
+            embed = create_embed(
+                title="Repeating Already On",
+                description="The current song is already being repeated.",
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
             )
 
         player.loop = 1
-
-        embed = discord.Embed(
-            title=f"Repeating Current Song 🔁",
+        embed = create_embed(
+            title="Repeating Current Song 🔁",
             description=(
-                f"The song that is currently playing will be repeated until"
-                f" the </repeat off:1224840891395608737> command is run"
+                "The song that is currently playing will be repeated until"
+                " the </repeat off:1224840891395608737> command is run"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
         )
         await interaction.response.send_message(embed=embed)
 
@@ -95,36 +66,21 @@ class Repeat(commands.GroupCog, name="repeat"):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         if player.loop == 2:
-            embed = discord.Embed(
-                title=f"Repeating Already On",
-                description=f"The queue is already being repeated.",
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
+            embed = create_embed(
+                title="Repeating Already On",
+                description="The queue is already being repeated.",
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
             )
 
         player.loop = 2
-
-        embed = discord.Embed(
-            title=f"Repeating Current Song 🔂",
+        embed = create_embed(
+            title="Repeating Queue 🔂",
             description=(
-                f"All songs in the queue will continue to repeat until the"
-                f" </repeat off:1224840891395608737> command is run."
+                "The queue will continuously repeat until the"
+                " </repeat off:1224840891395608737> command is run."
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
         )
         await interaction.response.send_message(embed=embed)
 

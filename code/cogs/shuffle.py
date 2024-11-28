@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Shuffle(commands.GroupCog, name="shuffle"):
@@ -19,16 +19,9 @@ class Shuffle(commands.GroupCog, name="shuffle"):
 
         player.shuffle = True
 
-        embed = discord.Embed(
-            title=f"Shuffle Enabled 🔀",
-            description=f"All music will now be shuffled.",
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+        embed = create_embed(
+            title="Shuffle Enabled 🔀",
+            description="All music will now be shuffled.",
         )
         await interaction.response.send_message(embed=embed)
 
@@ -40,16 +33,9 @@ class Shuffle(commands.GroupCog, name="shuffle"):
 
         player.shuffle = False
 
-        embed = discord.Embed(
-            title=f"Disabled 🔀",
-            description=f"Music will no longer be shuffled.",
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+        embed = create_embed(
+            title="Shuffle Disabled 🔀",
+            description="Music will no longer be shuffled.",
         )
         await interaction.response.send_message(embed=embed)
 

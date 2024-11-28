@@ -1,10 +1,9 @@
-import datetime
 import discord
 import requests
 from typing import Tuple, Optional
 from requests.exceptions import JSONDecodeError
 
-from utils.config import BOT_COLOR, LOG
+from utils.config import create_embed, LOG
 
 
 async def load(
@@ -25,13 +24,12 @@ async def load(
         )
 
         if response.status_code == 404:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Song Not Found",
                 description=(
                     "The song could not be found as the provided link is"
                     " invalid. Please try again."
                 ),
-                color=BOT_COLOR,
             )
             return None, embed
 
@@ -61,14 +59,10 @@ async def load(
     if artwork_url:
         artwork_url = artwork_url.replace("{w}x{h}", "300x300")
 
-    embed = discord.Embed(
+    embed = create_embed(
         title="Song Queued",
-        description=f"**{name}** by **{artist}**\n\nQueued by: {user.mention}",
-        color=BOT_COLOR,
-    )
-    embed.set_thumbnail(url=artwork_url)
-    embed.set_footer(
-        text=datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") + " UTC"
+        description=f"**{name}** by **{artist}**\n\nQueued by {user.mention}",
+        thumbnail=artwork_url,
     )
 
     return song, embed

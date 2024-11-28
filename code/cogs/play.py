@@ -6,7 +6,7 @@ from lavalink import LoadType
 import re
 
 from cogs.music import Music, LavalinkVoiceClient
-from utils.config import BOT_COLOR, YOUTUBE_SUPPORT
+from utils.config import YOUTUBE_SUPPORT, create_embed
 from utils.custom_sources import (
     LoadError,
     CustomAudioTrack,
@@ -31,7 +31,7 @@ class Play(commands.Cog):
         # Notify users that YouTube links are not allowed if YouTube support is disabled
         if "youtube.com" in query or "youtu.be" in query:
             if not YOUTUBE_SUPPORT:
-                embed = discord.Embed(
+                embed = create_embed(
                     title="YouTube Not Supported",
                     description=(
                         "Unfortunately, YouTube does not allow bots to stream"
@@ -40,7 +40,6 @@ class Play(commands.Cog):
                         " song and I will automatically find it on a supported"
                         " platform."
                     ),
-                    color=BOT_COLOR,
                 )
                 return await interaction.response.send_message(
                     embed=embed, ephemeral=True
@@ -91,54 +90,39 @@ class Play(commands.Cog):
 
             # Create the embed if the results are a playlist
             if results.load_type == LoadType.PLAYLIST:
-                embed = discord.Embed(
+                embed = create_embed(
                     title="Songs Queued!",
                     description=(
                         f"**{results.playlist_info.name}**\n"
                         f"` {len(results.tracks)} ` tracks\n\n"
                         f"Queued by: {interaction.user.mention}"
                     ),
-                    color=BOT_COLOR,
-                )
-                embed.set_footer(
-                    text=datetime.datetime.utcnow().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
-                    + " UTC"
                 )
                 await interaction.response.send_message(embed=embed)
             # Otherwise, the result is just a single track, create that embed
             else:
                 # Remove all but first track (most relevant result)
                 results.tracks = results.tracks[:1]
-                embed = discord.Embed(
+                embed = create_embed(
                     title="Song Queued!",
                     description=(
                         f"**{results.tracks[0].title}** by"
                         f" **{results.tracks[0].author}**\n\nQueued by:"
                         f" {interaction.user.mention}"
                     ),
-                    color=BOT_COLOR,
-                )
-                embed.set_thumbnail(url=results.tracks[0].artwork_url)
-                embed.set_footer(
-                    text=datetime.datetime.utcnow().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
-                    + " UTC"
+                    thumbnail=results.tracks[0].artwork_url,
                 )
                 await interaction.response.send_message(embed=embed)
 
         # If there are no results, and no embed
         if not results and not embed:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Nothing Found",
                 description=(
                     "I was not able to find or load any songs for that query."
                     " Please try again and fill out a bug report with"
                     " </bug:1224840889906499626> if this continues to happen."
                 ),
-                color=BOT_COLOR,
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True

@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.music import Music
 import lavalink
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class NowPlaying(commands.Cog):
@@ -25,21 +25,14 @@ class NowPlaying(commands.Cog):
             time_in = time_in[2:]
             total_duration = total_duration[3:]
 
-        embed = discord.Embed(
+        embed = create_embed(
             title="Now Playing 🎶",
             description=(
                 f"**[{player.current.title}]({player.current.uri})** by"
                 f" {player.current.author}\n{f'` {time_in}/{total_duration} `'}\n\nQueued"
                 f" by: {player.current.requester.mention}"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_thumbnail(url=player.current.artwork_url)
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+            thumbnail=player.current.artwork_url,
         )
         await interaction.response.send_message(embed=embed)
 
