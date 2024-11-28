@@ -46,6 +46,7 @@ class Play(commands.Cog):
                     embed=embed, ephemeral=True
                 )
 
+        # Check for custom sources (Apple Music/Spotify)
         if "music.apple.com" in query:
             results, embed = await parse_custom_source(
                 self, "apple", query, interaction.user
@@ -56,10 +57,7 @@ class Play(commands.Cog):
                 self, "spotify", query, interaction.user
             )
 
-        ###
-        ### For anything else, use default Lavalink providers to search the query
-        ###
-
+        # For anything else, use default Lavalink providers to search the query
         else:
             # If the query is not a URL, begin searching
             if not url_rx.match(query):
