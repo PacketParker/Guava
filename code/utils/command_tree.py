@@ -84,31 +84,23 @@ class Tree(app_commands.CommandTree):
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(embed=embed, ephemeral=True)
 
-        # If a Spotify song is linked but cannot be found on a provider (e.g. YouTube)
-        elif isinstance(error, LoadError):
+        elif (error, LoadError):
             embed = discord.Embed(
-                title="Nothing Found",
+                title="Load Error",
                 description=(
-                    "Spotify does not allow direct play, meaning songs have to"
-                    " be found on a supported provider. In this case, the song"
-                    " couldn't be found. Please try again with a different"
-                    " song, or try searching for just the name and artist"
-                    " manually rather than sending a link."
+                    "Apple Music and Spotify do not allow direct playing from"
+                    " their websites, and I was unable to load a track on a"
+                    " valid source. Please try again."
                 ),
                 color=BOT_COLOR,
             )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
-            )
+            # Only send the error if the interaction is still valid
             try:
                 await interaction.response.send_message(
                     embed=embed, ephemeral=True
                 )
             except discord.errors.InteractionResponded:
-                await interaction.followup.send(embed=embed, ephemeral=True)
+                pass
 
         else:
             raise error

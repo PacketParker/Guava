@@ -4,11 +4,14 @@ from discord import app_commands
 from discord.ext import commands
 from lavalink import LoadType
 import re
-import requests
 
 from cogs.music import Music, LavalinkVoiceClient
 from utils.config import BOT_COLOR, YOUTUBE_SUPPORT
-from utils.custom_sources import SpotifySource, AppleSource
+from utils.custom_sources import (
+    LoadError,
+    CustomAudioTrack,
+)
+from utils.source_helpers.parse import parse_custom_source
 
 
 url_rx = re.compile(r"https?://(?:www\.)?.+")
@@ -43,366 +46,137 @@ class Play(commands.Cog):
                     embed=embed, ephemeral=True
                 )
 
-        ###
-        ### APPLE MUSIC links, perform API requests and load all tracks from the playlist/album/track
-        ###
-
         if "music.apple.com" in query:
-            if not self.bot.apple_headers:
-                embed = discord.Embed(
-                    title="Apple Music Error",
-                    description=(
-                        "Apple Music support seems to be broken at the moment."
-                        " Please try again and fill out a bug report with"
-                        " </bug:1224840889906499626> if this continues to"
-                        " happen."
-                    ),
-                    color=BOT_COLOR,
-                )
-                return await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
-
-            embed = discord.Embed(color=BOT_COLOR)
-
-            if "/playlist/" in query and "?i=" not in query:
-                playlist_id = query.split("/playlist/")[1].split("/")[1]
-                # Get all of the tracks in the playlist (limit at 250)
-                playlist_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}/tracks?limit=100"
-                response = requests.get(
-                    playlist_url, headers=self.bot.apple_headers
-                )
-                if response.status_code == 200:
-                    playlist = response.json()
-                    # Get the general playlist info (name, artwork)
-                    playlist_info_url = f"https://api.music.apple.com/v1/catalog/us/playlists/{playlist_id}"
-                    playlist_info = requests.get(
-                        playlist_info_url, headers=self.bot.apple_headers
-                    )
-                    playlist_info = playlist_info.json()
-                    try:
-                        artwork_url = playlist_info["data"][0]["attributes"][
-                            "artwork"
-                        ]["url"].replace("{w}x{h}", "300x300")
-                    except KeyError:
-                        artwork_url = None
-
-                    embed.title = "Playlist Queued"
-                    embed.description = (
-                        f"**{playlist_info['data'][0]['attributes']['name']}**\n`"
-                        f" {len(playlist['data'])} ` tracks\n\nQueued by:"
-                        f" {interaction.user.mention}"
-                    )
-                    embed.set_thumbnail(url=artwork_url)
-                    embed.set_footer(
-                        text=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        + " UTC"
-                    )
-                    # Add small alert if the playlist is the max size
-                    if len(playlist["data"]) == 100:
-                        embed.description += (
-                            "\n\n*This playlist is longer than the 100 song"
-                            " maximum. Only the first 100 songs will be"
-                            " queued.*"
-                        )
-
-                    await interaction.response.send_message(embed=embed)
-
-                    tracks = await AppleSource.load_playlist(
-                        self, interaction.user, playlist
-                    )
-                    for track in tracks["tracks"]:
-                        player.add(requester=interaction.user, track=track)
-
-            # If there is an album, not a specific song within the album
-            if "/album/" in query and "?i=" not in query:
-                album_id = query.split("/album/")[1].split("/")[1]
-                album_url = f"https://api.music.apple.com/v1/catalog/us/albums/{album_id}"
-                response = requests.get(
-                    album_url, headers=self.bot.apple_headers
-                )
-                if response.status_code == 200:
-                    album = response.json()
-
-                    embed.title = "Album Queued"
-                    embed.description = (
-                        f"**{album['data'][0]['attributes']['name']}** by"
-                        f" **{album['data'][0]['attributes']['artistName']}**\n`"
-                        f" {len(album['data'][0]['relationships']['tracks']['data'])} `"
-                        f" tracks\n\nQueued by: {interaction.user.mention}"
-                    )
-                    embed.set_thumbnail(
-                        url=album["data"][0]["attributes"]["artwork"][
-                            "url"
-                        ].replace("{w}x{h}", "300x300")
-                    )
-                    embed.set_footer(
-                        text=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        + " UTC"
-                    )
-                    await interaction.response.send_message(embed=embed)
-
-                    tracks = await AppleSource.load_album(
-                        self, interaction.user, album
-                    )
-                    for track in tracks["tracks"]:
-                        player.add(requester=interaction.user, track=track)
-
-            # If there is a specific song
-            if "/album/" in query and "?i=" in query:
-                song_id = query.split("/album/")[1].split("?i=")[1]
-                song_url = f"https://api.music.apple.com/v1/catalog/us/songs/{song_id}"
-                response = requests.get(
-                    song_url, headers=self.bot.apple_headers
-                )
-                if response.status_code == 200:
-                    song = response.json()
-
-                    embed.title = "Song Queued"
-                    embed.description = (
-                        f"**{song['data'][0]['attributes']['name']}** by"
-                        f" **{song['data'][0]['attributes']['artistName']}**\n\nQueued"
-                        f" by: {interaction.user.mention}"
-                    )
-                    embed.set_thumbnail(
-                        url=song["data"][0]["attributes"]["artwork"][
-                            "url"
-                        ].replace("{w}x{h}", "300x300")
-                    )
-                    embed.set_footer(
-                        text=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        + " UTC"
-                    )
-                    await interaction.response.send_message(embed=embed)
-
-                    results = await AppleSource.load_item(
-                        self, interaction.user, song
-                    )
-                    player.add(
-                        requester=interaction.user, track=results.tracks[0]
-                    )
-
-        ###
-        ### SPOTIFY links, perform API requests and load all tracks from the playlist/album/track
-        ###
+            results, embed = await parse_custom_source(
+                self, "apple", query, interaction.user
+            )
 
         elif "open.spotify.com" in query:
-            if not self.bot.spotify_headers:
-                embed = discord.Embed(
-                    title="Spotify Error",
-                    description=(
-                        "Spotify support seems to be broken at the moment."
-                        " Please try again and fill out a bug report with"
-                        " </bug:1224840889906499626> if this continues to"
-                        " happen."
-                    ),
-                    color=BOT_COLOR,
-                )
-                return await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
-
-            embed = discord.Embed(color=BOT_COLOR)
-
-            if "open.spotify.com/playlist" in query:
-                playlist_id = query.split("playlist/")[1].split("?si=")[0]
-                playlist_url = (
-                    f"https://api.spotify.com/v1/playlists/{playlist_id}"
-                )
-                response = requests.get(
-                    playlist_url, headers=self.bot.spotify_headers
-                )
-                if response.status_code == 200:
-                    playlist = response.json()
-
-                    embed.title = "Playlist Queued"
-                    embed.description = (
-                        f"**{playlist['name']}** from"
-                        f" **{playlist['owner']['display_name']}**\n`"
-                        f" {len(playlist['tracks']['items'])} `"
-                        f" tracks\n\nQueued by: {interaction.user.mention}"
-                    )
-                    embed.set_thumbnail(url=playlist["images"][0]["url"])
-                    embed.set_footer(
-                        text=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        + " UTC"
-                    )
-                    await interaction.response.send_message(embed=embed)
-
-                    tracks = await SpotifySource.load_playlist(
-                        self, interaction.user, playlist
-                    )
-                    for track in tracks["tracks"]:
-                        player.add(requester=interaction.user, track=track)
-
-            if "open.spotify.com/album" in query:
-                album_id = query.split("album/")[1]
-                album_url = f"https://api.spotify.com/v1/albums/{album_id}"
-                response = requests.get(
-                    album_url, headers=self.bot.spotify_headers
-                )
-                if response.status_code == 200:
-                    album = response.json()
-
-                    embed.title = "Album Queued"
-                    embed.description = (
-                        f"**{album['name']}** by"
-                        f" **{album['artists'][0]['name']}**\n`"
-                        f" {len(album['tracks']['items'])} ` tracks\n\nQueued"
-                        f" by: {interaction.user.mention}"
-                    )
-                    embed.set_thumbnail(url=album["images"][0]["url"])
-                    embed.set_footer(
-                        text=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        + " UTC"
-                    )
-                    await interaction.response.send_message(embed=embed)
-
-                    tracks = await SpotifySource.load_album(
-                        self, interaction.user, album
-                    )
-                    for track in tracks["tracks"]:
-                        player.add(requester=interaction.user, track=track)
-
-            if "open.spotify.com/track" in query:
-                track_id = query.split("track/")[1]
-                track_url = f"https://api.spotify.com/v1/tracks/{track_id}"
-                response = requests.get(
-                    track_url, headers=self.bot.spotify_headers
-                )
-                if response.status_code == 200:
-                    track = response.json()
-
-                    embed.title = "Track Queued"
-                    embed.description = (
-                        f"**{track['name']}** by"
-                        f" **{track['artists'][0]['name']}**\n\nQueued by:"
-                        f" {interaction.user.mention}"
-                    )
-                    embed.set_thumbnail(url=track["album"]["images"][0]["url"])
-                    embed.set_footer(
-                        text=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).strftime("%Y-%m-%d %H:%M:%S")
-                        + " UTC"
-                    )
-                    await interaction.response.send_message(embed=embed)
-
-                    results = await SpotifySource.load_item(
-                        self, interaction.user, track
-                    )
-                    player.add(
-                        requester=interaction.user, track=results.tracks[0]
-                    )
-
-            if "open.spotify.com/artists" in query:
-                embed.title = "Artists Cannot Be Played"
-                embed.description = (
-                    "I cannot play just artists, you must provide a"
-                    " song/album/playlist. Please try again."
-                )
-                return await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
+            results, embed = await parse_custom_source(
+                self, "spotify", query, interaction.user
+            )
 
         ###
         ### For anything else, use default Lavalink providers to search the query
         ###
 
         else:
+            # If the query is not a URL, begin searching
             if not url_rx.match(query):
                 dzsearch = f"dzsearch:{query}"
                 results = await player.node.get_tracks(dzsearch)
-
+                # If Deezer returned nothing
                 if not results.tracks or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
-                    ytmsearch = f"ytmsearch:{query}"
-                    results = await player.node.get_tracks(ytmsearch)
-
-                    if not results.tracks or results.load_type in (
-                        LoadType.EMPTY,
-                        LoadType.ERROR,
-                    ):
-                        ytsearch = f"ytsearch:{query}"
-                        results = await player.node.get_tracks(ytsearch)
+                    if YOUTUBE_SUPPORT:
+                        ytmsearch = f"ytmsearch:{query}"
+                        results = await player.node.get_tracks(ytmsearch)
+                        # If YouTube Music returned nothing
+                        if not results.tracks or results.load_type in (
+                            LoadType.EMPTY,
+                            LoadType.ERROR,
+                        ):
+                            # Final search attempt with YouTube
+                            ytsearch = f"ytsearch:{query}"
+                            results = await player.node.get_tracks(ytsearch)
             else:
                 results = await player.node.get_tracks(query)
 
-            embed = discord.Embed(color=BOT_COLOR)
-
+            # If there are no results found, set results/embed to None, handled further down
             if not results.tracks or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):
-                embed.title = "Nothing Found"
-                embed.description = (
-                    "Nothing for that query could be found. If this continues"
-                    " happening for other songs, please run"
-                    " </bug:1224840889906499626> to let the developer know."
-                )
-                return await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
+                results, embed = None, None
 
-            elif results.load_type == LoadType.PLAYLIST:
-                tracks = results.tracks
-
-                for track in tracks:
-                    player.add(requester=interaction.user, track=track)
-
-                embed.title = "Songs Queued!"
-                embed.description = (
-                    f"**{results.playlist_info.name}**\n` {len(tracks)} `"
-                    f" tracks\n\nQueued by: {interaction.user.mention}"
+            # Create the embed if the results are a playlist
+            if results.load_type == LoadType.PLAYLIST:
+                embed = discord.Embed(
+                    title="Songs Queued!",
+                    description=(
+                        f"**{results.playlist_info.name}**\n"
+                        f"` {len(results.tracks)} ` tracks\n\n"
+                        f"Queued by: {interaction.user.mention}"
+                    ),
+                    color=BOT_COLOR,
                 )
                 embed.set_footer(
-                    text=datetime.datetime.now(datetime.timezone.utc).strftime(
+                    text=datetime.datetime.utcnow().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                    + " UTC"
+                )
+                await interaction.response.send_message(embed=embed)
+            # Otherwise, the result is just a single track, create that embed
+            else:
+                # Remove all but first track (most relevant result)
+                results.tracks = results.tracks[:1]
+                embed = discord.Embed(
+                    title="Song Queued!",
+                    description=(
+                        f"**{results.tracks[0].title}** by"
+                        f" **{results.tracks[0].author}**\n\nQueued by:"
+                        f" {interaction.user.mention}"
+                    ),
+                    color=BOT_COLOR,
+                )
+                embed.set_thumbnail(url=results.tracks[0].artwork_url)
+                embed.set_footer(
+                    text=datetime.datetime.utcnow().strftime(
                         "%Y-%m-%d %H:%M:%S"
                     )
                     + " UTC"
                 )
                 await interaction.response.send_message(embed=embed)
 
-            else:
-                track = results.tracks[0]
+        # If there are no results, and no embed
+        if not results and not embed:
+            embed = discord.Embed(
+                title="Nothing Found",
+                description=(
+                    "I was not able to find or load any songs for that query."
+                    " Please try again and fill out a bug report with"
+                    " </bug:1224840889906499626> if this continues to happen."
+                ),
+                color=BOT_COLOR,
+            )
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
+        # If there are no results, but there is an embed (error msg)
+        elif embed and not results:
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
+        # If there are results, add them to the player
+        else:
+            for track in results.tracks:
                 player.add(requester=interaction.user, track=track)
 
-                embed.title = "Track Queued"
-                embed.description = (
-                    f"**{track.title}** by **{track.author}**\n\nQueued by:"
-                    f" {interaction.user.mention}"
-                )
-                embed.set_thumbnail(url=track.artwork_url)
-                embed.set_footer(
-                    text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
-                    + " UTC"
-                )
-                await interaction.response.send_message(embed=embed)
+            # If the track is CustomAudioTrack (Apple Music/Spotify)
+            if type(results.tracks[0]) == CustomAudioTrack:
+                # Attempt to load an actual track from a provider
+                try:
+                    await results.tracks[0].load(player.node)
+                # If it fails, remove it from the queue and alert the user
+                except LoadError:
+                    player.queue.remove(results.tracks[0])
+                    raise LoadError
 
-        # Only join the voice channel now, so that the bot doesn't join if nothing is found
-        if not interaction.guild.voice_client:
-            await interaction.user.voice.channel.connect(
-                cls=LavalinkVoiceClient, self_deaf=True
-            )
+            # Join the voice channel if not already connected
+            if not interaction.guild.voice_client:
+                await interaction.user.voice.channel.connect(
+                    cls=LavalinkVoiceClient, self_deaf=True
+                )
 
-        # We don't want to call .play() if the player is playing as that will
-        # effectively skip the current track
-        if not player.is_playing:
-            await player.play()
+            # Only call player.play if it is not already playing, otherwise it will
+            # effectively skip the current track
+            if not player.is_playing:
+                await player.play()
+
+            await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
