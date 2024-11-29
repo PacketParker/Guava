@@ -76,7 +76,7 @@ class Play(commands.Cog):
                             LoadType.ERROR,
                         ):
                             # Final search attempt with YouTube
-                            ytsearch = f"ytsearch:{query}"
+                            ytsearch = f"ytsearch:{query} audio"
                             results = await player.node.get_tracks(ytsearch)
             else:
                 results = await player.node.get_tracks(query)
