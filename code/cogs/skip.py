@@ -70,13 +70,13 @@ class Skip(commands.Cog):
             else:
                 pass
 
-        # Sometimes when a playlist/album of custom source tracks are loaded, one is not able to be found
-        # so, when a user attempts to skip to that track, we get a LoadError. In this case, just pass it.
-        try:
-            await player.skip()
-        except LoadError:
-            pass
-            await player.skip()
+        # Skip current track, continue skipping on LoadError
+        while True:
+            try:
+                await player.skip()
+                break
+            except LoadError:
+                continue
 
         if not player.current:
             embed = create_embed(
