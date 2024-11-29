@@ -17,20 +17,11 @@ class Repeat(commands.GroupCog, name="repeat"):
         "Turn song/queue repetition off"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        if player.loop == 0:
-            embed = create_embed(
-                title="Repeating Already Off",
-                description="Music repetition is already turned off.",
-            )
-            return await interaction.response.send_message(
-                embed=embed, ephemeral=True
-            )
-
         player.loop = 0
 
         embed = create_embed(
             title="Repeating Off",
-            description="Music will no longer be repeated.",
+            description="Music will not be repeated.",
         )
         await interaction.response.send_message(embed=embed)
 
@@ -40,16 +31,8 @@ class Repeat(commands.GroupCog, name="repeat"):
         "Forever repeat that song that is currently playing"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        if player.loop == 1:
-            embed = create_embed(
-                title="Repeating Already On",
-                description="The current song is already being repeated.",
-            )
-            return await interaction.response.send_message(
-                embed=embed, ephemeral=True
-            )
-
         player.loop = 1
+
         embed = create_embed(
             title="Repeating Current Song 🔁",
             description=(
@@ -65,16 +48,8 @@ class Repeat(commands.GroupCog, name="repeat"):
         "Continuously repeat the queue once it reaches the end"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        if player.loop == 2:
-            embed = create_embed(
-                title="Repeating Already On",
-                description="The queue is already being repeated.",
-            )
-            return await interaction.response.send_message(
-                embed=embed, ephemeral=True
-            )
-
         player.loop = 2
+
         embed = create_embed(
             title="Repeating Queue 🔂",
             description=(
