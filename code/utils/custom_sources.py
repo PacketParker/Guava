@@ -6,6 +6,8 @@ from lavalink import (
     PlaylistInfo,
 )
 
+from utils.config import YOUTUBE_SUPPORT
+
 
 class LoadError(
     Exception
@@ -32,21 +34,22 @@ class CustomAudioTrack(DeferredAudioTrack):
             LoadType.EMPTY,
             LoadType.ERROR,
         ):
-            ytmsearch = f"ytmsearch:{self.title} {self.author}"
-            results = await client.get_tracks(ytmsearch)
-
-            if not results.tracks or results.load_type in (
-                LoadType.EMPTY,
-                LoadType.ERROR,
-            ):
-                ytsearch = f"ytsearch:{self.title} {self.author} audio"
-                results = await client.get_tracks(ytsearch)
+            if YOUTUBE_SUPPORT:
+                ytmsearch = f"ytmsearch:{self.title} {self.author}"
+                results = await client.get_tracks(ytmsearch)
 
                 if not results.tracks or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
-                    raise LoadError
+                    ytsearch = f"ytsearch:{self.title} {self.author} audio"
+                    results = await client.get_tracks(ytsearch)
+
+                    if not results.tracks or results.load_type in (
+                        LoadType.EMPTY,
+                        LoadType.ERROR,
+                    ):
+                        raise LoadError
 
         first_track = results.tracks[
             0
