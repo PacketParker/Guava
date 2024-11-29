@@ -54,11 +54,11 @@ class Queue(commands.Cog):
             )
 
         embed = create_embed(
-            title=f"Queue for {interaction.guild.name}",
+            title=f"Current Song Queue",
             description=(
-                f"**{len(player.queue)} tracks total**\n\n{queue_list}"
+                f"**{len(player.queue)} total tracks**\n\n{queue_list}"
             ),
-            footer=f"Viewing page {page}/{pages}",
+            footer=f"Page {page}/{pages}",
         )
         await interaction.response.send_message(embed=embed)
 
