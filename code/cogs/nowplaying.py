@@ -15,7 +15,7 @@ class NowPlaying(commands.Cog):
     @app_commands.command()
     @app_commands.check(Music.create_player)
     async def np(self, interaction: discord.Interaction):
-        "Show what song is currently playing"
+        "See what song is currently playing"
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         time_in = str(datetime.timedelta(milliseconds=player.position))[:-7]

@@ -91,7 +91,7 @@ class Play(commands.Cog):
             # Create the embed if the results are a playlist
             if results.load_type == LoadType.PLAYLIST:
                 embed = create_embed(
-                    title="Songs Queued!",
+                    title="Songs Queued",
                     description=(
                         f"**{results.playlist_info.name}**\n"
                         f"` {len(results.tracks)} ` tracks\n\n"
@@ -104,7 +104,7 @@ class Play(commands.Cog):
                 # Remove all but first track (most relevant result)
                 results.tracks = results.tracks[:1]
                 embed = create_embed(
-                    title="Song Queued!",
+                    title="Song Queued",
                     description=(
                         f"**{results.tracks[0].title}** by"
                         f" **{results.tracks[0].author}**\n\nQueued by:"
@@ -119,9 +119,9 @@ class Play(commands.Cog):
             embed = create_embed(
                 title="Nothing Found",
                 description=(
-                    "I was not able to find or load any songs for that query."
-                    " Please try again and fill out a bug report with"
-                    " </bug:1224840889906499626> if this continues to happen."
+                    "No songs were found for that query. Please try again and"
+                    " fill out a bug report with </bug:1224840889906499626> if"
+                    " this continues to happen."
                 ),
             )
             return await interaction.response.send_message(
@@ -143,9 +143,20 @@ class Play(commands.Cog):
                 try:
                     await results.tracks[0].load(player.node)
                 # If it fails, remove it from the queue and alert the user
-                except LoadError:
+                except LoadError as e:
                     player.queue.remove(results.tracks[0])
-                    raise LoadError
+                    embed = create_embed(
+                        title="Load Error",
+                        description=(
+                            "Apple Music and Spotify do not allow direct"
+                            " playing from their websites, and I was unable to"
+                            " load a track on a supported platform. Please try"
+                            " again."
+                        ),
+                    )
+                    return await interaction.response.send_message(
+                        embed=embed, ephemeral=True
+                    )
 
             # Join the voice channel if not already connected
             if not interaction.guild.voice_client:

@@ -65,8 +65,9 @@ class Lyrics(commands.Cog):
                     f" {player.current.author}"
                 ),
                 description=(
-                    "Song lyrics are too long to display on Discord. [Click"
-                    f" here to view the lyrics on Genius]({song.url})."
+                    "The lyrics for this song are too long to display on"
+                    " Discord. [Click here to view the lyrics on"
+                    f" Genius]({song.url})."
                 ),
                 thumbnail=player.current.artwork_url,
             )

@@ -28,8 +28,8 @@ class Stop(commands.Cog):
         embed = create_embed(
             title="Queue Cleared and Music Stopped",
             description=(
-                "Thank you for using me :wave:\n\nIssued by:"
-                f" {interaction.user.mention}"
+                f"Thank you for using {self.bot.me.mention}\n\n"
+                f"Issued by: {interaction.user.mention}"
             ),
         )
         await interaction.response.send_message(embed=embed)

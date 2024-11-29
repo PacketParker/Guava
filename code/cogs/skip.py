@@ -75,15 +75,16 @@ class Skip(commands.Cog):
             try:
                 await player.skip()
                 break
-            except LoadError:
+            except LoadError as e:
                 continue
 
         if not player.current:
             embed = create_embed(
                 title="End of Queue",
                 description=(
-                    "All songs in queue have been played. Thank you for using"
-                    f" me :wave:\n\nIssued by: {interaction.user.mention}"
+                    "I have left the voice channel as all songs in the queue"
+                    " have been played.\n\n"
+                    f"Issued by: {interaction.user.mention}"
                 ),
             )
             return await interaction.response.send_message(embed=embed)
@@ -92,13 +93,9 @@ class Skip(commands.Cog):
         # So just wait a sec before sending the message
         await asyncio.sleep(0.5)
         embed = create_embed(
-            title="Track Skipped",
-            description=(
-                f"**Now Playing: [{next_song.title}]({next_song.uri})** by"
-                f" {next_song.author}\n\nQueued by:"
-                f" {next_song.requester.mention}"
+            title=(
+                f"{'Track Skipped' if number == 1 else f'{number} Tracks Skipped'}"
             ),
-            thumbnail=next_song.artwork_url,
         )
         await interaction.response.send_message(embed=embed)
 

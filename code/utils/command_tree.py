@@ -69,22 +69,5 @@ class Tree(app_commands.CommandTree):
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(embed=embed, ephemeral=True)
 
-        elif (error, LoadError):
-            embed = create_embed(
-                title="Load Error",
-                description=(
-                    "Apple Music and Spotify do not allow direct playing from"
-                    " their websites, and I was unable to load a track on a"
-                    " valid source. Please try again."
-                ),
-            )
-            # Only send the error if the interaction is still valid
-            try:
-                await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
-            except discord.errors.InteractionResponded:
-                pass
-
         else:
             raise error

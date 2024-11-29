@@ -23,12 +23,20 @@ class Remove(commands.Cog):
                 title="Nothing Queued",
                 description="There are no songs in the queue to remove.",
             )
-            return await interaction.response.send_message(embed=embed)
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
 
         if number > len(player.queue) or number < 1:
+            embed = create_embed(
+                title="Number Out of Range",
+                description=(
+                    "The number you entered is outside of the allowed range."
+                    " Please try again with a valid song number."
+                ),
+            )
             return await interaction.response.send_message(
-                "Number out of range - please try again!",
-                ephemeral=True,
+                embed=embed, ephemeral=True
             )
 
         index = number - 1
@@ -40,9 +48,8 @@ class Remove(commands.Cog):
         embed = create_embed(
             title="Song Removed from Queue",
             description=(
-                "**Song Removed -"
-                f" [{removed_title}]({removed_url})**\n\nIssued by:"
-                f" {interaction.user.mention}"
+                f"**[{removed_title}]({removed_url})** has been unqueued.\n\n"
+                f"Issued by: {interaction.user.mention}"
             ),
             thumbnail=removed_artwork,
         )

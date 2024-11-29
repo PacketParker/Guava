@@ -15,7 +15,7 @@ async def load(
     """
     Get the playlist info from the Spotify API
     """
-    playlist_id = query.split("/playlist/")[1].split("?si=")[0]
+    playlist_id = query.split("/playlist/")[1]
 
     try:
         # Get the playlist info
