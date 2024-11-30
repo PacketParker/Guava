@@ -283,7 +283,11 @@ Template for embeds
 
 
 def create_embed(
-    title: str, description: str, color=None, footer=None, thumbnail=None
+    title: str = None,
+    description: str = None,
+    color=None,
+    footer=None,
+    thumbnail=None,
 ):
     embed = discord.Embed(
         title=title,
