@@ -126,6 +126,10 @@ class SpotifySource(Source):
         for track in metadata["tracks"][
             "items"
         ]:  # Loop through each track in the playlist.
+            try:
+                artwork_url = track["track"]["album"]["images"][0]["url"]
+            except IndexError:
+                artwork_url = None
             tracks.append(
                 CustomAudioTrack(
                     {  # Create an instance of our CustomAudioTrack.
@@ -139,9 +143,7 @@ class SpotifySource(Source):
                         "title": track["track"]["name"],
                         "uri": track["track"]["external_urls"]["spotify"],
                         "duration": track["track"]["duration_ms"],
-                        "artworkUrl": track["track"]["album"]["images"][0][
-                            "url"
-                        ],
+                        "artworkUrl": artwork_url,
                     },
                     requster=user,
                 )
