@@ -153,6 +153,34 @@ class SpotifySource(Source):
             LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
         )
 
+    async def load_artist(self, user, metadata):
+        tracks = []
+        for track in metadata["tracks"]:
+            try:
+                artwork_url = track["album"]["images"][0]["url"]
+            except IndexError:
+                artwork_url = None
+            tracks.append(
+                CustomAudioTrack(
+                    {
+                        "identifier": track["id"],
+                        "isSeekable": True,
+                        "author": track["artists"][0]["name"],
+                        "length": track["duration_ms"],
+                        "isStream": False,
+                        "title": track["name"],
+                        "uri": track["external_urls"]["spotify"],
+                        "duration": track["duration_ms"],
+                        "artworkUrl": artwork_url,
+                    },
+                    requester=user,
+                )
+            )
+
+        return LoadResult(
+            LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
+        )
+
 
 """
 Custom Source for Apple Music links

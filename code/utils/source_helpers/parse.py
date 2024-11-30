@@ -7,6 +7,7 @@ from utils.source_helpers.apple import (
 )
 from utils.source_helpers.spotify import (
     album as spotify_album,
+    artist as spotify_artist,
     playlist as spotify_playlist,
     song as spotify_song,
 )
@@ -29,6 +30,7 @@ async def parse_custom_source(
         },
         "spotify": {
             "album": spotify_album.load,
+            "artist": spotify_artist.load,
             "playlist": spotify_playlist.load,
             "song": spotify_song.load,
         },
@@ -43,7 +45,6 @@ async def parse_custom_source(
         "apple": AppleSource,
         "spotify": SpotifySource,
     }
-
     # Catch all songs
     if "?i=" in query or "/track/" in query:
         song, embed = await load_funcs[provider]["song"](
@@ -74,6 +75,16 @@ async def parse_custom_source(
 
         if album:
             results = await sources[provider].load_album(self, user, album)
+        else:
+            return None, embed
+    # Catch Spotify artists
+    elif "/artist/" in query:
+        artist, embed = await load_funcs[provider]["artist"](
+            headers[provider], query, user
+        )
+
+        if artist:
+            results = await sources[provider].load_artist(self, user, artist)
         else:
             return None, embed
 
