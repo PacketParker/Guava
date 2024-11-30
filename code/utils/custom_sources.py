@@ -73,6 +73,10 @@ class SpotifySource(Source):
         )  # Initialising our custom source with the name 'custom'.
 
     async def load_item(self, user, metadata):
+        try:
+            artwork_url = metadata["album"]["images"][0]["url"]
+        except IndexError:
+            artwork_url = None
         track = CustomAudioTrack(
             {  # Create an instance of our CustomAudioTrack.
                 "identifier": metadata[
@@ -85,7 +89,7 @@ class SpotifySource(Source):
                 "title": metadata["name"],
                 "uri": metadata["external_urls"]["spotify"],
                 "duration": metadata["duration_ms"],
-                "artworkUrl": metadata["album"]["images"][0]["url"],
+                "artworkUrl": artwork_url,
             },
             requester=user,
         )
@@ -98,6 +102,10 @@ class SpotifySource(Source):
         for track in metadata["tracks"][
             "items"
         ]:  # Loop through each track in the album.
+            try:
+                artwork_url = track["album"]["images"][0]["url"]
+            except IndexError:
+                artwork_url = None
             tracks.append(
                 CustomAudioTrack(
                     {  # Create an instance of our CustomAudioTrack.
@@ -111,7 +119,7 @@ class SpotifySource(Source):
                         "title": track["name"],
                         "uri": track["external_urls"]["spotify"],
                         "duration": track["duration_ms"],
-                        "artworkUrl": metadata["images"][0]["url"],
+                        "artworkUrl": artwork_url,
                     },
                     requester=user,
                 )
