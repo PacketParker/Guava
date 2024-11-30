@@ -297,10 +297,10 @@ def create_embed(
 
     if footer:
         embed.set_footer(text=footer)
-    else:
-        embed.set_footer(
-            text=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") + " UTC"
-        )
+    # else:
+    #     embed.set_footer(
+    #         text=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") + " UTC"
+    #     )
 
     if thumbnail:
         embed.set_thumbnail(url=thumbnail)
