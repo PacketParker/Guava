@@ -98,14 +98,15 @@ class SpotifySource(Source):
         )
 
     async def load_album(self, user, metadata):
+        try:
+            artwork_url = metadata["images"][0]["url"]
+        except IndexError:
+            artwork_url = None
+
         tracks = []
         for track in metadata["tracks"][
             "items"
         ]:  # Loop through each track in the album.
-            try:
-                artwork_url = track["album"]["images"][0]["url"]
-            except IndexError:
-                artwork_url = None
             tracks.append(
                 CustomAudioTrack(
                     {  # Create an instance of our CustomAudioTrack.
