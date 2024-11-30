@@ -28,7 +28,7 @@ class Stop(commands.Cog):
         embed = create_embed(
             title="Queue Cleared and Music Stopped",
             description=(
-                f"Thank you for using {self.bot.me.mention}\n\n"
+                f"Thank you for using {self.bot.user.mention}\n\n"
                 f"Issued by: {interaction.user.mention}"
             ),
         )
