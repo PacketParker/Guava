@@ -96,6 +96,12 @@ class Skip(commands.Cog):
             title=(
                 f"{'Track Skipped' if number == 1 else f'{number} Tracks Skipped'}"
             ),
+            description=(
+                f"**[{player.current.title}]({player.current.uri})**"
+                f" by **{player.current.author}** is now playing\n\n"
+                f"Issued by: {interaction.user.mention}"
+            ),
+            thumbnail=player.current.artwork_url,
         )
         await interaction.response.send_message(embed=embed)
 
