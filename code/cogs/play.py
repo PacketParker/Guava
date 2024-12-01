@@ -98,7 +98,6 @@ class Play(commands.Cog):
                         f"Queued by: {interaction.user.mention}"
                     ),
                 )
-                await interaction.response.send_message(embed=embed)
             # Otherwise, the result is just a single track, create that embed
             else:
                 # Remove all but first track (most relevant result)
@@ -112,7 +111,6 @@ class Play(commands.Cog):
                     ),
                     thumbnail=results.tracks[0].artwork_url,
                 )
-                await interaction.response.send_message(embed=embed)
 
         # If there are no results, and no embed
         if not results and not embed:
