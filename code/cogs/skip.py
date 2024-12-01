@@ -49,26 +49,21 @@ class Skip(commands.Cog):
                 for i in range(number - 2, -1, -1):
                     player.queue.pop(i)
 
-        # If there is a next song, get it
-        try:
-            next_song = player.queue[0]
-        except IndexError:
-            # If the song is on repeat, catch the IndexError and get the current song
-            # Otherwise, pass
-            if player.loop == 1:
-                embed = create_embed(
-                    title="Song on Repeat",
-                    description=(
-                        "There is nothing in queue, but the current song is on"
-                        " repeat. Use </stop:1224840890866991305> to stop"
-                        " playing music."
-                    ),
-                )
-                return await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
-            else:
-                pass
+        # If the queue is empty, but the current song is on repeat
+        if player.loop == 1 and not player.queue:
+            embed = create_embed(
+                title="Song on Repeat",
+                description=(
+                    "There is nothing in queue, but the current song is on"
+                    " repeat. Use </stop:1224840890866991305> to stop"
+                    " playing music."
+                ),
+            )
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
+            )
+        else:
+            pass
 
         # Skip current track, continue skipping on LoadError
         while True:
