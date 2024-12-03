@@ -23,11 +23,21 @@ class News(commands.Cog):
 
         embed.add_field(
             name="**Limited YouTube Support**",
-            description=(
+            value=(
                 "Support for YouTube links and searches has been added. This"
                 " is currently in a testing phase and is not guaranteed to"
                 " work. If you encounter any issues, please submit a but"
                 " report."
+            ),
+            inline=False,
+        )
+
+        embed.add_field(
+            name="**General Improvements**",
+            value=(
+                "Quality of life updates and general improvements have been"
+                " made. Hopefully there are no new bugs, but please report any"
+                " with </bug:1224840889906499626>."
             ),
             inline=False,
         )
