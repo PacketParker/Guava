@@ -86,7 +86,7 @@ For instructions on setting up a Lavalink node on bare metal, look [here](https:
 
 After setting up your Lavalink node, it is highly recommended to configure IPv6 rotation with at least a /64 or /48 block. IPv6 rotation helps to relieve issues from getting rate limited/blocked from YouTube and other sources. There are helpful guides for setting this up which are available on GitHub, however, [this](https://github.com/Nansess/tunnelbroker-guide) is the one that I have used .
 
-An example of my personal `application.yml` configuration file can be found [here](https://github.com/PacketParker/Guava/blob/main/application.yml.example).
+An example of my personal `application.yml` configuration file can be found [here](application.yml).
 
 <br>
 
