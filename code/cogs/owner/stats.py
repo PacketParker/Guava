@@ -3,7 +3,7 @@ import sqlite3
 import discord
 import os
 
-from utils.config import BOT_COLOR
+from utils.config import BOT_COLOR, LOG
 
 
 class Stats(commands.Cog):
@@ -13,6 +13,10 @@ class Stats(commands.Cog):
     def cog_load(self):
         if not os.path.exists("data"):
             os.makedirs("data")
+
+        if not os.access("data/count.db", os.W_OK):
+            LOG.error("Cannot write to data/count.db - check permissions")
+            return
 
         connection = sqlite3.connect("data/count.db")
         cursor = connection.cursor()
@@ -24,6 +28,16 @@ class Stats(commands.Cog):
         connection.close()
 
         self.dump_count.start()
+
+    def millis_to_readable(self, ms):
+        hours = ms // 3600000
+        ms %= 3600000
+        minutes = ms // 60000
+        ms %= 60000
+        seconds = ms // 1000
+        milliseconds = ms % 1000
+
+        return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:03}"
 
     @tasks.loop(seconds=30)
     async def dump_count(self):
@@ -54,10 +68,19 @@ class Stats(commands.Cog):
         except KeyError:
             self.bot.temp_command_count[interaction.command.name] = 1
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     @commands.dm_only()
     @commands.is_owner()
     async def stats(self, ctx: commands.Context):
+        await ctx.author.send(
+            f"This is a group command. Use `{self.bot.command_prefix}stats"
+            " bot/lavalink` to get specific statistics."
+        )
+
+    @stats.command()
+    @commands.dm_only()
+    @commands.is_owner()
+    async def bot(self, ctx: commands.Context):
         connection = sqlite3.connect("data/count.db")
         cursor = connection.cursor()
 
@@ -74,10 +97,8 @@ class Stats(commands.Cog):
         embed = discord.Embed(
             title="Statistics",
             description=(
-                f"Total Guilds: `{len(self.bot.guilds):,}`\nTotal Commands:"
-                f" `{total_commands:,}`\n\nTotal Players:"
-                f" `{self.bot.lavalink.nodes[0].stats.playing_players}`\nLoad:"
-                f" `{round(self.bot.lavalink.nodes[0].stats.lavalink_load * 100, 2)}%`"
+                f"Total Guilds: `{len(self.bot.guilds):,}`\n"
+                f"Total Commands: `{total_commands:,}`\n\n"
             ),
             color=BOT_COLOR,
         )
@@ -90,8 +111,37 @@ class Stats(commands.Cog):
         connection.close()
         await ctx.send(embed=embed)
 
-    @stats.error
-    async def stats_error(self, ctx, error):
+    @bot.error
+    async def bot_error(self, ctx, error):
+        return
+
+    @stats.command()
+    @commands.dm_only()
+    @commands.is_owner()
+    async def lavalink(self, ctx: commands.Context):
+        if not self.bot.lavalink:
+            return await ctx.send("No connection with Lavalink.")
+
+        embed = discord.Embed(
+            title="Lavalink Statistics",
+            color=BOT_COLOR,
+        )
+
+        for node in self.bot.lavalink.nodes:
+            embed.add_field(
+                name=node.name,
+                value=(
+                    f"\tPlayers: `{node.stats.players}`\n\tUptime:"
+                    f" `{self.millis_to_readable(node.stats.uptime)}`\n\tMemory"
+                    f" Used: `{node.stats.memory_used / 1024 / 1024:.2f}MB`\n"
+                ),
+                inline=True,
+            )
+
+        await ctx.send(embed=embed)
+
+    @lavalink.error
+    async def lavalink_error(self, ctx, error):
         return
 
 

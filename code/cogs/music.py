@@ -113,10 +113,12 @@ class Music(commands.Cog):
             try:
                 await node.get_version()
             except lavalink.errors.ClientError:
+                self.bot.lavalink = None
                 LOG.error(
                     "Authentication to lavalink node failed. Check your login"
                     " credentials."
                 )
+                return
             else:
                 await node.connect()
 
@@ -135,6 +137,10 @@ class Music(commands.Cog):
 
     async def create_player(interaction: discord.Interaction):
         """Create a player for the guild associated with the interaction, or raise an error"""
+        if not interaction.client.lavalink:
+            LOG.error("Lavalink is not connected.")
+            return
+
         try:
             player = interaction.client.lavalink.player_manager.create(
                 interaction.guild.id
