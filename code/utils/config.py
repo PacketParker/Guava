@@ -8,6 +8,7 @@ import sys
 import discord
 import logging
 import requests
+from datetime import datetime
 from colorlog import ColoredFormatter
 
 log_level = logging.DEBUG
@@ -32,7 +33,8 @@ BOT_COLOR = None
 BOT_INVITE_LINK = None
 FEEDBACK_CHANNEL_ID = None
 BUG_CHANNEL_ID = None
-YOUTUBE_SUPPORT = None
+LOG_SONGS = False
+YOUTUBE_SUPPORT = False
 SPOTIFY_CLIENT_ID = None
 SPOTIFY_CLIENT_SECRET = None
 GENIUS_CLIENT_ID = None
@@ -53,9 +55,16 @@ schema = {
                 "bot_invite_link": {"type": "string"},
                 "feedback_channel_id": {"type": "integer"},
                 "bug_channel_id": {"type": "integer"},
-                "youtube_support": {"type": "boolean"},
+                "log_songs": {"type": "boolean"},
             },
             "required": ["token"],
+        },
+        "youtube": {
+            "type": "object",
+            "properties": {
+                "enabled": {"type": "boolean"},
+            },
+            "required": ["enabled"],
         },
         "spotify": {
             "type": "object",
@@ -117,7 +126,10 @@ bot_info:
     bot_invite_link: ""
     feedback_channel_id: ""
     bug_channel_id: ""
-    youtube_support: false
+    log_songs: true
+
+youtube:
+    enabled: false
 
 spotify:
     spotify_client_id: ""
@@ -148,7 +160,7 @@ lavalink:
 
 # Thouroughly validate all of the options in the config.yaml file
 def validate_config(file_contents):
-    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, YOUTUBE_SUPPORT, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_CLIENT_ID, GENIUS_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
+    global TOKEN, BOT_COLOR, BOT_INVITE_LINK, FEEDBACK_CHANNEL_ID, BUG_CHANNEL_ID, LOG_SONGS, YOUTUBE_SUPPORT, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, GENIUS_CLIENT_ID, GENIUS_CLIENT_SECRET, OPENAI_API_KEY, LAVALINK_HOST, LAVALINK_PORT, LAVALINK_PASSWORD
     config = yaml.safe_load(file_contents)
 
     try:
@@ -208,10 +220,12 @@ def validate_config(file_contents):
             else:
                 BUG_CHANNEL_ID = config["bot_info"]["bug_channel_id"]
 
-    if "youtube_support" in config["bot_info"]:
-        YOUTUBE_SUPPORT = bool(config["bot_info"]["youtube_support"])
-    else:
-        YOUTUBE_SUPPORT = False
+    if "log_songs" in config["bot_info"]:
+        LOG_SONGS = bool(config["bot_info"]["log_songs"])
+
+    # Check for YouTube support
+    if "youtube" in config:
+        YOUTUBE_SUPPORT = bool(config["youtube"]["enabled"])
 
     #
     # If the SPOTIFY section is present, make sure the client ID and secret are valid
@@ -274,3 +288,34 @@ def validate_config(file_contents):
     LAVALINK_HOST = config["lavalink"]["host"]
     LAVALINK_PORT = config["lavalink"]["port"]
     LAVALINK_PASSWORD = config["lavalink"]["password"]
+
+
+"""
+Template for embeds
+"""
+
+
+def create_embed(
+    title: str = None,
+    description: str = None,
+    color=None,
+    footer=None,
+    thumbnail=None,
+):
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color if color else BOT_COLOR,
+    )
+
+    if footer:
+        embed.set_footer(text=footer)
+    # else:
+    #     embed.set_footer(
+    #         text=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") + " UTC"
+    #     )
+
+    if thumbnail:
+        embed.set_thumbnail(url=thumbnail)
+
+    return embed

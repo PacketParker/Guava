@@ -6,6 +6,8 @@ from lavalink import (
     PlaylistInfo,
 )
 
+from utils.config import YOUTUBE_SUPPORT
+
 
 class LoadError(
     Exception
@@ -32,21 +34,22 @@ class CustomAudioTrack(DeferredAudioTrack):
             LoadType.EMPTY,
             LoadType.ERROR,
         ):
-            ytmsearch = f"ytmsearch:{self.title} {self.author}"
-            results = await client.get_tracks(ytmsearch)
-
-            if not results.tracks or results.load_type in (
-                LoadType.EMPTY,
-                LoadType.ERROR,
-            ):
-                ytsearch = f"ytsearch:{self.title} {self.author} audio"
-                results = await client.get_tracks(ytsearch)
+            if YOUTUBE_SUPPORT:
+                ytmsearch = f"ytmsearch:{self.title} {self.author}"
+                results = await client.get_tracks(ytmsearch)
 
                 if not results.tracks or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
-                    raise LoadError
+                    ytsearch = f"ytsearch:{self.title} {self.author} audio"
+                    results = await client.get_tracks(ytsearch)
+
+                    if not results.tracks or results.load_type in (
+                        LoadType.EMPTY,
+                        LoadType.ERROR,
+                    ):
+                        raise LoadError
 
         first_track = results.tracks[
             0
@@ -70,6 +73,10 @@ class SpotifySource(Source):
         )  # Initialising our custom source with the name 'custom'.
 
     async def load_item(self, user, metadata):
+        try:
+            artwork_url = metadata["album"]["images"][0]["url"]
+        except IndexError:
+            artwork_url = None
         track = CustomAudioTrack(
             {  # Create an instance of our CustomAudioTrack.
                 "identifier": metadata[
@@ -82,7 +89,7 @@ class SpotifySource(Source):
                 "title": metadata["name"],
                 "uri": metadata["external_urls"]["spotify"],
                 "duration": metadata["duration_ms"],
-                "artworkUrl": metadata["album"]["images"][0]["url"],
+                "artworkUrl": artwork_url,
             },
             requester=user,
         )
@@ -91,6 +98,11 @@ class SpotifySource(Source):
         )
 
     async def load_album(self, user, metadata):
+        try:
+            artwork_url = metadata["images"][0]["url"]
+        except IndexError:
+            artwork_url = None
+
         tracks = []
         for track in metadata["tracks"][
             "items"
@@ -108,7 +120,7 @@ class SpotifySource(Source):
                         "title": track["name"],
                         "uri": track["external_urls"]["spotify"],
                         "duration": track["duration_ms"],
-                        "artworkUrl": metadata["images"][0]["url"],
+                        "artworkUrl": artwork_url,
                     },
                     requester=user,
                 )
@@ -123,6 +135,10 @@ class SpotifySource(Source):
         for track in metadata["tracks"][
             "items"
         ]:  # Loop through each track in the playlist.
+            try:
+                artwork_url = track["track"]["album"]["images"][0]["url"]
+            except IndexError:
+                artwork_url = None
             tracks.append(
                 CustomAudioTrack(
                     {  # Create an instance of our CustomAudioTrack.
@@ -136,11 +152,37 @@ class SpotifySource(Source):
                         "title": track["track"]["name"],
                         "uri": track["track"]["external_urls"]["spotify"],
                         "duration": track["track"]["duration_ms"],
-                        "artworkUrl": track["track"]["album"]["images"][0][
-                            "url"
-                        ],
+                        "artworkUrl": artwork_url,
                     },
                     requster=user,
+                )
+            )
+
+        return LoadResult(
+            LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none()
+        )
+
+    async def load_artist(self, user, metadata):
+        tracks = []
+        for track in metadata["tracks"]:
+            try:
+                artwork_url = track["album"]["images"][0]["url"]
+            except IndexError:
+                artwork_url = None
+            tracks.append(
+                CustomAudioTrack(
+                    {
+                        "identifier": track["id"],
+                        "isSeekable": True,
+                        "author": track["artists"][0]["name"],
+                        "length": track["duration_ms"],
+                        "isStream": False,
+                        "title": track["name"],
+                        "uri": track["external_urls"]["spotify"],
+                        "duration": track["duration_ms"],
+                        "artworkUrl": artwork_url,
+                    },
+                    requester=user,
                 )
             )
 

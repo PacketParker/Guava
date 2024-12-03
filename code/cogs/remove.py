@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Remove(commands.Cog):
@@ -19,27 +19,24 @@ class Remove(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.queue:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Nothing Queued",
-                description=(
-                    "Nothing is currently in the queue, so there is nothing"
-                    " for me to remove."
-                ),
-                color=BOT_COLOR,
+                description="There are no songs in the queue to remove.",
             )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
+            return await interaction.response.send_message(
+                embed=embed, ephemeral=True
             )
-            return await interaction.response.send_message(embed=embed)
 
         if number > len(player.queue) or number < 1:
+            embed = create_embed(
+                title="Number Out of Range",
+                description=(
+                    "The number you entered is outside of the allowed range."
+                    " Please try again with a valid song number."
+                ),
+            )
             return await interaction.response.send_message(
-                "The number entered is not a number within the queue - please"
-                " try again!",
-                ephemeral=True,
+                embed=embed, ephemeral=True
             )
 
         index = number - 1
@@ -48,21 +45,13 @@ class Remove(commands.Cog):
         removed_artwork = player.queue[index].artwork_url
         player.queue.pop(index)
 
-        embed = discord.Embed(
+        embed = create_embed(
             title="Song Removed from Queue",
             description=(
-                "**Song Removed -"
-                f" [{removed_title}]({removed_url})**\n\nIssued by:"
-                f" {interaction.user.mention}"
+                f"**[{removed_title}]({removed_url})** has been unqueued.\n\n"
+                f"Issued by: {interaction.user.mention}"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_thumbnail(url=removed_artwork)
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
+            thumbnail=removed_artwork,
         )
         await interaction.response.send_message(embed=embed)
 

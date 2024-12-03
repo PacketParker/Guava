@@ -3,3 +3,4 @@ __pycache__
 count.db
 notes.txt
 config.yaml
+track_events.log

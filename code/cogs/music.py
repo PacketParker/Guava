@@ -2,13 +2,14 @@ import discord
 from discord.ext import commands
 import lavalink
 from lavalink import errors
-from discord.ext import tasks
+import os
 
 from utils.config import (
     LAVALINK_HOST,
     LAVALINK_PASSWORD,
     LAVALINK_PORT,
     LOG,
+    LOG_SONGS,
 )
 from utils.command_tree import CheckPlayerError
 from utils.ai_recommendations import add_song_recommendations
@@ -95,6 +96,7 @@ class LavalinkVoiceClient(discord.VoiceProtocol):
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.log_file = "track_events.log"
 
     async def cog_load(self):
         if not hasattr(
@@ -119,10 +121,15 @@ class Music(commands.Cog):
                 return
             else:
                 await node.connect()
-                LOG.info(f"Connected to lavalink node {node.name}")
 
         self.lavalink: lavalink.Client = self.bot.lavalink
         self.lavalink.add_event_hooks(self)
+
+        if os.path.exists("/.dockerenv"):
+            self.log_file = "/config/track_events.log"
+
+        if LOG_SONGS:
+            LOG.info(f"Logging track events to {self.log_file}")
 
     def cog_unload(self):
         """Cog unload handler. This removes any event hooks that were registered."""
@@ -240,6 +247,54 @@ class Music(commands.Cog):
             await add_song_recommendations(
                 self.bot.openai, self.bot.user, event.player, 5, inputs
             )
+
+    @lavalink.listener(lavalink.events.NodeConnectedEvent)
+    async def node_connected(self, event: lavalink.events.NodeConnectedEvent):
+        LOG.info(f"Lavalink node {event.node.name} has connected")
+
+    @lavalink.listener(lavalink.events.NodeReadyEvent)
+    async def node_ready(self, event: lavalink.events.NodeReadyEvent):
+        LOG.info(f"Lavalink node {event.node.name} is ready")
+
+    @lavalink.listener(lavalink.events.NodeDisconnectedEvent)
+    async def node_disconnected(
+        self, event: lavalink.events.NodeDisconnectedEvent
+    ):
+        LOG.error(f"Lavalink node {event.node.name} has disconnected")
+
+    # If we get a track load failed event (like LoadError, but for some reason that
+    # wasn't the eception raised), skip the track
+    @lavalink.listener(lavalink.events.TrackLoadFailedEvent)
+    async def track_load_failed(self, event: lavalink.events.TrackEndEvent):
+        await event.player.skip()
+
+    # Only log track events if enabled
+    if LOG_SONGS:
+
+        @lavalink.listener(lavalink.events.TrackStartEvent)
+        async def track_start(self, event: lavalink.events.TrackStartEvent):
+            with open(self.log_file, "a") as f:
+                f.write(
+                    f"STARTED: {event.track.title} by {event.track.author}\n"
+                )
+
+        @lavalink.listener(lavalink.events.TrackStuckEvent)
+        async def track_stuck(self, event: lavalink.events.TrackStuckEvent):
+            with open(self.log_file, "a") as f:
+                f.write(
+                    f"STUCK: {event.track.title} by {event.track.author} -"
+                    f" {event.track.uri}\n"
+                )
+
+        @lavalink.listener(lavalink.events.TrackExceptionEvent)
+        async def track_exception(
+            self, event: lavalink.events.TrackExceptionEvent
+        ):
+            with open(self.log_file, "a") as f:
+                f.write(
+                    f"EXCEPTION{event.track.title} by {event.track.author} -"
+                    f" {event.track.uri}\n"
+                )
 
 
 async def setup(bot):

@@ -169,18 +169,18 @@ class Help(commands.Cog):
             embed = discord.Embed(
                 title=f":musical_note:  Help  :musical_note:",
                 description=(
-                    "**Check out recent news and updates about the bot with"
-                    " the </news:1260842465666007040> command!\n\u200b**"
+                    "**Check out recent updates with the"
+                    " </news:1260842465666007040> command!\n\u200b**"
                 ),
                 color=BOT_COLOR,
             )
 
             embed.add_field(
-                name="**Use Me**",
+                name="**Get Started**",
                 value=(
-                    "> To get started, use the </play:1224840890368000172>"
-                    " command and enter the name or link to the song of your"
-                    " choice."
+                    "> Start playing music with the"
+                    " </play:1224840890368000172> command. Enter the name or"
+                    " link of the song you want to play."
                 ),
                 inline=False,
             )
@@ -195,9 +195,9 @@ class Help(commands.Cog):
             embed.add_field(
                 name="**Help for Specific Commands**",
                 value=(
-                    "> If you want more information on how to use a specific"
-                    " command, use the </help:1224854217597124610> command and"
-                    " include the specific command."
+                    "> To get information on a specific command, use"
+                    " </help:1224854217597124610> and include the command"
+                    " name."
                 ),
                 inline=False,
             )

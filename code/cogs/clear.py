@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Clear(commands.Cog):
@@ -18,19 +18,13 @@ class Clear(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         player.queue.clear()
-        embed = discord.Embed(
+
+        embed = create_embed(
             title="Queue Cleared",
             description=(
                 "The queue has been cleared of all songs!\n\nIssued by:"
                 f" {interaction.user.mention}"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
         )
         await interaction.response.send_message(embed=embed)
 

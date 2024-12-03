@@ -6,7 +6,7 @@ from cogs.music import Music
 from typing import Literal
 
 from utils.ai_recommendations import add_song_recommendations
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Autoplay(commands.Cog):
@@ -19,32 +19,29 @@ class Autoplay(commands.Cog):
     async def autoplay(
         self, interaction: discord.Interaction, toggle: Literal["ON", "OFF"]
     ):
-        "Keep the music playing forever with music suggestions from OpenAI"
+        "Keep music playing 24/7 with AI-generated song recommendations"
         if toggle == "OFF":
             self.bot.autoplay.remove(interaction.guild.id)
 
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Autoplay Off",
                 description=(
-                    "Autoplay has been turned off. I will no longer"
-                    " automatically add new songs to the queue based on AI"
-                    " recommendations."
+                    "Autoplay has been turned off. Song recommendations will"
+                    " no longer be added to the queue."
                 ),
-                color=BOT_COLOR,
             )
             return await interaction.response.send_message(embed=embed)
 
         # Otherwise, toggle must be "ON", so enable autoplaying
 
         if interaction.guild.id in self.bot.autoplay:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Autoplay Already Enabled",
                 description=(
                     "Autoplay is already enabled. If you would like to turn it"
-                    " off, choose the `OFF` option in the"
-                    " </autoplay:1228216490386391052> command."
+                    " off, run </autoplay:1228216490386391052> and choose the"
+                    " `OFF` option."
                 ),
-                color=BOT_COLOR,
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
@@ -53,21 +50,13 @@ class Autoplay(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         if len(player.queue) < 5:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Not Enough Context",
                 description=(
-                    "You must have at least 5 songs in the queue so that I can"
-                    " get a good understanding of what music I should continue"
-                    " to play. Add some more music to the queue, then try"
+                    "Autoplay requires at least 5 songs in the queue in order"
+                    " to generate recommendations. Please add more and try"
                     " again."
                 ),
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
             )
             return await interaction.response.send_message(
                 embed=embed, ephemeral=True
@@ -77,13 +66,12 @@ class Autoplay(commands.Cog):
         for song in player.queue[:10]:
             inputs[song.title] = song.author
 
-        embed = discord.Embed(
+        embed = create_embed(
             title="Getting AI Recommendations",
             description=(
                 "Attempting to generate recommendations based on the current"
                 " songs in your queue. Just a moment..."
             ),
-            color=BOT_COLOR,
         )
         await interaction.response.send_message(embed=embed)
 
@@ -91,35 +79,25 @@ class Autoplay(commands.Cog):
             self.bot.openai, self.bot.user, player, 5, inputs
         ):
             self.bot.autoplay.append(interaction.guild.id)
-            embed = discord.Embed(
+            embed = create_embed(
                 title=":infinity: Autoplay Enabled :infinity:",
                 description=(
-                    "I have added a few similar songs to the queue and will"
-                    " continue to do so once the queue gets low again. Now"
-                    " just sit back and enjoy the music!\n\nEnabled by:"
+                    "Recommendations have been generated and added to the"
+                    " queue. Autoplay will automatically search for more"
+                    " songs whenever the queue gets low.\n\nEnabled by:"
                     f" {interaction.user.mention}"
                 ),
-                color=BOT_COLOR,
             )
             await interaction.edit_original_response(embed=embed)
 
         else:
-            embed = discord.Embed(
+            embed = create_embed(
                 title="Autoplay Error",
                 description=(
-                    "Autoplay is an experimental feature, meaning sometimes it"
-                    " doesn't work as expected. I had an error when attempting"
-                    " to get similar songs for you, please try running the"
-                    " command again. If the issue persists, fill out a bug"
-                    " report with the </bug:1224840889906499626> command."
+                    "Unable to get AI recommendations at this time. Please try"
+                    " again. If issues continue, please fill out a bug report"
+                    " with </bug:1224840889906499626>."
                 ),
-                color=BOT_COLOR,
-            )
-            embed.set_footer(
-                text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                + " UTC"
             )
             await interaction.edit_original_response(embed=embed)
 

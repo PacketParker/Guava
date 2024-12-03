@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.music import Music
 
-from utils.config import BOT_COLOR
+from utils.config import create_embed
 
 
 class Stop(commands.Cog):
@@ -25,19 +25,12 @@ class Stop(commands.Cog):
         await player.stop()
         await interaction.guild.voice_client.disconnect(force=True)
 
-        embed = discord.Embed(
+        embed = create_embed(
             title="Queue Cleared and Music Stopped",
             description=(
-                "Thank you for using me :wave:\n\nIssued by:"
-                f" {interaction.user.mention}"
+                f"Thank you for using {self.bot.user.mention}\n\n"
+                f"Issued by: {interaction.user.mention}"
             ),
-            color=BOT_COLOR,
-        )
-        embed.set_footer(
-            text=datetime.datetime.now(datetime.timezone.utc).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            + " UTC"
         )
         await interaction.response.send_message(embed=embed)
 

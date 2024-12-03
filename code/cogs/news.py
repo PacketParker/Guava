@@ -13,7 +13,7 @@ class News(commands.Cog):
     async def news(self, interaction: discord.Interaction):
         "Get recent news and updates about the bot"
         embed = discord.Embed(
-            title="Recent News :newspaper2:",
+            title="Recent News and Updates",
             description=(
                 "View recent code commits"
                 " [here](https://github.com/packetparker/guava/commits)\n\u200b"
@@ -22,30 +22,22 @@ class News(commands.Cog):
         )
 
         embed.add_field(
-            name="**Lyrics!**",
+            name="**Limited YouTube Support**",
             value=(
-                "> You can now get lyrics for the song that is currently"
-                " playing. Just use the `/lyrics` command! Some songs may not"
-                " have lyrics available, but the bot will do its best to find"
-                " them."
+                "Support for YouTube links and searches has been added. This"
+                " is currently in a testing phase and is not guaranteed to"
+                " work. If you encounter any issues, please submit a but"
+                " report."
             ),
+            inline=False,
         )
 
         embed.add_field(
-            name="**Apple Music Support!**",
+            name="**General Improvements**",
             value=(
-                "> After some trial and error, you can now play music through"
-                " Apple Music links. Just paste the link and the bot will do"
-                " the rest!"
-            ),
-        )
-
-        embed.add_field(
-            name="**Autoplay Update**",
-            value=(
-                "> Autoplay is now much more stable after a revamp of the"
-                " previous system. If you experienced short outages recently,"
-                " this was due to the update. Thank you for your patience!"
+                "Quality of life updates and general improvements have been"
+                " made. Hopefully there are no new bugs, but please report any"
+                " with </bug:1224840889906499626>."
             ),
             inline=False,
         )
