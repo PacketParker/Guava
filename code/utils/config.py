@@ -121,31 +121,31 @@ def load_config():
             f.write(
                 """
 bot_info:
-    token: ""
-    bot_color: ""
-    bot_invite_link: ""
-    feedback_channel_id: ""
-    bug_channel_id: ""
+    token: 
+    bot_color: 
+    bot_invite_link: 
+    feedback_channel_id: 
+    bug_channel_id: 
     log_songs: true
+
+lavalink:
+    host: 
+    port: 
+    password: 
 
 youtube:
     enabled: false
 
 spotify:
-    spotify_client_id: ""
-    spotify_client_secret: ""
+    spotify_client_id: 
+    spotify_client_secret: 
 
 genius:
-    genius_client_id: ""
-    genius_client_secret: ""
+    genius_client_id: 
+    genius_client_secret: 
 
 openai:
-    openai_api_key: ""
-
-lavalink:
-    host: ""
-    port: ""
-    password: ""
+    openai_api_key: 
                 """
             )
 
