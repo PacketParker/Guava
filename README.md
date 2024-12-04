@@ -59,25 +59,6 @@ To run Guava on bare metal, follow the steps below.
 5. Input information into the newly created config.yaml file.
 6. Re-run the `code/bot.py` file.
 
-# Configuration
-
-Field | Description | Requirement
---- | --- | ---
-TOKEN | The token for your bot. Create a bot at [discord.com/developers](https://discord.com/developers) | **REQUIRED**
-BOT_COLOR | `HEX CODE`: Color that will be used for the color of message embeds | **REQUIRED**
-BOT_INVITE_LINK | `URL`: Discord Invite link for your bot (shown on the `help` command) | **OPTIONAL** - *Adds an "Invite Me" button to the /help message*
-FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be sent to | **OPTIONAL** - *Used for feedback messages*
-BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL** - *Used for bug reporting*
-YOUTUBE_SUPPORT | `BOOLEAN`: Whether or not YouTube links are supported | **OPTIONAL**
-SPOTIFY_CLIENT_ID | `CLIENT ID`: ID from Spotify Developer account | **OPTIONAL** - *Used for Spotify support*
-SPOTIFY_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Spotify Developer account | **OPTIONAL** - *Used for Sporify support*
-GENIUS_CLIENT_ID | `CLIENT ID`: ID from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
-GENIUS_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
-OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations | **OPTIONAL** - *Used to support the /autoplay feature*
-HOST | Host address for your Lavalink node | **REQUIRED**
-PORT | Port for your Lavalink node | **REQUIRED**
-PASSWORD | Password to authenticate into the Lavalink node | **REQUIRED**
-
 # Lavalink
 
 For instructions on setting up a Lavalink node on bare metal, look [here](https://lavalink.dev/getting-started/). Refer to the plugin repositories for support on configuring them.
@@ -87,6 +68,47 @@ For instructions on setting up a Lavalink node on bare metal, look [here](https:
 After setting up your Lavalink node, it is highly recommended to configure IPv6 rotation with at least a /64 or /48 block. IPv6 rotation helps to relieve issues from getting rate limited/blocked from YouTube and other sources. There are helpful guides for setting this up which are available on GitHub, however, [this](https://github.com/Nansess/tunnelbroker-guide) is the one that I have used .
 
 An example of my personal `application.yml` configuration file can be found [here](application.yml).
+
+# Configuration
+
+## BOT_INFO | REQUIRED
+Field | Description | Requirement
+--- | --- | ---
+TOKEN | The token for your bot. Create a bot at [discord.com/developers](https://discord.com/developers) | **REQUIRED**
+BOT_COLOR | `HEX CODE`: Color that will be used for message embeds | **REQUIRED**
+BOT_INVITE_LINK | `URL`: Discord Invite link for your bot | **OPTIONAL** - *Adds an "Invite Me" button to the /help message*
+FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be sent to | **OPTIONAL** - *Used for feedback messages (/feedback)*
+BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL** - *Used for bug reporting (/bug)*
+LOG_SONGS | `BOOLEAN`: Whether or not to log song events in `track_events.log` | **OPTIONAL** - *default false*
+
+## LAVALINK - REQUIRED
+Field | Description | Requirement
+--- | --- | ---
+HOST | Host address for your Lavalink node | **REQUIRED**
+PORT | Port for your Lavalink node | **REQUIRED**
+PASSWORD | Password to authenticate into the Lavalink node | **REQUIRED**
+
+## YOUTUBE - OPTIONAL
+Field | Description | Requirement
+--- | --- | ---
+ENABLED | `BOOLEAN`: Whether or not playing from YouTube is allowed/supported | **OPTIONAL**
+
+## SPOTIFY - OPTIONAL
+Field | Description | Requirement
+--- | --- | ---
+SPOTIFY_CLIENT_ID | `CLIENT ID`: ID from Spotify Developer account | **OPTIONAL** - *Used for Spotify support*
+SPOTIFY_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Spotify Developer account | **OPTIONAL** - *Used for Sporify support*
+
+## GENIUS - OPTIONAL
+Field | Description | Requirement
+--- | --- | ---
+GENIUS_CLIENT_ID | `CLIENT ID`: ID from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
+GENIUS_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
+
+## OPENAI - OPTIONAL
+Field | Description | Requirement
+--- | --- | ---
+OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations | **OPTIONAL** - *Used to support the /autoplay feature*
 
 <br>
 
