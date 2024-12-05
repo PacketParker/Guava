@@ -27,6 +27,7 @@
 
 Guava is a Discord music bot with support for multiple different music and video streaming platforms. Guava is a part of >200 Discord servers and currently supports these services:
 
+- YouTube
 - Apple Music
 - Spotify
 - SoundCloud
