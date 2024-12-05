@@ -82,31 +82,31 @@ FEEDBACK_CHANNEL_ID | `CHANNEL ID`: Discord channel for feedback messages to be 
 BUG_CHANNEL_ID | `CHANNEL ID`: Discord channel for bug messages to be sent to | **OPTIONAL** - *Used for bug reporting (/bug)*
 LOG_SONGS | `BOOLEAN`: Whether or not to log song events in `track_events.log` | **OPTIONAL** - *default false*
 
-## LAVALINK - REQUIRED
+## LAVALINK | REQUIRED
 Field | Description | Requirement
 --- | --- | ---
 HOST | Host address for your Lavalink node | **REQUIRED**
 PORT | Port for your Lavalink node | **REQUIRED**
 PASSWORD | Password to authenticate into the Lavalink node | **REQUIRED**
 
-## YOUTUBE - OPTIONAL
+## YOUTUBE | OPTIONAL
 Field | Description | Requirement
 --- | --- | ---
 ENABLED | `BOOLEAN`: Whether or not playing from YouTube is allowed/supported | **OPTIONAL**
 
-## SPOTIFY - OPTIONAL
+## SPOTIFY | OPTIONAL
 Field | Description | Requirement
 --- | --- | ---
 SPOTIFY_CLIENT_ID | `CLIENT ID`: ID from Spotify Developer account | **OPTIONAL** - *Used for Spotify support*
 SPOTIFY_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Spotify Developer account | **OPTIONAL** - *Used for Sporify support*
 
-## GENIUS - OPTIONAL
+## GENIUS | OPTIONAL
 Field | Description | Requirement
 --- | --- | ---
 GENIUS_CLIENT_ID | `CLIENT ID`: ID from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
 GENIUS_CLIENT_SECRET | `CLIENT SECRET`: Secret string from Genius API Dashboard | **OPTIONAL** - *Used for the /lyrics command*
 
-## OPENAI - OPTIONAL
+## OPENAI | OPTIONAL
 Field | Description | Requirement
 --- | --- | ---
 OPENAI_API_KEY | API Key from OpenAI for autoplay recommendations | **OPTIONAL** - *Used to support the /autoplay feature*
