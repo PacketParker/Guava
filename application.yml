@@ -32,11 +32,11 @@ plugins:
       flowerytts: falsee
       youtube: false
     deezer:
-      masterDecryptionKey: "" # the master key used for decrypting the deezer tracks. (yes this is not here you need to get it from somewhere else)
+      masterDecryptionKey: "" # master decryption key from deezer
 
 lavalink:
   plugins:
-    - dependency: "dev.lavalink.youtube:youtube-plugin:1.8.3"
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.11.1"
       snapshot: false
     - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.3.0"
       snapshot: false
