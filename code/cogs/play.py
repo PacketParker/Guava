@@ -63,7 +63,7 @@ class Play(commands.Cog):
                 dzsearch = f"dzsearch:{query}"
                 results = await player.node.get_tracks(dzsearch)
                 # If Deezer returned nothing
-                if not results.tracks or results.load_type in (
+                if not (results and results.tracks) or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
@@ -71,7 +71,9 @@ class Play(commands.Cog):
                         ytmsearch = f"ytmsearch:{query}"
                         results = await player.node.get_tracks(ytmsearch)
                         # If YouTube Music returned nothing
-                        if not results.tracks or results.load_type in (
+                        if not (
+                            results and results.tracks
+                        ) or results.load_type in (
                             LoadType.EMPTY,
                             LoadType.ERROR,
                         ):
@@ -82,7 +84,7 @@ class Play(commands.Cog):
                 results = await player.node.get_tracks(query)
 
             # If there are no results found, set results/embed to None, handled further down
-            if not results.tracks or results.load_type in (
+            if not (results and results.tracks) or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):

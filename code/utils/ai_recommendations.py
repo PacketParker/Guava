@@ -62,14 +62,14 @@ async def add_song_recommendations(
             ytsearch = f"ytsearch:{song} by {artist} audio"
             results = await player.node.get_tracks(ytsearch)
 
-            if not results.tracks or results.load_type in (
+            if not (results and results.tracks) or results.load_type in (
                 LoadType.EMPTY,
                 LoadType.ERROR,
             ):
                 dzsearch = f"dzsearch:{song}"
                 results = await player.node.get_tracks(dzsearch)
 
-                if not results.tracks or results.load_type in (
+                if not (results and results.tracks) or results.load_type in (
                     LoadType.EMPTY,
                     LoadType.ERROR,
                 ):
