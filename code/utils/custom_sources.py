@@ -30,17 +30,29 @@ class CustomAudioTrack(DeferredAudioTrack):
     ):  # Load our 'actual' playback track using the metadata from this one.
         dzsearch = f"dzsearch:{self.title} {self.author}"
         results = await client.get_tracks(dzsearch)
-        if not (results and results.tracks) or results.load_type in (
-            LoadType.EMPTY,
-            LoadType.ERROR,
+        if (
+            not results
+            or not results.tracks
+            or not results.load_type
+            or results.load_type
+            in (
+                LoadType.EMPTY,
+                LoadType.ERROR,
+            )
         ):
             if YOUTUBE_SUPPORT:
                 ytmsearch = f"ytmsearch:{self.title} {self.author}"
                 results = await client.get_tracks(ytmsearch)
 
-                if not (results and results.tracks) or results.load_type in (
-                    LoadType.EMPTY,
-                    LoadType.ERROR,
+                if (
+                    not results
+                    or not results.tracks
+                    or not results.load_type
+                    or results.load_type
+                    in (
+                        LoadType.EMPTY,
+                        LoadType.ERROR,
+                    )
                 ):
                     ytsearch = f"ytsearch:{self.title} {self.author} audio"
                     results = await client.get_tracks(ytsearch)
